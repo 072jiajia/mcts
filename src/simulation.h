@@ -18,7 +18,7 @@ public:
         while (!traverse_b->IsGameOver())
         {
             int m = this->GetRandomMove(traverse_b);
-            auto move = traverse_b->GetMovableActions()[m];
+            auto move = traverse_b->GetLegalMoves()[m];
             traverse_b->DoAction(move);
         }
         return EvaluateResult(traverse_b, turn);
@@ -27,7 +27,7 @@ public:
 private:
     int GetRandomMove(G *b) const
     {
-        auto movable_actions = b->GetMovableActions();
+        auto movable_actions = b->GetLegalMoves();
         int m = rand() % movable_actions.size();
         return m;
     }

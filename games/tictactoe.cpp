@@ -16,7 +16,7 @@ TicTacToe::TicTacToe(TicTacToe *src)
     whos_turn = src->whos_turn;
 }
 
-std::vector<TicTacToe::Action> TicTacToe::GetMovableActions()
+std::vector<TicTacToe::Action> TicTacToe::GetLegalMoves()
 {
     std::vector<Action> output;
     for (int i = 0; i < 3; i++)

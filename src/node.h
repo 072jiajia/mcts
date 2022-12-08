@@ -33,7 +33,7 @@ public:
 
     void Expansion()
     {
-        auto movable_actions = state_->GetMovableActions();
+        auto movable_actions = state_->GetLegalMoves();
 
         for (uint i = 0; i < movable_actions.size(); i++)
         {

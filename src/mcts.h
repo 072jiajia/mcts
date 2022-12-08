@@ -30,7 +30,7 @@ public:
 		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
 		std::cout << mcts_root_node->GetTotalSimulationCount() << std::endl;
 		delete mcts_root_node;
-		return b->GetMovableActions()[best_move];
+		return b->GetLegalMoves()[best_move];
 	}
 
 private:
