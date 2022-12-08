@@ -18,13 +18,9 @@ public:
     G *GetCurrentState() { return state_; }
     bool IsExpanded() { return expanded_; }
 
-    mcts_node(G *s, SimulationStrategy<G> *simulation_strategy = nullptr)
+    mcts_node(G *s)
         : state_(s->Clone()), Q_(rand() / RAND_MAX * 0.001), N_(0),
-          expanded_(false), simulation_strategy_(simulation_strategy)
-    {
-        if (!simulation_strategy_)
-            simulation_strategy_ = new SimulationDefaultStrategy<G>();
-    }
+          expanded_(false) {}
 
     ~mcts_node()
     {
@@ -49,7 +45,7 @@ public:
         expanded_ = true;
     }
 
-    float DoMonteCarloTreeSearchOnce()
+    float DoMonteCarloTreeSearchOnce(SimulationStrategy<G> *simulation_strategy)
     {
         float q;
         if (state_->IsGameOver())
@@ -61,13 +57,13 @@ public:
         }
         else if (N_ == 0)
         {
-            q = simulation_strategy_->SimulationOnce(state_);
+            q = simulation_strategy->SimulationOnce(state_);
         }
         else
         {
             if (!expanded_)
                 this->Expansion();
-            q = children_[this->SelecHighestUCBChildNode()]->DoMonteCarloTreeSearchOnce();
+            q = children_[this->SelecHighestUCBChildNode()]->DoMonteCarloTreeSearchOnce(simulation_strategy);
         }
         Q_ += (q - Q_) / ++N_;
         return -q;
@@ -114,5 +110,4 @@ private:
     float Q_;
     float N_;
     bool expanded_;
-    SimulationStrategy<G> *simulation_strategy_;
 };
