@@ -8,12 +8,6 @@
 template <typename G>
 class MCTSPlayer
 {
-private:
-	double time_limit_ms_;
-	int min_iterations_;
-	Timer timer_;
-	SimulationStrategy<G> *simulation_strategy_;
-
 public:
 	MCTSPlayer(double time_limit_ms = 1000., int min_iterations = 100000, SimulationStrategy<G> *simulation_strategy = nullptr)
 		: timer_(), time_limit_ms_(time_limit_ms), min_iterations_(min_iterations),
@@ -27,7 +21,7 @@ public:
 	typename G::Action SearchAction(G *b)
 	{
 		timer_.reset();
-		mcts_node<G> *mcts_root_node = new mcts_node<G>(b);
+		MCTSNode<G> *mcts_root_node = new MCTSNode<G>(b);
 		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
@@ -38,4 +32,10 @@ public:
 		delete mcts_root_node;
 		return b->GetMovableActions()[best_move];
 	}
+
+private:
+	double time_limit_ms_;
+	int min_iterations_;
+	Timer timer_;
+	SimulationStrategy<G> *simulation_strategy_;
 };

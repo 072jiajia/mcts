@@ -5,14 +5,14 @@
 
 class Timer
 {
-private:
-	struct timespec tick_, tock_;
-
 public:
 	Timer();
 	~Timer();
 	void reset();
 	double get_duration();
+
+private:
+	struct timespec tick_, tock_;
 };
 
 template <typename G>

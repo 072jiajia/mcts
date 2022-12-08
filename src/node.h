@@ -10,7 +10,7 @@
 #include "simulation.h"
 
 template <typename G>
-class mcts_node
+class MCTSNode
 {
 public:
     float GetValueForCurrentPlayer() { return Q_; }
@@ -18,11 +18,11 @@ public:
     G *GetCurrentState() { return state_; }
     bool IsExpanded() { return expanded_; }
 
-    mcts_node(G *s)
+    MCTSNode(G *s)
         : state_(s->Clone()), Q_(rand() / RAND_MAX * 0.001), N_(0),
           expanded_(false) {}
 
-    ~mcts_node()
+    ~MCTSNode()
     {
         for (uint i = 0; i < children_.size(); i++)
         {
@@ -37,7 +37,7 @@ public:
 
         for (uint i = 0; i < movable_actions.size(); i++)
         {
-            mcts_node *new_node = new mcts_node<G>(state_);
+            MCTSNode *new_node = new MCTSNode<G>(state_);
             new_node->state_->DoAction(movable_actions[i]);
             children_.push_back(new_node);
         }
@@ -106,7 +106,7 @@ private:
     }
 
     G *state_;
-    std::vector<mcts_node<G> *> children_;
+    std::vector<MCTSNode<G> *> children_;
     float Q_;
     float N_;
     bool expanded_;

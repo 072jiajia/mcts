@@ -10,14 +10,6 @@ public:
 template <typename G>
 class SimulationDefaultStrategy : public SimulationStrategy<G>
 {
-private:
-    int GetRandomMove(G *b) const
-    {
-        auto movable_actions = b->GetMovableActions();
-        int m = rand() % movable_actions.size();
-        return m;
-    }
-
 public:
     float SimulationOnce(G *b) const override
     {
@@ -30,5 +22,13 @@ public:
             traverse_b->DoAction(move);
         }
         return EvaluateResult(traverse_b, turn);
+    }
+
+private:
+    int GetRandomMove(G *b) const
+    {
+        auto movable_actions = b->GetMovableActions();
+        int m = rand() % movable_actions.size();
+        return m;
     }
 };
