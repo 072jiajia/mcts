@@ -180,6 +180,18 @@ bool NoGo::DoesHaveLiberty(NoGo &state, int x, int y, PieceType who)
                 check.emplace_back(x, y + 1);
         }
     }
-
     return false;
+}
+
+std::vector<NoGo::Action> *NoGo::GetActionSpace()
+{
+    std::vector<Action> *output = new std::vector<Action>();
+    for (int i = 0; i < size_x_; i++)
+    {
+        for (int j = 0; j < size_y_; j++)
+        {
+            output->push_back({i, j});
+        }
+    }
+    return output;
 }

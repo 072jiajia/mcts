@@ -7,6 +7,7 @@
 #include <utility>
 #include <cmath>
 #include <vector>
+#include <map>
 #include "game_base.h"
 
 class NoGo
@@ -35,6 +36,10 @@ public:
 
     void PrintState();
 
+public:
+    std::vector<Action> *GetActionSpace();
+    static bool IsMovable(NoGo &state, const Action &action);
+
 private:
     enum class PieceType
     {
@@ -53,7 +58,6 @@ private:
 
     PieceType GetPlayersPiece(Player);
     void switch_turn();
-    static bool IsMovable(NoGo &state, const Action &action);
     static bool DoesHaveLiberty(NoGo &state, int x, int y, PieceType who);
 
     int size_x_;
