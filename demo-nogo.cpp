@@ -10,9 +10,9 @@ int main()
 {
     Game b(4, 4);
 
-    // MCTSPlayer<Game> p(1000., 1000);
-    // MCTSPlayer<Game> p(1000., 1000, new SimulationDefaultStrategy<Game>());
-    MCTSPlayer<Game> p(1000., 1000, new QuickRandomRollout<Game>(b.GetActionSpace()));
+    // MCTSAgent<Game> p(1000., 1000);
+    // MCTSAgent<Game> p(1000., 1000, new SimulationDefaultStrategy<Game>());
+    MCTSAgent<Game> p(1000., 1000, new QuickRandomRollout<Game>(b.GetActionSpace()));
 
     while (!b.IsGameOver())
     {

@@ -6,17 +6,17 @@
 #include "utils.h"
 
 template <typename G>
-class MCTSPlayer
+class MCTSAgent
 {
 public:
-	MCTSPlayer(double time_limit_ms = 1000., int min_iterations = 100000, SimulationStrategy<G> *simulation_strategy = nullptr)
+	MCTSAgent(double time_limit_ms = 1000., int min_iterations = 100000, SimulationStrategy<G> *simulation_strategy = nullptr)
 		: timer_(), time_limit_ms_(time_limit_ms), min_iterations_(min_iterations),
 		  simulation_strategy_(simulation_strategy)
 	{
 		if (!simulation_strategy_)
 			simulation_strategy_ = new SimulationDefaultStrategy<G>();
 	}
-	~MCTSPlayer() {}
+	~MCTSAgent() {}
 
 	typename G::Action SearchAction(G *b)
 	{

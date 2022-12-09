@@ -10,7 +10,7 @@ int main()
 {
     Game b;
 
-    MCTSPlayer<Game> p(1000., 1000);
+    MCTSAgent<Game> p(1000., 1000);
 
     while (!b.IsGameOver())
     {
