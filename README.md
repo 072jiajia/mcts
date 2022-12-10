@@ -3,8 +3,8 @@
 This is a c++ implementation of Monte Carlo Tree Search algorithm.
 
 Also, this is a project for [myself](https://github.com/072jiajia) to practice software development,
-so I may update it occasionally and I will try to keep my main branch a runnable version.
-Of course, I will add other games & add further technique for mcts.
+so I may update it occasionally.
+Of course, I will add other games & add further techniques of mcts.
 
 If you have any advices for this project (including implementation / solid principles / naming convention / optimization / others...),
 please feel free to leave a message on the issue page or send me an [email](mailto:jijiawu.cs@gmail.com) to let me know!
@@ -20,7 +20,7 @@ please feel free to leave a message on the issue page or send me an [email](mail
 
 ## How To Run It On Your Game?
 
-Implement your game and finish the following function which will be used in Monte
+Implement your game and finish the following functions which will be used in Monte Carlo Tree Search
 
 Here's an example
 
