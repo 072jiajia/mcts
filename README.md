@@ -18,4 +18,42 @@ please feel free to leave a message on the issue page or send me an [email](mail
     ./simpledemo
 ```
 
+## How To Run It On Your Game?
+
+Implement your game and finish the following function which will be used in Monte
+
+Here's an example
+
+your_game.h
+
+```code=cpp
+#include "games/game_base.h"
+
+class YourGame
+{
+public:
+    GAME_MODULE(YourGame);
+
+    /*
+    other members & functions of your implementations
+    */
+};
+```
+
+your_game.cpp
+
+```code=cpp
+#inlcude "your_game.h"
+
+std::vector<YourGame::Action> YourGame::GetLegalMoves() { /* your implementation */ }
+void YourGame::DoAction(const Action action) { /* your implementation */ }
+YourGame *YourGame::Clone() { /* your implementation */ }
+void YourGame::switch_turn() { /* your implementation */ }
+void YourGame::PrintState() { /* your implementation */ }
+bool YourGame::IsGameOver() { /* your implementation */ }
+YourGame::ResultType YourGame::GetResult() { /* your implementation */ }
+YourGame::Player YourGame::GetPlayerThisTurn() { /* your implementation */ }
+
+```
+
 (On-going Readme.md contents...)

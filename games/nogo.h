@@ -14,6 +14,11 @@ class NoGo
 {
 public:
     GAME_MODULE(NoGo);
+
+    NoGo(int size_x, int size_y);
+    NoGo(NoGo *src);
+    ~NoGo();
+
     struct Action
     {
         int x;
@@ -21,20 +26,6 @@ public:
         Action(int x_, int y_) : x(x_), y(y_) {}
         Action(const Action &) = default;
     };
-
-    NoGo(int size_x, int size_y);
-    NoGo(NoGo *src);
-    ~NoGo();
-
-    NoGo *Clone();
-    std::vector<Action> GetLegalMoves();
-    void DoAction(const Action action);
-
-    Player GetPlayerThisTurn();
-    ResultType GetResult();
-    bool IsGameOver();
-
-    void PrintState();
 
 public:
     std::vector<Action> *GetActionSpace();

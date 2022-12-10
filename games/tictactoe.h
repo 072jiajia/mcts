@@ -21,14 +21,6 @@ public:
     TicTacToe(TicTacToe *);
     ~TicTacToe();
 
-    TicTacToe *Clone();
-    std::vector<Action> GetLegalMoves();
-    void DoAction(const Action);
-    Player GetPlayerThisTurn();
-    ResultType GetResult();
-    bool IsGameOver();
-    void PrintState();
-
 private:
     enum class PieceType
     {
