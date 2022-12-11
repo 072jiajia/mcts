@@ -3,6 +3,7 @@
 #include <cstring>
 #include <time.h>
 #include "node.h"
+#include "node_v2.h"
 #include "utils.h"
 
 template <typename G>
@@ -18,19 +19,35 @@ public:
 	}
 	~MCTSAgent() {}
 
-	typename G::Action SearchAction(G *b)
+	typename G::Action SearchAction(G *b, bool use_v2 = false)
 	{
 		timer_.reset();
-		MCTSNode<G> *mcts_root_node = new MCTSNode<G>(b);
-		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
-			   timer_.get_duration() < time_limit_ms_ / 1000.)
+		if (!use_v2)
 		{
-			mcts_root_node->DoMonteCarloTreeSearchOnce(simulation_strategy_);
+			MCTSNode<G> *mcts_root_node = new MCTSNode<G>(b);
+			while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+				   timer_.get_duration() < time_limit_ms_ / 1000.)
+			{
+				mcts_root_node->DoMonteCarloTreeSearchOnce(simulation_strategy_);
+			}
+			int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
+			std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
+			delete mcts_root_node;
+			return b->GetLegalMoves()[best_move];
 		}
-		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
-		std::cout << mcts_root_node->GetTotalSimulationCount() << std::endl;
-		delete mcts_root_node;
-		return b->GetLegalMoves()[best_move];
+		else
+		{
+			MCTSNodeV2<G> *mcts_root_node = new MCTSNodeV2<G>();
+			while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+				   timer_.get_duration() < time_limit_ms_ / 1000.)
+			{
+				mcts_root_node->DoMonteCarloTreeSearchOnce(b->Clone(), simulation_strategy_);
+			}
+			int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
+			std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
+			delete mcts_root_node;
+			return b->GetLegalMoves()[best_move];
+		}
 	}
 
 private:
