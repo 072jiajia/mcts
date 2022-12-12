@@ -55,9 +55,16 @@ NoGo::PieceType NoGo::GetPlayersPiece(NoGo::Player p)
 
 NoGo::ResultType NoGo::GetResult()
 {
-    std::vector<Action> movable_actions = GetLegalMoves();
-    if (movable_actions.size() > 0)
-        return ResultType::NOT_FINISH_YET;
+    for (int i = 0; i < size_x_; i++)
+    {
+        for (int j = 0; j < size_y_; j++)
+        {
+            if (IsMovable(*this, Action(i, j)))
+            {
+                return ResultType::NOT_FINISH_YET;
+            }
+        }
+    }
     return whos_turn_ == Player::PLAYER1 ? ResultType::PLAYER2_WIN : ResultType::PLAYER1_WIN;
 }
 
