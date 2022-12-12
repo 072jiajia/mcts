@@ -3,7 +3,6 @@
 #include <cstring>
 #include <time.h>
 #include "node.h"
-#include "node_v2.h"
 #include "utils.h"
 
 template <typename G>
