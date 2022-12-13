@@ -1,11 +1,11 @@
 simpledemo:
-	g++ demo-tictactoe.cpp src/utils.cpp games/tictactoe.cpp -o simpledemo
+	g++ demo-tictactoe.cpp src/*.cpp games/*.cpp -o simpledemo
 
 clean-simpledemo:
 	rm simpledemo
 
 demo-nogo:
-	g++ demo-nogo.cpp src/utils.cpp games/nogo.cpp -o demo-nogo
+	g++ demo-nogo.cpp src/*.cpp games/*.cpp -o demo-nogo
 
 clean-demo-nogo:
 	rm demo-nogo

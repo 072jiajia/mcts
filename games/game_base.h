@@ -1,28 +1,33 @@
 #pragma once
 
-#define GAME_MODULE(game_name)           \
-                                         \
-public:                                  \
-    enum class Player                    \
-    {                                    \
-        PLAYER1 = 0,                     \
-        PLAYER2 = 1,                     \
-    };                                   \
-                                         \
-    enum class ResultType                \
-    {                                    \
-        DRAW = 0,                        \
-        PLAYER1_WIN = 1,                 \
-        PLAYER2_WIN = 2,                 \
-        NOT_FINISH_YET = 3,              \
-    };                                   \
-                                         \
-    struct Action;                       \
-                                         \
-    game_name *Clone();                  \
-    std::vector<Action> GetLegalMoves(); \
-    void DoAction(const Action);         \
-    Player GetPlayerThisTurn();          \
-    ResultType GetResult();              \
-    bool IsGameOver();                   \
-    void PrintState();
+#include <vector>
+
+enum class Player
+{
+    PLAYER1,
+    PLAYER2,
+};
+
+enum class ResultType
+{
+    DRAW,
+    PLAYER1_WIN,
+    PLAYER2_WIN,
+    NOT_FINISH_YET,
+};
+
+class Action
+{
+};
+
+class Game
+{
+public:
+    virtual Game *Clone() = 0;
+    virtual std::vector<Action *> GetLegalMoves() = 0;
+    virtual void DoAction(const Action *) = 0;
+    virtual Player GetPlayerThisTurn() = 0;
+    virtual ResultType GetResult() = 0;
+    virtual bool IsGameOver() = 0;
+    virtual void PrintState() = 0;
+};

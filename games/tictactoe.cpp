@@ -16,27 +16,28 @@ TicTacToe::TicTacToe(TicTacToe *src)
     whos_turn = src->whos_turn;
 }
 
-std::vector<TicTacToe::Action> TicTacToe::GetLegalMoves()
+std::vector<Action *> TicTacToe::GetLegalMoves()
 {
-    std::vector<Action> output;
+    std::vector<Action *> output;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
             if (board[i][j] == PieceType::EMPTY)
-                output.emplace_back(i, j);
+                output.push_back(new TicTacToeAction(i, j));
         }
     }
     return output;
 }
 
-void TicTacToe::DoAction(const Action action)
+void TicTacToe::DoAction(const Action *action_abs)
 {
-    if (board[action.x][action.y] != PieceType::EMPTY)
+    TicTacToeAction *action = (TicTacToeAction *)action_abs;
+    if (board[action->x()][action->y()] != PieceType::EMPTY)
     {
         throw std::invalid_argument("Your action is invalid");
     }
-    board[action.x][action.y] = whos_turn == Player::PLAYER1 ? PieceType::PLAYER1 : PieceType::PLAYER2;
+    board[action->x()][action->y()] = whos_turn == Player::PLAYER1 ? PieceType::PLAYER1 : PieceType::PLAYER2;
     switch_turn();
 }
 
@@ -90,7 +91,7 @@ bool TicTacToe::IsGameOver()
     return result != ResultType::NOT_FINISH_YET;
 }
 
-TicTacToe::ResultType TicTacToe::GetResult()
+ResultType TicTacToe::GetResult()
 {
     for (int i = 0; i < 3; i++)
     {
@@ -174,4 +175,4 @@ TicTacToe::ResultType TicTacToe::GetResult()
     return ResultType::DRAW;
 }
 
-TicTacToe::Player TicTacToe::GetPlayerThisTurn() { return whos_turn; }
+Player TicTacToe::GetPlayerThisTurn() { return whos_turn; }

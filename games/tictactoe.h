@@ -5,21 +5,34 @@
 
 #include "game_base.h"
 
-class TicTacToe
+class TicTacToeAction : public Action
 {
 public:
-    GAME_MODULE(TicTacToe);
-    struct Action
-    {
-        int x;
-        int y;
-        Action(int x_, int y_) : x(x_), y(y_) {}
-        Action(const Action &) = default;
-    };
+    TicTacToeAction(int x, int y) : x_(x), y_(y) {}
+    TicTacToeAction(const TicTacToeAction &) = default;
 
+    inline int x() { return x_; }
+    inline int y() { return y_; }
+
+private:
+    int x_;
+    int y_;
+};
+
+class TicTacToe : public Game
+{
+public:
     TicTacToe();
     TicTacToe(TicTacToe *);
     ~TicTacToe();
+
+    TicTacToe *Clone();
+    std::vector<Action *> GetLegalMoves();
+    void DoAction(const Action *);
+    Player GetPlayerThisTurn();
+    ResultType GetResult();
+    bool IsGameOver();
+    void PrintState();
 
 private:
     enum class PieceType

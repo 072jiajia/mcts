@@ -4,13 +4,11 @@
 #include <vector>
 #include <stdexcept>
 
-using Game = TicTacToe;
-
 int main()
 {
-    Game b;
+    TicTacToe b;
 
-    MCTSAgent<Game> p(1000., 1000);
+    MCTSAgent p(1000., 1000);
 
     while (!b.IsGameOver())
     {

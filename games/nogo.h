@@ -10,26 +10,37 @@
 #include <map>
 #include "game_base.h"
 
-class NoGo
+class NoGoAction : public Action
 {
 public:
-    GAME_MODULE(NoGo);
+    NoGoAction(int x, int y) : x_(x), y_(y) {}
+    NoGoAction(const NoGoAction &) = default;
 
+    inline int x() { return x_; }
+    inline int y() { return y_; }
+
+private:
+    int x_;
+    int y_;
+};
+
+class NoGo : public Game
+{
+public:
     NoGo(int size_x, int size_y);
     NoGo(NoGo *src);
     ~NoGo();
 
-    struct Action
-    {
-        int x;
-        int y;
-        Action(int x_, int y_) : x(x_), y(y_) {}
-        Action(const Action &) = default;
-    };
+    NoGo *Clone();
+    std::vector<Action *> GetLegalMoves();
+    void DoAction(const Action *);
+    Player GetPlayerThisTurn();
+    ResultType GetResult();
+    bool IsGameOver();
+    void PrintState();
 
-public:
-    std::vector<Action> *GetActionSpace();
-    static bool IsMovable(NoGo &state, const Action &action);
+    std::vector<Action *> *GetActionSpace();
+    static bool IsMovable(NoGo &state, const Action *action);
 
 private:
     enum class PieceType

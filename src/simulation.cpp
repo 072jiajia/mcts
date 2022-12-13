@@ -1,22 +1,24 @@
-#pragma once
-#include <random>
-#include "utils.h"
+#include "simulation.h"
 
-class SimulationStrategy
+float SimulationDefaultStrategy::SimulationOnce(Game *b) const
 {
-public:
-    virtual ~SimulationStrategy() = default;
-    virtual float SimulationOnce(Game *b) const = 0;
-};
+    Game *traverse_b = b->Clone();
+    Player turn = traverse_b->GetPlayerThisTurn();
+    while (!traverse_b->IsGameOver())
+    {
+        int m = this->GetRandomMove(traverse_b);
+        auto move = traverse_b->GetLegalMoves()[m];
+        traverse_b->DoAction(move);
+    }
+    return EvaluateResult(traverse_b, turn);
+}
 
-class SimulationDefaultStrategy : public SimulationStrategy
+int SimulationDefaultStrategy::GetRandomMove(Game *b) const
 {
-public:
-    float SimulationOnce(Game *b) const;
-
-private:
-    int GetRandomMove(Game *b) const;
-};
+    auto movable_actions = b->GetLegalMoves();
+    int m = rand() % movable_actions.size();
+    return m;
+}
 
 // class QuickRandomRollout : public SimulationStrategy
 // {

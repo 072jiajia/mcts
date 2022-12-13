@@ -23,16 +23,16 @@ NoGo::NoGo(NoGo *src)
 NoGo::~NoGo() { delete flat_board_; }
 NoGo *NoGo::Clone() { return new NoGo(this); }
 
-NoGo::Player NoGo::GetPlayerThisTurn() { return whos_turn_; }
+Player NoGo::GetPlayerThisTurn() { return whos_turn_; }
 
-std::vector<NoGo::Action> NoGo::GetLegalMoves()
+std::vector<Action *> NoGo::GetLegalMoves()
 {
-    std::vector<Action> output;
+    std::vector<Action *> output;
     for (int i = 0; i < size_x_; i++)
     {
         for (int j = 0; j < size_y_; j++)
         {
-            Action action(i, j);
+            Action *action = new NoGoAction(i, j);
             if (IsMovable(*this, action))
             {
                 output.push_back(action);
@@ -42,24 +42,26 @@ std::vector<NoGo::Action> NoGo::GetLegalMoves()
     return output;
 }
 
-void NoGo::DoAction(const Action action)
+void NoGo::DoAction(const Action *action_abs)
 {
-    flat_board_[action.x * size_y_ + action.y] = GetPlayersPiece(whos_turn_);
+    NoGoAction *action = (NoGoAction *)action_abs;
+    flat_board_[action->x() * size_y_ + action->y()] = GetPlayersPiece(whos_turn_);
     switch_turn();
 }
 
-NoGo::PieceType NoGo::GetPlayersPiece(NoGo::Player p)
+NoGo::PieceType NoGo::GetPlayersPiece(Player p)
 {
     return p == Player::PLAYER1 ? PieceType::PLAYER1 : PieceType::PLAYER2;
 }
 
-NoGo::ResultType NoGo::GetResult()
+ResultType NoGo::GetResult()
 {
     for (int i = 0; i < size_x_; i++)
     {
         for (int j = 0; j < size_y_; j++)
         {
-            if (IsMovable(*this, Action(i, j)))
+            Action *action = new NoGoAction(i, j);
+            if (IsMovable(*this, action))
             {
                 return ResultType::NOT_FINISH_YET;
             }
@@ -113,10 +115,11 @@ void NoGo::PrintState()
     std::cout << std::endl;
 }
 
-bool NoGo::IsMovable(NoGo &state, const Action &action)
+bool NoGo::IsMovable(NoGo &state, const Action *action_abs)
 {
-    int x = action.x;
-    int y = action.y;
+    NoGoAction *action = (NoGoAction *)action_abs;
+    int x = action->x();
+    int y = action->y();
     if (state.flat_board_[x * state.size_y_ + y] != PieceType::EMPTY)
         return false;
     NoGo test(&state);
@@ -190,14 +193,14 @@ bool NoGo::DoesHaveLiberty(NoGo &state, int x, int y, PieceType who)
     return false;
 }
 
-std::vector<NoGo::Action> *NoGo::GetActionSpace()
+std::vector<Action *> *NoGo::GetActionSpace()
 {
-    std::vector<Action> *output = new std::vector<Action>();
+    std::vector<Action *> *output = new std::vector<Action *>();
     for (int i = 0; i < size_x_; i++)
     {
         for (int j = 0; j < size_y_; j++)
         {
-            output->push_back({i, j});
+            output->push_back(new NoGoAction(i, j));
         }
     }
     return output;
