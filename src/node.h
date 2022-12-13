@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "simulation.h"
+#include "selection.h"
 
 template <typename G>
 class MCTSNodeBase
@@ -15,7 +16,10 @@ class MCTSNodeBase
 public:
     float GetValueForCurrentPlayer() { return Q_; }
     float GetTotalSimulationCount() { return N_; }
+    float Q() { return Q_; }
+    float N() { return N_; }
     bool IsExpanded() { return expanded_; }
+    std::vector<MCTSNodeBase<G> *> GetChildren() const { return children_; }
 
     MCTSNodeBase() : Q_(rand() / RAND_MAX * 0.001), N_(0), expanded_(false) {}
 
@@ -45,24 +49,6 @@ public:
     }
 
 protected:
-    int SelecHighestUCBChildNode(float C = 1.4)
-    {
-        float best_value = -1e20;
-        int best_move = -1;
-        float logN = std::log(N_ + 1.);
-        for (uint i = 0; i < children_.size(); i++)
-        {
-            float value = -children_[i]->Q_ + C * std::sqrt(logN / (children_[i]->N_ + 1));
-
-            if (value > best_value)
-            {
-                best_value = value;
-                best_move = i;
-            }
-        }
-        return best_move;
-    }
-
     std::vector<MCTSNodeBase<G> *> children_;
     float Q_;
     float N_;
@@ -93,7 +79,7 @@ public:
         this->expanded_ = true;
     }
 
-    float DoMonteCarloTreeSearchOnce(SimulationStrategy<G> *simulation_strategy)
+    float DoMonteCarloTreeSearchOnce(SelectionStrategy<G> *selection_strategy, SimulationStrategy<G> *simulation_strategy)
     {
         float q;
         if (state_->IsGameOver())
@@ -111,7 +97,7 @@ public:
         {
             if (!this->expanded_)
                 this->Expansion();
-            q = ((MCTSNode<G> *)(this->children_[this->SelecHighestUCBChildNode()]))->DoMonteCarloTreeSearchOnce(simulation_strategy);
+            q = ((MCTSNode<G> *)(this->children_[selection_strategy->Select(this)]))->DoMonteCarloTreeSearchOnce(selection_strategy, simulation_strategy);
         }
         this->Q_ += (q - this->Q_) / ++this->N_;
         return -q;
@@ -145,7 +131,7 @@ public:
         this->expanded_ = true;
     }
 
-    float DoMonteCarloTreeSearchOnce(G *state, SimulationStrategy<G> *simulation_strategy)
+    float DoMonteCarloTreeSearchOnce(G *state, SelectionStrategy<G> *selection_strategy, SimulationStrategy<G> *simulation_strategy)
     {
         float q;
         if (state->IsGameOver())
@@ -164,9 +150,9 @@ public:
             if (!this->expanded_)
                 this->Expansion(state);
 
-            int action_index = this->SelecHighestUCBChildNode();
+            int action_index = selection_strategy->Select(this);
             state->DoAction(actions_[action_index]);
-            q = ((MCTSNodeV2<G> *)(this->children_[action_index]))->DoMonteCarloTreeSearchOnce(state, simulation_strategy);
+            q = ((MCTSNodeV2<G> *)(this->children_[action_index]))->DoMonteCarloTreeSearchOnce(state, selection_strategy, simulation_strategy);
         }
         this->Q_ += (q - this->Q_) / ++this->N_;
         return -q;

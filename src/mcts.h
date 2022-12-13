@@ -9,10 +9,14 @@ template <typename G>
 class MCTSAgent
 {
 public:
-	MCTSAgent(double time_limit_ms = 1000., int min_iterations = 100000, SimulationStrategy<G> *simulation_strategy = nullptr)
+	MCTSAgent(double time_limit_ms = 1000., int min_iterations = 100000, SelectionStrategy<G> *selection_strategy = nullptr, SimulationStrategy<G> *simulation_strategy = nullptr)
 		: timer_(), time_limit_ms_(time_limit_ms), min_iterations_(min_iterations),
+		  selection_strategy_(selection_strategy),
 		  simulation_strategy_(simulation_strategy)
 	{
+		if (!selection_strategy_)
+			selection_strategy_ = new UCBHighest<G>();
+
 		if (!simulation_strategy_)
 			simulation_strategy_ = new SimulationDefaultStrategy<G>();
 	}
@@ -27,7 +31,7 @@ public:
 			while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
 				   timer_.get_duration() < time_limit_ms_ / 1000.)
 			{
-				mcts_root_node->DoMonteCarloTreeSearchOnce(simulation_strategy_);
+				mcts_root_node->DoMonteCarloTreeSearchOnce(selection_strategy_, simulation_strategy_);
 			}
 			int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
 			std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
@@ -40,7 +44,7 @@ public:
 			while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
 				   timer_.get_duration() < time_limit_ms_ / 1000.)
 			{
-				mcts_root_node->DoMonteCarloTreeSearchOnce(b->Clone(), simulation_strategy_);
+				mcts_root_node->DoMonteCarloTreeSearchOnce(b->Clone(), selection_strategy_, simulation_strategy_);
 			}
 			int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
 			std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
@@ -53,5 +57,6 @@ private:
 	double time_limit_ms_;
 	int min_iterations_;
 	Timer timer_;
+	SelectionStrategy<G> *selection_strategy_;
 	SimulationStrategy<G> *simulation_strategy_;
 };
