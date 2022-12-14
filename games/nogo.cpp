@@ -64,8 +64,8 @@ ResultType NoGo::GetResult()
     {
         for (int j = 0; j < size_y_; j++)
         {
-            Action *action = new NoGoAction(i, j);
-            if (IsMovable(*this, action))
+            NoGoAction action(i, j);
+            if (IsMovable(*this, &action))
             {
                 return ResultType::NOT_FINISH_YET;
             }

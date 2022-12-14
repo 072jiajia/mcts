@@ -13,8 +13,10 @@ int main()
     while (!b.IsGameOver())
     {
         b.PrintState();
-        auto m = p.SearchAction(&b);
-        b.DoAction(m);
+
+        Action *action = p.SearchAction(&b);
+        b.DoAction(action);
+        delete action;
     }
 
     b.PrintState();

@@ -25,8 +25,9 @@ int main()
         else
             current_player = &p2;
 
-        auto m = current_player->SearchAction(&b);
-        b.DoAction(m);
+        Action *action = current_player->SearchAction(&b);
+        b.DoAction(action);
+        delete action;
     }
 
     b.PrintState();
