@@ -32,14 +32,14 @@ public:
     ~NoGo();
 
     NoGo *Clone();
-    std::vector<Action *> GetLegalMoves();
+    ActionList *GetLegalMoves();
     void DoAction(const Action *);
     Player GetPlayerThisTurn();
     ResultType GetResult();
     bool IsGameOver();
     void PrintState();
 
-    std::vector<Action *> *GetActionSpace();
+    ActionList *GetActionSpace();
     static bool IsMovable(NoGo &state, const Action *action);
 
 private:

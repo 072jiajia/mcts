@@ -45,16 +45,18 @@ MCTSNode::~MCTSNode() { delete state_; }
 
 void MCTSNode::Expansion()
 {
-    auto movable_actions = state_->GetLegalMoves();
+    ActionList *movable_actions = state_->GetLegalMoves();
 
-    for (uint i = 0; i < movable_actions.size(); i++)
+    for (uint i = 0; i < movable_actions->GetSize(); i++)
     {
         MCTSNode *new_node = new MCTSNode(state_);
-        new_node->state_->DoAction(movable_actions[i]);
+        new_node->state_->DoAction(movable_actions->Get(i));
         this->children_.push_back(new_node);
     }
 
     this->expanded_ = true;
+
+    delete movable_actions;
 }
 
 float MCTSNode::DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
@@ -81,15 +83,21 @@ float MCTSNode::DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy
     return -q;
 }
 
-MCTSNodeV2::MCTSNodeV2() : MCTSNodeBase() {}
+MCTSNodeV2::MCTSNodeV2() : MCTSNodeBase(), actions_(nullptr) {}
 
-MCTSNodeV2::~MCTSNodeV2() {}
+MCTSNodeV2::~MCTSNodeV2()
+{
+    if (actions_ != nullptr)
+    {
+        delete actions_;
+    }
+}
 
 void MCTSNodeV2::Expansion(Game *state)
 {
     actions_ = state->GetLegalMoves();
 
-    for (uint i = 0; i < actions_.size(); i++)
+    for (uint i = 0; i < actions_->GetSize(); i++)
     {
         this->children_.push_back(new MCTSNodeV2());
     }
@@ -116,7 +124,7 @@ float MCTSNodeV2::DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *sel
             this->Expansion(state);
 
         int action_index = selection_strategy->Select(this);
-        state->DoAction(actions_[action_index]);
+        state->DoAction(actions_->Get(action_index));
         q = ((MCTSNodeV2 *)(this->children_[action_index]))->DoMonteCarloTreeSearchOnce(state, selection_strategy, simulation_strategy);
     }
     this->Q_ += (q - this->Q_) / ++this->N_;

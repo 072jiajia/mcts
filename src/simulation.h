@@ -15,7 +15,7 @@ public:
     float SimulationOnce(Game *b) const;
 
 private:
-    int GetRandomMove(Game *b) const;
+    Action *GetRandomMove(Game *b) const;
 };
 
 // class QuickRandomRollout : public SimulationStrategy

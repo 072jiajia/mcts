@@ -30,7 +30,11 @@ Action *MCTSAgent::SearchAction(Game *b, bool use_v2)
 		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
 		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
 		delete mcts_root_node;
-		return b->GetLegalMoves()[best_move];
+
+		ActionList *action_list = b->GetLegalMoves();
+		Action *output = action_list->Pop(best_move);
+		delete action_list;
+		return output;
 	}
 	else
 	{
@@ -43,6 +47,10 @@ Action *MCTSAgent::SearchAction(Game *b, bool use_v2)
 		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
 		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
 		delete mcts_root_node;
-		return b->GetLegalMoves()[best_move];
+
+		ActionList *action_list = b->GetLegalMoves();
+		Action *output = action_list->Pop(best_move);
+		delete action_list;
+		return output;
 	}
 }

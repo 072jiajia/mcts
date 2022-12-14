@@ -27,7 +27,7 @@ public:
     ~TicTacToe();
 
     TicTacToe *Clone();
-    std::vector<Action *> GetLegalMoves();
+    ActionList *GetLegalMoves();
     void DoAction(const Action *);
     Player GetPlayerThisTurn();
     ResultType GetResult();

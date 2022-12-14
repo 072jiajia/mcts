@@ -37,7 +37,7 @@ public:
     ~YourGame();
 
     YourGame *Clone();
-    std::vector<Action *> GetLegalMoves();
+    ActionList* GetLegalMoves();
     void DoAction(const Action *);
     Player GetPlayerThisTurn();
     ResultType GetResult();
@@ -55,7 +55,7 @@ your_game.cpp
 ```code=cpp
 #inlcude "your_game.h"
 
-std::vector<Action*> YourGame::GetLegalMoves() { /* your implementation */ }
+ActionList* YourGame::GetLegalMoves() { /* your implementation */ }
 void YourGame::DoAction(const Action action) { /* your implementation */ }
 YourGame *YourGame::Clone() { /* your implementation */ }
 void YourGame::switch_turn() { /* your implementation */ }

@@ -16,15 +16,15 @@ TicTacToe::TicTacToe(TicTacToe *src)
     whos_turn = src->whos_turn;
 }
 
-std::vector<Action *> TicTacToe::GetLegalMoves()
+ActionList *TicTacToe::GetLegalMoves()
 {
-    std::vector<Action *> output;
+    ActionList *output = new ActionList();
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
             if (board[i][j] == PieceType::EMPTY)
-                output.push_back(new TicTacToeAction(i, j));
+                output->Add(new TicTacToeAction(i, j));
         }
     }
     return output;

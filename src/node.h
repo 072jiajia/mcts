@@ -63,5 +63,5 @@ public:
     float DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
 
 protected:
-    std::vector<Action *> actions_;
+    ActionList *actions_;
 };

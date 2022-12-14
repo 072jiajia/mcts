@@ -6,18 +6,20 @@ float SimulationDefaultStrategy::SimulationOnce(Game *b) const
     Player turn = traverse_b->GetPlayerThisTurn();
     while (!traverse_b->IsGameOver())
     {
-        int m = this->GetRandomMove(traverse_b);
-        auto move = traverse_b->GetLegalMoves()[m];
+        Action *move = this->GetRandomMove(traverse_b);
         traverse_b->DoAction(move);
+        delete move;
     }
     return EvaluateResult(traverse_b, turn);
 }
 
-int SimulationDefaultStrategy::GetRandomMove(Game *b) const
+Action *SimulationDefaultStrategy::GetRandomMove(Game *b) const
 {
-    auto movable_actions = b->GetLegalMoves();
-    int m = rand() % movable_actions.size();
-    return m;
+    ActionList *movable_actions = b->GetLegalMoves();
+    int m = rand() % movable_actions->GetSize();
+    Action *output = movable_actions->Pop(m);
+    delete movable_actions;
+    return output;
 }
 
 // class QuickRandomRollout : public SimulationStrategy

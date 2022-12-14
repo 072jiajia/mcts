@@ -25,9 +25,9 @@ NoGo *NoGo::Clone() { return new NoGo(this); }
 
 Player NoGo::GetPlayerThisTurn() { return whos_turn_; }
 
-std::vector<Action *> NoGo::GetLegalMoves()
+ActionList *NoGo::GetLegalMoves()
 {
-    std::vector<Action *> output;
+    ActionList *output = new ActionList();
     for (int i = 0; i < size_x_; i++)
     {
         for (int j = 0; j < size_y_; j++)
@@ -35,7 +35,11 @@ std::vector<Action *> NoGo::GetLegalMoves()
             Action *action = new NoGoAction(i, j);
             if (IsMovable(*this, action))
             {
-                output.push_back(action);
+                output->Add(action);
+            }
+            else
+            {
+                delete action;
             }
         }
     }
@@ -193,14 +197,14 @@ bool NoGo::DoesHaveLiberty(NoGo &state, int x, int y, PieceType who)
     return false;
 }
 
-std::vector<Action *> *NoGo::GetActionSpace()
+ActionList *NoGo::GetActionSpace()
 {
-    std::vector<Action *> *output = new std::vector<Action *>();
+    ActionList *output = new ActionList();
     for (int i = 0; i < size_x_; i++)
     {
         for (int j = 0; j < size_y_; j++)
         {
-            output->push_back(new NoGoAction(i, j));
+            output->Add(new NoGoAction(i, j));
         }
     }
     return output;
