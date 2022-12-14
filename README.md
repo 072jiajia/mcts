@@ -15,7 +15,7 @@ please feel free to leave a message on the issue page or send me an [email](mail
     # compile
     make simpledemo
     # Run the demo on tic-tac-toe game
-    ./simpledemo
+    ./build/simpledemo
 ```
 
 ## How To Run It On Your Game?
