@@ -25,6 +25,8 @@ public:
     int ChooseMoveWithMostFrequency();
 
 protected:
+    float EvaluateGameOverNode(Game *);
+
     std::vector<MCTSNodeBase *> children_;
     float Q_;
     float N_;

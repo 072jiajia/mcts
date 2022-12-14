@@ -37,6 +37,14 @@ int MCTSNodeBase::ChooseMoveWithMostFrequency()
     return best_move;
 }
 
+float MCTSNodeBase::EvaluateGameOverNode(Game *state)
+{
+    if (this->N_ == 0)
+        this->Q_ = EvaluateResult(state, state->GetPlayerThisTurn());
+    this->N_++;
+    return -this->Q_;
+}
+
 Game *MCTSNode::GetCurrentState() { return state_; }
 
 MCTSNode::MCTSNode(Game *s) : MCTSNodeBase(), state_(s->Clone()) {}
@@ -61,24 +69,27 @@ void MCTSNode::Expansion()
 
 float MCTSNode::DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
 {
-    float q;
+    /* Simulation for leaf nodes */
     if (state_->IsGameOver())
+        return EvaluateGameOverNode(state_);
+    if (this->N_ == 0)
     {
-        if (this->N_ == 0)
-            this->Q_ = EvaluateResult(state_, state_->GetPlayerThisTurn());
-        this->N_++;
+        this->Q_ = simulation_strategy->SimulationOnce(state_);
+        this->N_ = 1;
         return -this->Q_;
     }
-    else if (this->N_ == 0)
-    {
-        q = simulation_strategy->SimulationOnce(state_);
-    }
-    else
-    {
-        if (!this->expanded_)
-            this->Expansion();
-        q = ((MCTSNode *)(this->children_[selection_strategy->Select(this)]))->DoMonteCarloTreeSearchOnce(selection_strategy, simulation_strategy);
-    }
+
+    /* Instead of expanding the children 1-by-1
+       expand all of them at once */
+    if (!this->expanded_)
+        this->Expansion();
+
+    /* Recursively select the child nodes */
+    int action_index = selection_strategy->Select(this);
+    MCTSNode *child = (MCTSNode *)(this->children_[action_index]);
+    float q = child->DoMonteCarloTreeSearchOnce(selection_strategy, simulation_strategy);
+
+    /* Back Propagation */
     this->Q_ += (q - this->Q_) / ++this->N_;
     return -q;
 }
@@ -106,27 +117,28 @@ void MCTSNodeV2::Expansion(Game *state)
 
 float MCTSNodeV2::DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
 {
-    float q;
+    /* Simulation for leaf nodes */
     if (state->IsGameOver())
+        return EvaluateGameOverNode(state);
+    if (this->N_ == 0)
     {
-        if (this->N_ == 0)
-            this->Q_ = EvaluateResult(state, state->GetPlayerThisTurn());
-        this->N_++;
+        this->Q_ = simulation_strategy->SimulationOnce(state);
+        this->N_ = 1;
         return -this->Q_;
     }
-    else if (this->N_ == 0)
-    {
-        q = simulation_strategy->SimulationOnce(state);
-    }
-    else
-    {
-        if (!this->expanded_)
-            this->Expansion(state);
 
-        int action_index = selection_strategy->Select(this);
-        state->DoAction(actions_->Get(action_index));
-        q = ((MCTSNodeV2 *)(this->children_[action_index]))->DoMonteCarloTreeSearchOnce(state, selection_strategy, simulation_strategy);
-    }
+    /* Instead of expanding the children 1-by-1
+       expand all of them at once */
+    if (!this->expanded_)
+        this->Expansion(state);
+
+    /* Recursively select the child nodes */
+    int action_index = selection_strategy->Select(this);
+    state->DoAction(actions_->Get(action_index));
+    MCTSNodeV2 *child = (MCTSNodeV2 *)(this->children_[action_index]);
+    float q = child->DoMonteCarloTreeSearchOnce(state, selection_strategy, simulation_strategy);
+
+    /* Back Propagation */
     this->Q_ += (q - this->Q_) / ++this->N_;
     return -q;
 }
