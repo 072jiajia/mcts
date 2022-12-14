@@ -20,7 +20,7 @@ please feel free to leave a message on the issue page or send me an [email](mail
 
 ## How To Run It On Your Game?
 
-Implement your game and finish the following functions which will be used in Monte Carlo Tree Search
+Implement your game and finish the functions which will be used in Monte Carlo Tree Search
 
 Here's an example
 
@@ -29,10 +29,20 @@ your_game.h
 ```code=cpp
 #include "games/game_base.h"
 
-class YourGame
+class YourGame : public Game
 {
 public:
-    GAME_MODULE(YourGame);
+    YourGame();
+    YourGame(YourGame *);
+    ~YourGame();
+
+    YourGame *Clone();
+    std::vector<Action *> GetLegalMoves();
+    void DoAction(const Action *);
+    Player GetPlayerThisTurn();
+    ResultType GetResult();
+    bool IsGameOver();
+    void PrintState();
 
     /*
     other members & functions of your implementations
@@ -45,14 +55,14 @@ your_game.cpp
 ```code=cpp
 #inlcude "your_game.h"
 
-std::vector<YourGame::Action> YourGame::GetLegalMoves() { /* your implementation */ }
+std::vector<Action*> YourGame::GetLegalMoves() { /* your implementation */ }
 void YourGame::DoAction(const Action action) { /* your implementation */ }
 YourGame *YourGame::Clone() { /* your implementation */ }
 void YourGame::switch_turn() { /* your implementation */ }
 void YourGame::PrintState() { /* your implementation */ }
 bool YourGame::IsGameOver() { /* your implementation */ }
-YourGame::ResultType YourGame::GetResult() { /* your implementation */ }
-YourGame::Player YourGame::GetPlayerThisTurn() { /* your implementation */ }
+ResultType YourGame::GetResult() { /* your implementation */ }
+Player YourGame::GetPlayerThisTurn() { /* your implementation */ }
 
 ```
 
