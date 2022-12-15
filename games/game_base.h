@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <stdexcept>
 
 enum class Player
 {
@@ -18,6 +19,8 @@ enum class ResultType
 
 class Action
 {
+public:
+    virtual int encoding();
 };
 
 class ActionList

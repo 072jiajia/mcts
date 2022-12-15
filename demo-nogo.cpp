@@ -6,29 +6,46 @@
 
 int main()
 {
-    NoGo b(4, 4);
 
     // MCTSAgent p(1000., 1000);
     // MCTSAgent p(1000., 1000, new SimulationDefaultStrategy());
     // MCTSAgent p1(1000., 1000, new UCBHighest(0.7), new QuickRandomRollout(b.GetActionSpace()));
     // MCTSAgent p2(1000., 1000, new UCBHighest(1.4), new QuickRandomRollout(b.GetActionSpace()));
-    MCTSAgent p1(1000., 1000, new UCBHighest(0.7));
+    MCTSAgent p1(1000., 1000, new UCBHighest(1.4));
     MCTSAgent p2(1000., 1000, new UCBHighest(1.4));
 
-    while (!b.IsGameOver())
+    int p1_win = 0;
+    int p2_win = 0;
+    int draw_count = 0;
+    while (true)
     {
+        NoGo b(5, 5);
+        while (!b.IsGameOver())
+        {
+            b.PrintState();
+            Action *action;
+            MCTSAgent *current_player;
+            if (b.GetPlayerThisTurn() == Player::PLAYER1)
+            {
+                current_player = &p1;
+                action = current_player->SearchAction(&b, "Rave");
+            }
+            else
+            {
+                current_player = &p2;
+                action = current_player->SearchAction(&b);
+            }
+            b.DoAction(action);
+            delete action;
+        }
         b.PrintState();
+        if (b.GetResult() == ResultType::PLAYER1_WIN)
+            p1_win++;
+        else if (b.GetResult() == ResultType::PLAYER2_WIN)
+            p2_win++;
+        else if (b.GetResult() == ResultType::DRAW)
+            draw_count++;
 
-        MCTSAgent *current_player;
-        if (b.GetPlayerThisTurn() == Player::PLAYER1)
-            current_player = &p1;
-        else
-            current_player = &p2;
-
-        Action *action = current_player->SearchAction(&b);
-        b.DoAction(action);
-        delete action;
+        std::cout << p1_win << " / " << draw_count << " / " << p2_win << std::endl;
     }
-
-    b.PrintState();
 }

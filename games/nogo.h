@@ -15,6 +15,7 @@ class NoGoAction : public Action
 public:
     NoGoAction(int x, int y) : x_(x), y_(y) {}
     NoGoAction(const NoGoAction &) = default;
+    int encoding() { return (x_ << 16) + y_; }
 
     inline int x() { return x_; }
     inline int y() { return y_; }

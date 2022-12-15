@@ -3,6 +3,7 @@
 #include <cstring>
 #include <time.h>
 #include "node.h"
+#include "rave.h"
 #include "utils.h"
 #include "simulation.h"
 #include "selection.h"
@@ -16,7 +17,7 @@ public:
 			  SimulationStrategy *simulation_strategy = nullptr);
 	~MCTSAgent();
 
-	Action *SearchAction(Game *b, bool use_v2 = false);
+	Action *SearchAction(Game *b, std::string method = "MCTSNode");
 
 private:
 	double time_limit_ms_;
