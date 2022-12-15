@@ -6,12 +6,7 @@
 
 int main()
 {
-
-    // MCTSAgent p(1000., 1000);
-    // MCTSAgent p(1000., 1000, new SimulationDefaultStrategy());
-    // MCTSAgent p1(1000., 1000, new UCBHighest(0.7), new QuickRandomRollout(b.GetActionSpace()));
-    // MCTSAgent p2(1000., 1000, new UCBHighest(1.4), new QuickRandomRollout(b.GetActionSpace()));
-    MCTSAgent p1(1000., 1000, new UCBHighest(1.4));
+    MCTSAgent p1(1000., 1000, new RaveUCBHighest(1.4));
     MCTSAgent p2(1000., 1000, new UCBHighest(1.4));
 
     int p1_win = 0;
@@ -28,12 +23,12 @@ int main()
             if (b.GetPlayerThisTurn() == Player::PLAYER1)
             {
                 current_player = &p1;
-                action = current_player->SearchAction(&b);
+                action = current_player->SearchAction(&b, "Rave");
             }
             else
             {
                 current_player = &p2;
-                action = current_player->SearchAction(&b);
+                action = current_player->SearchAction(&b, "MCTSNodeV2");
             }
             b.DoAction(action);
             delete action;

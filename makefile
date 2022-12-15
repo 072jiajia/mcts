@@ -14,7 +14,7 @@ clean-demo-nogo:
 
 demo-rave:
 	mkdir -p build
-	g++ demo-nogo.cpp src/*.cpp games/*.cpp -o build/demo-rave
+	g++ demo-rave.cpp src/*.cpp games/*.cpp -o build/demo-rave
 
 clean-demo-rave:
 	rm build/demo-rave

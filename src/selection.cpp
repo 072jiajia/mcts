@@ -40,7 +40,7 @@ int RaveUCBHighest::Select(MCTSNodeBase *node_abs) const
         float child_N = children[i]->N();
         float rave_Q = node->rave_Q(i);
         float rave_N = node->rave_N(i);
-        float beta = rave_N / (child_N + rave_N + 4 * child_N * rave_N * 0.025 + 1e-8);
+        float beta = rave_N / (child_N + rave_N + 4 * child_N * rave_N * 0.1 + 1e-8);
         float value = (child_Q * (1 - beta) + beta * rave_Q) + this->C_ * std::sqrt(logN / (child_N + 1));
 
         if (value > best_value)
