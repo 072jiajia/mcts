@@ -29,6 +29,13 @@ your_game.h
 ```code=cpp
 #include "games/game_base.h"
 
+class YourGameAction : public Action
+{
+    /*
+        Your implementations of your game's action
+    */
+};
+
 class YourGame : public Game
 {
 public:
@@ -45,7 +52,7 @@ public:
     void PrintState();
 
     /*
-    other members & functions of your implementations
+        Other members & functions of your implementations
     */
 };
 ```
@@ -54,6 +61,10 @@ your_game.cpp
 
 ```code=cpp
 #inlcude "your_game.h"
+
+/*
+    Your implementations of your game's action
+*/
 
 ActionList* YourGame::GetLegalMoves() { /* your implementation */ }
 void YourGame::DoAction(const Action action) { /* your implementation */ }
