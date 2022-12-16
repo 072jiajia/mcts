@@ -10,7 +10,9 @@ float SimulationDefaultStrategy::SimulationOnce(Game *b) const
         traverse_b->DoAction(move);
         delete move;
     }
-    return EvaluateResult(traverse_b, turn);
+    float output = EvaluateResult(traverse_b, turn);
+    delete traverse_b;
+    return output;
 }
 
 Action *SimulationDefaultStrategy::GetRandomMove(Game *b) const
