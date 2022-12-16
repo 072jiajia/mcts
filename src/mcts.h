@@ -8,18 +8,27 @@
 #include "simulation.h"
 #include "selection.h"
 
-class MCTSAgent
+class Agent
 {
 public:
-	MCTSAgent(double time_limit_ms,
-			  int min_iterations,
-			  SelectionStrategy *selection_strategy = nullptr,
-			  SimulationStrategy *simulation_strategy = nullptr);
-	~MCTSAgent();
+	enum class Algo
+	{
+		MCTS,
+		MCTS_COPY_STATE,
+		RAVE
+	};
 
-	Action *SearchAction(Game *b, std::string method = "MCTSNode");
+	Agent(Algo algo,
+		  double time_limit_ms,
+		  int min_iterations,
+		  SelectionStrategy *selection_strategy = nullptr,
+		  SimulationStrategy *simulation_strategy = nullptr);
+	~Agent();
+
+	Action *SearchAction(Game *b);
 
 private:
+	Algo algo_;
 	double time_limit_ms_;
 	int min_iterations_;
 	Timer timer_;

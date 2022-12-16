@@ -8,7 +8,7 @@ int main()
 {
     TicTacToe b;
 
-    MCTSAgent p(1000., 1000);
+    Agent p(Agent::Algo::MCTS_COPY_STATE, 1000., 1000);
 
     while (!b.IsGameOver())
     {

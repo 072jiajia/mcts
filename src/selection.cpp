@@ -4,7 +4,7 @@
 
 UCBHighest::UCBHighest(float C) : C_(C){};
 
-int UCBHighest::Select(MCTSNodeBase *node) const
+int UCBHighest::Select(MCTSNode_ *node) const
 {
     const auto &children = node->GetChildren();
 
@@ -26,7 +26,7 @@ int UCBHighest::Select(MCTSNodeBase *node) const
 
 RaveUCBHighest::RaveUCBHighest(float C) : C_(C){};
 
-int RaveUCBHighest::Select(MCTSNodeBase *node_abs) const
+int RaveUCBHighest::Select(MCTSNode_ *node_abs) const
 {
     RaveNode *node = (RaveNode *)node_abs;
     const auto &children = node->GetChildren();

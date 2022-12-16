@@ -11,7 +11,7 @@
 #include "selection.h"
 #include "simulation.h"
 
-class MCTSNodeBase
+class MCTSNode_
 {
 public:
     float GetValueForCurrentPlayer();
@@ -19,27 +19,27 @@ public:
     float Q();
     float N();
     bool IsExpanded();
-    std::vector<MCTSNodeBase *> GetChildren() const;
-    MCTSNodeBase();
-    ~MCTSNodeBase();
+    std::vector<MCTSNode_ *> GetChildren() const;
+    MCTSNode_();
+    ~MCTSNode_();
     int ChooseMoveWithMostFrequency();
 
 protected:
     float EvaluateGameOverNode(Game *);
 
-    std::vector<MCTSNodeBase *> children_;
+    std::vector<MCTSNode_ *> children_;
     float Q_;
     float N_;
     bool expanded_;
 };
 
-class MCTSNode : public MCTSNodeBase
+class MCTSNodeCS : public MCTSNode_
 {
 public:
     Game *GetCurrentState();
 
-    MCTSNode(Game *s);
-    ~MCTSNode();
+    MCTSNodeCS(Game *s);
+    ~MCTSNodeCS();
     void Expansion();
 
     float DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
@@ -48,17 +48,17 @@ protected:
     Game *state_;
 };
 
-class MCTSNodeV2 : public MCTSNodeBase
+class MCTSNode : public MCTSNode_
 {
-    /* The difference between MCTSNode & MCTSNodeV2 is that
+    /* The difference between MCTSNodeCS & MCTSNode is that
      * instead of saving the state in the node,
-     * MCTSNodeV2 takes a mutable state as an input and
+     * MCTSNode takes a mutable state as an input and
      * does actions on that state while doing monte carlo tree search.
      */
 public:
-    MCTSNodeV2();
+    MCTSNode();
 
-    ~MCTSNodeV2();
+    ~MCTSNode();
 
     void Expansion(Game *state);
 

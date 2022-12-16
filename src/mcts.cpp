@@ -1,8 +1,8 @@
 
 #include "mcts.h"
 
-MCTSAgent::MCTSAgent(double time_limit_ms, int min_iterations, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
-	: timer_(), time_limit_ms_(time_limit_ms),
+Agent::Agent(Algo algo, double time_limit_ms, int min_iterations, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+	: algo_(algo), timer_(), time_limit_ms_(time_limit_ms),
 	  min_iterations_(min_iterations),
 	  selection_strategy_(selection_strategy),
 	  simulation_strategy_(simulation_strategy)
@@ -14,14 +14,14 @@ MCTSAgent::MCTSAgent(double time_limit_ms, int min_iterations, SelectionStrategy
 		simulation_strategy_ = new SimulationDefaultStrategy();
 }
 
-MCTSAgent::~MCTSAgent() {}
+Agent::~Agent() {}
 
-Action *MCTSAgent::SearchAction(Game *b, std::string method)
+Action *Agent::SearchAction(Game *b)
 {
 	timer_.reset();
-	if (method == "MCTSNode")
+	if (algo_ == Algo::MCTS_COPY_STATE)
 	{
-		MCTSNode *mcts_root_node = new MCTSNode(b);
+		MCTSNodeCS *mcts_root_node = new MCTSNodeCS(b);
 		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
@@ -36,9 +36,9 @@ Action *MCTSAgent::SearchAction(Game *b, std::string method)
 		delete action_list;
 		return output;
 	}
-	else if (method == "MCTSNodeV2")
+	else if (algo_ == Algo::MCTS)
 	{
-		MCTSNodeV2 *mcts_root_node = new MCTSNodeV2();
+		MCTSNode *mcts_root_node = new MCTSNode();
 		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
@@ -53,7 +53,7 @@ Action *MCTSAgent::SearchAction(Game *b, std::string method)
 		delete action_list;
 		return output;
 	}
-	else if (method == "Rave")
+	else if (algo_ == Algo::RAVE)
 	{
 		RaveNode *mcts_root_node = new RaveNode();
 		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||

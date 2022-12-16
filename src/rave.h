@@ -10,7 +10,7 @@
 
 #include "node.h"
 
-class RaveNode : public MCTSNodeV2
+class RaveNode : public MCTSNode
 {
     /*
      * Implementation of this paper (https://doi.org/10.1016/j.artint.2011.03.007)

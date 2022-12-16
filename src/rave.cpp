@@ -1,6 +1,6 @@
 #include "rave.h"
 
-RaveNode::RaveNode() : MCTSNodeV2(), rave_QN_() {}
+RaveNode::RaveNode() : MCTSNode(), rave_QN_() {}
 
 RaveNode::~RaveNode() {}
 

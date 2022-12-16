@@ -6,8 +6,8 @@
 
 int main()
 {
-    MCTSAgent p1(1000., 1000, new RaveUCBHighest(1.4));
-    MCTSAgent p2(1000., 1000, new UCBHighest(1.4));
+    Agent p1(Agent::Algo::RAVE, 1000., 1000, new RaveUCBHighest(1.4));
+    Agent p2(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
 
     int p1_win = 0;
     int p2_win = 0;
@@ -19,16 +19,16 @@ int main()
         {
             b.PrintState();
             Action *action;
-            MCTSAgent *current_player;
+            Agent *current_player;
             if (b.GetPlayerThisTurn() == Player::PLAYER1)
             {
                 current_player = &p1;
-                action = current_player->SearchAction(&b, "Rave");
+                action = current_player->SearchAction(&b);
             }
             else
             {
                 current_player = &p2;
-                action = current_player->SearchAction(&b, "MCTSNodeV2");
+                action = current_player->SearchAction(&b);
             }
             b.DoAction(action);
             delete action;

@@ -7,12 +7,8 @@
 int main()
 {
 
-    // MCTSAgent p(1000., 1000);
-    // MCTSAgent p(1000., 1000, new SimulationDefaultStrategy());
-    // MCTSAgent p1(1000., 1000, new UCBHighest(0.7), new QuickRandomRollout(b.GetActionSpace()));
-    // MCTSAgent p2(1000., 1000, new UCBHighest(1.4), new QuickRandomRollout(b.GetActionSpace()));
-    MCTSAgent p1(1000., 1000, new UCBHighest(1.4));
-    MCTSAgent p2(1000., 1000, new UCBHighest(1.4));
+    Agent p1(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
+    Agent p2(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
 
     int p1_win = 0;
     int p2_win = 0;
@@ -24,7 +20,7 @@ int main()
         {
             b.PrintState();
             Action *action;
-            MCTSAgent *current_player;
+            Agent *current_player;
             if (b.GetPlayerThisTurn() == Player::PLAYER1)
             {
                 current_player = &p1;
