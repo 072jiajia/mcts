@@ -21,7 +21,7 @@ public:
     bool IsExpanded();
     std::vector<MCTSNode_ *> GetChildren() const;
     MCTSNode_();
-    ~MCTSNode_();
+    virtual ~MCTSNode_();
     int ChooseMoveWithMostFrequency();
 
 protected:
@@ -39,7 +39,7 @@ public:
     Game *GetCurrentState();
 
     MCTSNodeCS(Game *s);
-    ~MCTSNodeCS();
+    virtual ~MCTSNodeCS();
     void Expansion();
 
     float DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
@@ -58,7 +58,7 @@ class MCTSNode : public MCTSNode_
 public:
     MCTSNode();
 
-    ~MCTSNode();
+    virtual ~MCTSNode();
 
     void Expansion(Game *state);
 

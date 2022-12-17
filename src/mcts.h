@@ -23,7 +23,7 @@ public:
 		  int min_iterations,
 		  SelectionStrategy *selection_strategy = nullptr,
 		  SimulationStrategy *simulation_strategy = nullptr);
-	~Agent();
+	virtual ~Agent();
 
 	Action *SearchAction(Game *b);
 

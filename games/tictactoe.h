@@ -25,7 +25,7 @@ class TicTacToe : public Game
 public:
     TicTacToe();
     TicTacToe(TicTacToe *);
-    ~TicTacToe();
+    virtual ~TicTacToe();
 
     TicTacToe *Clone();
     ActionList *GetLegalMoves();

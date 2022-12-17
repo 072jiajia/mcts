@@ -20,6 +20,7 @@ enum class ResultType
 class Action
 {
 public:
+    virtual ~Action();
     virtual int encoding();
 };
 
@@ -27,7 +28,7 @@ class ActionList
 {
 public:
     ActionList();
-    ~ActionList();
+    virtual ~ActionList();
 
     void Add(Action *action);
     int GetSize();
@@ -41,6 +42,7 @@ private:
 class Game
 {
 public:
+    virtual ~Game();
     virtual Game *Clone() = 0;
     virtual ActionList *GetLegalMoves() = 0;
     virtual void DoAction(const Action *) = 0;

@@ -18,7 +18,7 @@ class RaveNode : public MCTSNode
 public:
     RaveNode();
 
-    ~RaveNode();
+    virtual ~RaveNode();
 
     void Expansion(Game *state);
     float DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action);

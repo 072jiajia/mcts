@@ -30,7 +30,7 @@ class NoGo : public Game
 public:
     NoGo(int size_x, int size_y);
     NoGo(NoGo *src);
-    ~NoGo();
+    virtual ~NoGo();
 
     NoGo *Clone();
     ActionList *GetLegalMoves();

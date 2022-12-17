@@ -5,6 +5,8 @@ int Action::encoding()
     throw std::invalid_argument("virtual int YourGameAction::encoding() not implemented");
 }
 
+Action::~Action() {}
+
 ActionList::ActionList() {}
 
 ActionList::~ActionList()
@@ -39,3 +41,5 @@ int ActionList::GetSize()
 {
     return actions_.size();
 }
+
+Game::~Game() {}
