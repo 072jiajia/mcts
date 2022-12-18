@@ -15,7 +15,8 @@ public:
 	{
 		MCTS,
 		MCTS_COPY_STATE,
-		RAVE
+		RAVE,
+		MCTS_LEAF_PARALLEL,
 	};
 
 	Agent(Algo algo,

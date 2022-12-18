@@ -76,4 +76,23 @@ Action *Agent::SearchAction(Game *b)
 		delete action_list;
 		return output;
 	}
+	else if (algo_ == Algo::MCTS_LEAF_PARALLEL)
+	{
+		MCTSNode *mcts_root_node = new MCTSNode();
+		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+			   timer_.get_duration() < time_limit_ms_ / 1000.)
+		{
+			Game *b_clone = b->Clone();
+			mcts_root_node->DoMonteCarloTreeSearchOnce(b_clone, selection_strategy_, simulation_strategy_);
+			delete b_clone;
+		}
+		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
+		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
+		delete mcts_root_node;
+
+		ActionList *action_list = b->GetLegalMoves();
+		Action *output = action_list->Pop(best_move);
+		delete action_list;
+		return output;
+	}
 }

@@ -19,4 +19,11 @@ demo-rave:
 clean-demo-rave:
 	rm build/demo-rave
 
+demo-parallel:
+	mkdir -p build
+	g++ -O3 -pthread demo-parallel.cpp src/*.cpp games/*.cpp -o build/demo-parallel
+
+clean-demo-parallel:
+	rm build/demo-parallel
+
 

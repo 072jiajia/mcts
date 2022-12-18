@@ -1,6 +1,9 @@
 #pragma once
 #include <random>
 #include "utils.h"
+#include <semaphore.h>
+#include <pthread.h>
+#include <iostream>
 
 class SimulationStrategy
 {
@@ -16,6 +19,39 @@ public:
 
 private:
     Action *GetRandomMove(Game *b) const;
+};
+
+struct ParallelDataContainer
+{
+    ParallelDataContainer(SimulationStrategy *strategy, Game *b, float *result_ptr)
+    {
+        strategy_ = strategy;
+        b_ = b;
+        result_ptr_ = result_ptr;
+    }
+    SimulationStrategy *strategy() { return strategy_; }
+    Game *b() { return b_; }
+    float *result_ptr() { return result_ptr_; }
+
+    SimulationStrategy *strategy_;
+    Game *b_;
+    float *result_ptr_;
+};
+
+class ParallelSimulationStrategy : public SimulationStrategy
+{
+public:
+    ParallelSimulationStrategy(int num_threads, SimulationStrategy *strategy);
+    ~ParallelSimulationStrategy();
+    static void *LaunchThread(void *args);
+    float SimulationOnce(Game *b) const;
+
+private:
+    SimulationStrategy *strategy_;
+    int num_threads_;
+
+    float *results;
+    pthread_t *t;
 };
 
 // class QuickRandomRollout : public SimulationStrategy
