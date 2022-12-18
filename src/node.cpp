@@ -37,6 +37,16 @@ int MCTSNode_::ChooseMoveWithMostFrequency()
     return best_move;
 }
 
+std::vector<int> MCTSNode_::GetFrequencies()
+{
+    std::vector<int> output;
+    for (uint i = 0; i < children_.size(); i++)
+    {
+        output.push_back(children_[i]->N_);
+    }
+    return output;
+}
+
 float MCTSNode_::EvaluateGameOverNode(Game *state)
 {
     if (this->N_ == 0)

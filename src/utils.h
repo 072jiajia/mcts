@@ -13,7 +13,7 @@ public:
 	double get_duration();
 
 private:
-	struct timespec tick_, tock_;
+	struct timespec tick_;
 };
 
 float EvaluateResult(Game *b, Player turn);

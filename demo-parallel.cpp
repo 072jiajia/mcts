@@ -6,7 +6,8 @@
 
 int main()
 {
-    Agent p1(Agent::Algo::MCTS_LEAF_PARALLEL, 1000., 1000, new UCBHighest(1.4), new ParallelSimulationStrategy(4, new SimulationDefaultStrategy()));
+    // Agent p1(Agent::Algo::MCTS_LEAF_PARALLEL, 1000., 1000, new UCBHighest(1.4), new ParallelSimulationStrategy(4, new SimulationDefaultStrategy()));
+    Agent p1(Agent::Algo::MCTS_ROOT_PARALLEL, 1000., 1000, new UCBHighest(1.4), nullptr, 16);
     Agent p2(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
 
     int p1_win = 0;

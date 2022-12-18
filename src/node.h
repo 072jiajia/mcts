@@ -23,6 +23,7 @@ public:
     MCTSNode_();
     virtual ~MCTSNode_();
     int ChooseMoveWithMostFrequency();
+    std::vector<int> GetFrequencies();
 
 protected:
     float EvaluateGameOverNode(Game *);

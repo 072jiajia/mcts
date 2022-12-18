@@ -10,6 +10,7 @@ void Timer::reset()
 
 double Timer::get_duration()
 {
+    struct timespec tock_;
     clock_gettime(CLOCK_REALTIME, &tock_);
     return (double)((tock_.tv_sec + tock_.tv_nsec * 1e-9) - (double)(tick_.tv_sec + tick_.tv_nsec * 1e-9));
 }
