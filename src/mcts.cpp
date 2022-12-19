@@ -1,12 +1,13 @@
 
 #include "mcts.h"
 
-Agent::Agent(Algo algo, double time_limit_ms, int min_iter, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, int num_threads)
-	: algo_(algo), timer_(), time_limit_ms_(time_limit_ms),
-	  min_iter_(min_iter),
-	  selection_strategy_(selection_strategy),
-	  simulation_strategy_(simulation_strategy),
-	  num_threads_(num_threads)
+Agent::Agent(AgentOptions &options)
+	// Algorithm algo, double time_limit_ms, int min_iter, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, int num_threads)
+	: algo_(options.algo()), timer_(), time_limit_ms_(options.time_limit_ms()),
+	  min_iter_(options.min_iter()),
+	  selection_strategy_(options.selection_strategy()),
+	  simulation_strategy_(options.simulation_strategy()),
+	  num_threads_(options.num_threads())
 {
 	if (!selection_strategy_)
 		selection_strategy_ = new UCBHighest();
@@ -42,7 +43,7 @@ void *Agent::LaunchSearchThread(void *args_void)
 Action *Agent::SearchAction(Game *b)
 {
 	timer_.reset();
-	if (algo_ == Algo::MCTS_COPY_STATE)
+	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
 		MCTSNodeCS *mcts_root = new MCTSNodeCS(b);
 		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
@@ -59,7 +60,7 @@ Action *Agent::SearchAction(Game *b)
 		delete action_list;
 		return output;
 	}
-	else if (algo_ == Algo::MCTS)
+	else if (algo_ == Algorithm::MCTS)
 	{
 		MCTSNode *mcts_root = new MCTSNode();
 		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
@@ -78,7 +79,7 @@ Action *Agent::SearchAction(Game *b)
 		delete action_list;
 		return output;
 	}
-	else if (algo_ == Algo::RAVE)
+	else if (algo_ == Algorithm::RAVE)
 	{
 		RaveNode *mcts_root = new RaveNode();
 		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
@@ -99,7 +100,7 @@ Action *Agent::SearchAction(Game *b)
 		delete action_list;
 		return output;
 	}
-	else if (algo_ == Algo::MCTS_LEAF_PARALLEL)
+	else if (algo_ == Algorithm::MCTS_LEAF_PARALLEL)
 	{
 		MCTSNode *mcts_root = new MCTSNode();
 		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
@@ -118,7 +119,7 @@ Action *Agent::SearchAction(Game *b)
 		delete action_list;
 		return output;
 	}
-	else if (algo_ == Algo::MCTS_ROOT_PARALLEL)
+	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
 	{
 		MCTSNode **mcts_root_nodes = new MCTSNode *[num_threads_];
 		pthread_t *t = new pthread_t[num_threads_];

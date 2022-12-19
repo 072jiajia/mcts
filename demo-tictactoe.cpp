@@ -8,7 +8,8 @@ int main()
 {
     TicTacToe b;
 
-    Agent p(Agent::Algo::MCTS_COPY_STATE, 1000., 1000);
+    AgentOptions p_options(Algorithm::MCTS);
+    Agent p(p_options);
 
     while (!b.IsGameOver())
     {

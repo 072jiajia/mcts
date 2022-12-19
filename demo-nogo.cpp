@@ -6,9 +6,10 @@
 
 int main()
 {
-
-    Agent p1(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
-    Agent p2(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
+    AgentOptions p1_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+    AgentOptions p2_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+    Agent p1(p1_args);
+    Agent p2(p2_args);
 
     int p1_win = 0;
     int p2_win = 0;

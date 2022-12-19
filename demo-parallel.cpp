@@ -6,9 +6,14 @@
 
 int main()
 {
-    // Agent p1(Agent::Algo::MCTS_LEAF_PARALLEL, 1000., 1000, new UCBHighest(1.4), new ParallelSimulationStrategy(4, new SimulationDefaultStrategy()));
-    Agent p1(Agent::Algo::MCTS_ROOT_PARALLEL, 1000., 1000, new UCBHighest(1.4), nullptr, 16);
-    Agent p2(Agent::Algo::MCTS, 1000., 1000, new UCBHighest(1.4));
+    AgentOptions p1_options = AgentOptions(Algorithm::MCTS_ROOT_PARALLEL)
+                                  .selection_strategy(new UCBHighest(1.4))
+                                  .num_threads(16);
+
+    AgentOptions p2_options = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+
+    Agent p1(p1_options);
+    Agent p2(p2_options);
 
     int p1_win = 0;
     int p2_win = 0;

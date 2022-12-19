@@ -11,6 +11,15 @@
 #include "simulation.h"
 #include "selection.h"
 
+enum class Algorithm
+{
+	MCTS,
+	MCTS_COPY_STATE,
+	RAVE,
+	MCTS_LEAF_PARALLEL,
+	MCTS_ROOT_PARALLEL,
+};
+
 struct RootParallelInput
 {
 	RootParallelInput(Game *b, MCTSNode *root, Timer *timer, int min_iter, double time_limit_ms,
@@ -44,24 +53,24 @@ private:
 	SimulationStrategy *simulation_strategy_;
 };
 
+struct AgentOptions
+{
+	AgentOptions(Algorithm algo)
+	{
+		algo_ = algo;
+	}
+	OPTION_ARG(Algorithm, algo);
+	OPTION_ARG(double, time_limit_ms) = 1000.;
+	OPTION_ARG(int, min_iter) = 1000;
+	OPTION_POINTER_ARG(SelectionStrategy *, selection_strategy) = nullptr;
+	OPTION_POINTER_ARG(SimulationStrategy *, simulation_strategy) = nullptr;
+	OPTION_ARG(int, num_threads) = 1;
+};
+
 class Agent
 {
 public:
-	enum class Algo
-	{
-		MCTS,
-		MCTS_COPY_STATE,
-		RAVE,
-		MCTS_LEAF_PARALLEL,
-		MCTS_ROOT_PARALLEL,
-	};
-
-	Agent(Algo algo,
-		  double time_limit_ms,
-		  int min_iter,
-		  SelectionStrategy *selection_strategy = nullptr,
-		  SimulationStrategy *simulation_strategy = nullptr,
-		  int num_threads = 1);
+	Agent(AgentOptions &options);
 	virtual ~Agent();
 
 	Action *SearchAction(Game *b);
@@ -69,7 +78,7 @@ public:
 	static void *LaunchSearchThread(void *args_void);
 
 private:
-	Algo algo_;
+	Algorithm algo_;
 	double time_limit_ms_;
 	int min_iter_;
 	Timer timer_;
