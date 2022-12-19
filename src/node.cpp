@@ -77,7 +77,7 @@ void MCTSNodeCS::Expansion()
     delete movable_actions;
 }
 
-float MCTSNodeCS::DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+float MCTSNodeCS::SearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
 {
     /* Simulation for leaf nodes */
     if (state_->IsGameOver())
@@ -97,7 +97,7 @@ float MCTSNodeCS::DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strate
     /* Recursively select the child nodes */
     int action_index = selection_strategy->Select(this);
     MCTSNodeCS *child = (MCTSNodeCS *)(this->children_[action_index]);
-    float q = child->DoMonteCarloTreeSearchOnce(selection_strategy, simulation_strategy);
+    float q = child->SearchOnce(selection_strategy, simulation_strategy);
 
     /* Back Propagation */
     this->Q_ += (q - this->Q_) / ++this->N_;
@@ -125,7 +125,7 @@ void MCTSNode::Expansion(Game *state)
     this->expanded_ = true;
 }
 
-float MCTSNode::DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+float MCTSNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
 {
     /* Simulation for leaf nodes */
     if (state->IsGameOver())
@@ -146,7 +146,7 @@ float MCTSNode::DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selec
     int action_index = selection_strategy->Select(this);
     state->DoAction(actions_->Get(action_index));
     MCTSNode *child = (MCTSNode *)(this->children_[action_index]);
-    float q = child->DoMonteCarloTreeSearchOnce(state, selection_strategy, simulation_strategy);
+    float q = child->SearchOnce(state, selection_strategy, simulation_strategy);
 
     /* Back Propagation */
     this->Q_ += (q - this->Q_) / ++this->N_;

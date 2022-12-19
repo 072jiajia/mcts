@@ -58,7 +58,7 @@ public:
 
 	Agent(Algo algo,
 		  double time_limit_ms,
-		  int min_iterations,
+		  int min_iter,
 		  SelectionStrategy *selection_strategy = nullptr,
 		  SimulationStrategy *simulation_strategy = nullptr,
 		  int num_threads = 1);
@@ -71,7 +71,7 @@ public:
 private:
 	Algo algo_;
 	double time_limit_ms_;
-	int min_iterations_;
+	int min_iter_;
 	Timer timer_;
 	SelectionStrategy *selection_strategy_;
 	SimulationStrategy *simulation_strategy_;

@@ -35,7 +35,7 @@ void RaveNode::Expansion(Game *state)
     this->expanded_ = true;
 }
 
-float RaveNode::DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action)
+float RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action)
 {
     /* Simulation for leaf nodes */
     if (state->IsGameOver())
@@ -57,7 +57,7 @@ float RaveNode::DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selec
     Action *selected_action = actions_->Get(action_index);
     state->DoAction(selected_action);
     RaveNode *child = (RaveNode *)(this->children_[action_index]);
-    float q = child->DoMonteCarloTreeSearchOnce(state, selection_strategy, simulation_strategy, oppo_action, self_action);
+    float q = child->SearchOnce(state, selection_strategy, simulation_strategy, oppo_action, self_action);
 
     /* Back Propagation */
     this->Q_ += (q - this->Q_) / ++this->N_;

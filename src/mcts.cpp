@@ -1,9 +1,9 @@
 
 #include "mcts.h"
 
-Agent::Agent(Algo algo, double time_limit_ms, int min_iterations, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, int num_threads)
+Agent::Agent(Algo algo, double time_limit_ms, int min_iter, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, int num_threads)
 	: algo_(algo), timer_(), time_limit_ms_(time_limit_ms),
-	  min_iterations_(min_iterations),
+	  min_iter_(min_iter),
 	  selection_strategy_(selection_strategy),
 	  simulation_strategy_(simulation_strategy),
 	  num_threads_(num_threads)
@@ -32,7 +32,7 @@ void *Agent::LaunchSearchThread(void *args_void)
 		   timer->get_duration() < time_limit_ms / 1000.)
 	{
 		Game *b_clone = b->Clone();
-		root->DoMonteCarloTreeSearchOnce(b_clone, selection_strategy, simulation_strategy);
+		root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
 		delete b_clone;
 	}
 	delete args;
@@ -44,15 +44,15 @@ Action *Agent::SearchAction(Game *b)
 	timer_.reset();
 	if (algo_ == Algo::MCTS_COPY_STATE)
 	{
-		MCTSNodeCS *mcts_root_node = new MCTSNodeCS(b);
-		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+		MCTSNodeCS *mcts_root = new MCTSNodeCS(b);
+		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
-			mcts_root_node->DoMonteCarloTreeSearchOnce(selection_strategy_, simulation_strategy_);
+			mcts_root->SearchOnce(selection_strategy_, simulation_strategy_);
 		}
-		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
-		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
-		delete mcts_root_node;
+		int best_move = mcts_root->ChooseMoveWithMostFrequency();
+		std::cout << "Total Search Times: " << mcts_root->GetTotalSimulationCount() << std::endl;
+		delete mcts_root;
 
 		ActionList *action_list = b->GetLegalMoves();
 		Action *output = action_list->Pop(best_move);
@@ -61,17 +61,17 @@ Action *Agent::SearchAction(Game *b)
 	}
 	else if (algo_ == Algo::MCTS)
 	{
-		MCTSNode *mcts_root_node = new MCTSNode();
-		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+		MCTSNode *mcts_root = new MCTSNode();
+		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
 			Game *b_clone = b->Clone();
-			mcts_root_node->DoMonteCarloTreeSearchOnce(b_clone, selection_strategy_, simulation_strategy_);
+			mcts_root->SearchOnce(b_clone, selection_strategy_, simulation_strategy_);
 			delete b_clone;
 		}
-		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
-		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
-		delete mcts_root_node;
+		int best_move = mcts_root->ChooseMoveWithMostFrequency();
+		std::cout << "Total Search Times: " << mcts_root->GetTotalSimulationCount() << std::endl;
+		delete mcts_root;
 
 		ActionList *action_list = b->GetLegalMoves();
 		Action *output = action_list->Pop(best_move);
@@ -80,19 +80,19 @@ Action *Agent::SearchAction(Game *b)
 	}
 	else if (algo_ == Algo::RAVE)
 	{
-		RaveNode *mcts_root_node = new RaveNode();
-		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+		RaveNode *mcts_root = new RaveNode();
+		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
 			std::vector<int> self_action;
 			std::vector<int> oppo_action;
 			Game *b_clone = b->Clone();
-			mcts_root_node->DoMonteCarloTreeSearchOnce(b_clone, selection_strategy_, simulation_strategy_, self_action, oppo_action);
+			mcts_root->SearchOnce(b_clone, selection_strategy_, simulation_strategy_, self_action, oppo_action);
 			delete b_clone;
 		}
-		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
-		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
-		delete mcts_root_node;
+		int best_move = mcts_root->ChooseMoveWithMostFrequency();
+		std::cout << "Total Search Times: " << mcts_root->GetTotalSimulationCount() << std::endl;
+		delete mcts_root;
 
 		ActionList *action_list = b->GetLegalMoves();
 		Action *output = action_list->Pop(best_move);
@@ -101,17 +101,17 @@ Action *Agent::SearchAction(Game *b)
 	}
 	else if (algo_ == Algo::MCTS_LEAF_PARALLEL)
 	{
-		MCTSNode *mcts_root_node = new MCTSNode();
-		while (mcts_root_node->GetTotalSimulationCount() < min_iterations_ ||
+		MCTSNode *mcts_root = new MCTSNode();
+		while (mcts_root->GetTotalSimulationCount() < min_iter_ ||
 			   timer_.get_duration() < time_limit_ms_ / 1000.)
 		{
 			Game *b_clone = b->Clone();
-			mcts_root_node->DoMonteCarloTreeSearchOnce(b_clone, selection_strategy_, simulation_strategy_);
+			mcts_root->SearchOnce(b_clone, selection_strategy_, simulation_strategy_);
 			delete b_clone;
 		}
-		int best_move = mcts_root_node->ChooseMoveWithMostFrequency();
-		std::cout << "Total Search Times: " << mcts_root_node->GetTotalSimulationCount() << std::endl;
-		delete mcts_root_node;
+		int best_move = mcts_root->ChooseMoveWithMostFrequency();
+		std::cout << "Total Search Times: " << mcts_root->GetTotalSimulationCount() << std::endl;
+		delete mcts_root;
 
 		ActionList *action_list = b->GetLegalMoves();
 		Action *output = action_list->Pop(best_move);
@@ -126,7 +126,7 @@ Action *Agent::SearchAction(Game *b)
 		for (int i = 0; i < num_threads_; i++)
 		{
 			mcts_root_nodes[i] = new MCTSNode();
-			RootParallelInput *data = new RootParallelInput(b, mcts_root_nodes[i], &timer_, min_iterations_, time_limit_ms_,
+			RootParallelInput *data = new RootParallelInput(b, mcts_root_nodes[i], &timer_, min_iter_, time_limit_ms_,
 															selection_strategy_, simulation_strategy_);
 			if (pthread_create(&t[i], NULL, LaunchSearchThread, (void *)data) != 0)
 			{

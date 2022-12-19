@@ -43,7 +43,7 @@ public:
     virtual ~MCTSNodeCS();
     void Expansion();
 
-    float DoMonteCarloTreeSearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+    float SearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
 
 protected:
     Game *state_;
@@ -63,7 +63,7 @@ public:
 
     void Expansion(Game *state);
 
-    float DoMonteCarloTreeSearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+    float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
 
 protected:
     ActionList *actions_;
