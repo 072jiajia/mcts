@@ -1,18 +1,8 @@
 #include "node.h"
 
-float MCTSNode_::GetValueForCurrentPlayer() { return Q_; }
+MCTSNodeImpl_::MCTSNodeImpl_() : Q_(rand() / RAND_MAX * 0.001), N_(0), expanded_(false) {}
 
-float MCTSNode_::GetTotalSimulationCount() { return N_; }
-
-float MCTSNode_::Q() { return Q_; }
-float MCTSNode_::N() { return N_; }
-bool MCTSNode_::IsExpanded() { return expanded_; }
-
-std::vector<MCTSNode_ *> MCTSNode_::GetChildren() const { return children_; }
-
-MCTSNode_::MCTSNode_() : Q_(rand() / RAND_MAX * 0.001), N_(0), expanded_(false) {}
-
-MCTSNode_::~MCTSNode_()
+MCTSNodeImpl_::~MCTSNodeImpl_()
 {
     for (uint i = 0; i < children_.size(); i++)
     {
@@ -20,13 +10,23 @@ MCTSNode_::~MCTSNode_()
     }
 }
 
-int MCTSNode_::ChooseMoveWithMostFrequency()
+float MCTSNodeImpl_::GetValueForCurrentPlayer() { return Q_; }
+
+float MCTSNodeImpl_::GetTotalSimulationCount() { return N_; }
+
+float MCTSNodeImpl_::Q() { return Q_; }
+float MCTSNodeImpl_::N() { return N_; }
+bool MCTSNodeImpl_::IsExpanded() { return expanded_; }
+
+std::vector<MCTSNode_ *> MCTSNodeImpl_::GetChildren() const { return children_; }
+
+int MCTSNodeImpl_::ChooseMoveWithMostFrequency()
 {
     float best_value = -1e20;
     int best_move = -1;
     for (uint i = 0; i < children_.size(); i++)
     {
-        float value = children_[i]->N_;
+        float value = children_[i]->N();
 
         if (value > best_value)
         {
@@ -37,17 +37,17 @@ int MCTSNode_::ChooseMoveWithMostFrequency()
     return best_move;
 }
 
-std::vector<int> MCTSNode_::GetFrequencies()
+std::vector<int> MCTSNodeImpl_::GetFrequencies()
 {
     std::vector<int> output;
     for (uint i = 0; i < children_.size(); i++)
     {
-        output.push_back(children_[i]->N_);
+        output.push_back(children_[i]->N());
     }
     return output;
 }
 
-float MCTSNode_::EvaluateGameOverNode(Game *state)
+float MCTSNodeImpl_::EvaluateGameOverNode(Game *state)
 {
     if (this->N_ == 0)
         this->Q_ = EvaluateResult(state, state->GetPlayerThisTurn());
@@ -57,7 +57,7 @@ float MCTSNode_::EvaluateGameOverNode(Game *state)
 
 Game *MCTSNodeCS::GetCurrentState() { return state_; }
 
-MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNode_(), state_(s->Clone()) {}
+MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
 
 MCTSNodeCS::~MCTSNodeCS() { delete state_; }
 
@@ -104,7 +104,7 @@ float MCTSNodeCS::SearchOnce(SelectionStrategy *selection_strategy, SimulationSt
     return -q;
 }
 
-MCTSNode::MCTSNode() : MCTSNode_(), actions_(nullptr) {}
+MCTSNode::MCTSNode() : MCTSNodeImpl_(), actions_(nullptr) {}
 
 MCTSNode::~MCTSNode()
 {
