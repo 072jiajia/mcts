@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "selection.h"
 #include "simulation.h"
+#include "timecontrol.h"
 
 class MCTSNode_
 {
@@ -82,4 +83,94 @@ public:
 
 protected:
     ActionList *actions_;
+};
+
+class MCTSRoot_
+{
+public:
+    virtual ~MCTSRoot_(){};
+    virtual float GetTotalSimulationCount() = 0;
+    virtual void Search(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, TimeControlStrategy *time_controller) = 0;
+    virtual int MakeDecision() = 0;
+};
+
+class MCTSRoot : public MCTSRoot_
+{
+public:
+    MCTSRoot(Game *state);
+    ~MCTSRoot();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *selection_strategy,
+                SimulationStrategy *simulation_strategy,
+                TimeControlStrategy *time_controller);
+    int MakeDecision();
+
+private:
+    Game *state_;
+    MCTSNode *root_;
+};
+
+class MCTSRootCS : public MCTSRoot_
+{
+public:
+    MCTSRootCS(Game *state);
+    ~MCTSRootCS();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *selection_strategy,
+                SimulationStrategy *simulation_strategy,
+                TimeControlStrategy *time_controller);
+    int MakeDecision();
+
+private:
+    Game *state_;
+    MCTSNodeCS *root_;
+};
+
+struct RootParallelInput
+{
+    RootParallelInput(Game *b,
+                      MCTSNode *root,
+                      TimeControlStrategy *time_controller,
+                      SelectionStrategy *selection_strategy,
+                      SimulationStrategy *simulation_strategy)
+    {
+        b_ = b;
+        root_ = root;
+        time_controller_ = time_controller;
+        selection_strategy_ = selection_strategy;
+        simulation_strategy_ = simulation_strategy;
+    }
+
+    Game *b() { return b_; }
+    MCTSNode *root() { return root_; }
+    TimeControlStrategy *time_controller() { return time_controller_; }
+    SelectionStrategy *selection_strategy() { return selection_strategy_; }
+    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
+
+private:
+    Game *b_;
+    MCTSNode *root_;
+    TimeControlStrategy *time_controller_;
+    SelectionStrategy *selection_strategy_;
+    SimulationStrategy *simulation_strategy_;
+};
+
+class MCTSMultiRoot : public MCTSRoot_
+{
+public:
+    MCTSMultiRoot(Game *state, int num_threads);
+    ~MCTSMultiRoot();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *selection_strategy,
+                SimulationStrategy *simulation_strategy,
+                TimeControlStrategy *time_controller);
+    int MakeDecision();
+
+private:
+    static void *LaunchSearchThread(void *args_void);
+
+    Game *state_;
+    int num_threads_;
+    MCTSNode **roots_;
+    pthread_t *threads_;
 };

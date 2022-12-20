@@ -29,3 +29,20 @@ public:
 protected:
     std::map<int, std::pair<float, float>> rave_QN_;
 };
+
+class RaveRoot : public MCTSRoot_
+{
+public:
+    RaveRoot(Game *state);
+    ~RaveRoot();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *selection_strategy,
+                SimulationStrategy *simulation_strategy,
+                TimeControlStrategy *time_controller);
+
+    int MakeDecision();
+
+private:
+    Game *state_;
+    RaveNode *root_;
+};
