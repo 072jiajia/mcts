@@ -85,20 +85,20 @@ protected:
     ActionList *actions_;
 };
 
-class MCTSRoot_
+class MCTSTree_
 {
 public:
-    virtual ~MCTSRoot_(){};
+    virtual ~MCTSTree_(){};
     virtual float GetTotalSimulationCount() = 0;
     virtual void Search(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, TimeControlStrategy *time_controller) = 0;
     virtual int MakeDecision() = 0;
 };
 
-class MCTSRoot : public MCTSRoot_
+class MCTSTree : public MCTSTree_
 {
 public:
-    MCTSRoot(Game *state);
-    ~MCTSRoot();
+    MCTSTree(Game *state);
+    ~MCTSTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *selection_strategy,
                 SimulationStrategy *simulation_strategy,
@@ -110,11 +110,11 @@ private:
     MCTSNode *root_;
 };
 
-class MCTSRootCS : public MCTSRoot_
+class MCTSTreeCS : public MCTSTree_
 {
 public:
-    MCTSRootCS(Game *state);
-    ~MCTSRootCS();
+    MCTSTreeCS(Game *state);
+    ~MCTSTreeCS();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *selection_strategy,
                 SimulationStrategy *simulation_strategy,
@@ -155,11 +155,11 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class MCTSMultiRoot : public MCTSRoot_
+class MCTSMultiTree : public MCTSTree_
 {
 public:
-    MCTSMultiRoot(Game *state, int num_threads);
-    ~MCTSMultiRoot();
+    MCTSMultiTree(Game *state, int num_threads);
+    ~MCTSMultiTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *selection_strategy,
                 SimulationStrategy *simulation_strategy,

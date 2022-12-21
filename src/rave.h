@@ -30,11 +30,11 @@ protected:
     std::map<int, std::pair<float, float>> rave_QN_;
 };
 
-class RaveRoot : public MCTSRoot_
+class RaveTree : public MCTSTree_
 {
 public:
-    RaveRoot(Game *state);
-    ~RaveRoot();
+    RaveTree(Game *state);
+    ~RaveTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *selection_strategy,
                 SimulationStrategy *simulation_strategy,

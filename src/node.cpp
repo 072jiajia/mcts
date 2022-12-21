@@ -153,23 +153,23 @@ float MCTSNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
     return -q;
 }
 
-MCTSRoot::MCTSRoot(Game *state) : state_(state->Clone())
+MCTSTree::MCTSTree(Game *state) : state_(state->Clone())
 {
     root_ = new MCTSNode();
 }
 
-MCTSRoot::~MCTSRoot()
+MCTSTree::~MCTSTree()
 {
     delete state_;
     delete root_;
 }
 
-float MCTSRoot::GetTotalSimulationCount()
+float MCTSTree::GetTotalSimulationCount()
 {
     return root_->N();
 }
 
-void MCTSRoot::Search(SelectionStrategy *selection_strategy,
+void MCTSTree::Search(SelectionStrategy *selection_strategy,
                       SimulationStrategy *simulation_strategy,
                       TimeControlStrategy *time_controller)
 {
@@ -181,28 +181,28 @@ void MCTSRoot::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSRoot::MakeDecision()
+int MCTSTree::MakeDecision()
 {
     return root_->ChooseMoveWithMostFrequency();
 }
 
-MCTSRootCS::MCTSRootCS(Game *state) : state_(state->Clone())
+MCTSTreeCS::MCTSTreeCS(Game *state) : state_(state->Clone())
 {
     root_ = new MCTSNodeCS(state_);
 }
 
-MCTSRootCS::~MCTSRootCS()
+MCTSTreeCS::~MCTSTreeCS()
 {
     delete state_;
     delete root_;
 }
 
-float MCTSRootCS::GetTotalSimulationCount()
+float MCTSTreeCS::GetTotalSimulationCount()
 {
     return root_->N();
 }
 
-void MCTSRootCS::Search(SelectionStrategy *selection_strategy,
+void MCTSTreeCS::Search(SelectionStrategy *selection_strategy,
                         SimulationStrategy *simulation_strategy,
                         TimeControlStrategy *time_controller)
 {
@@ -212,12 +212,12 @@ void MCTSRootCS::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSRootCS::MakeDecision()
+int MCTSTreeCS::MakeDecision()
 {
     return root_->ChooseMoveWithMostFrequency();
 }
 
-MCTSMultiRoot::MCTSMultiRoot(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
+MCTSMultiTree::MCTSMultiTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
 {
     roots_ = new MCTSNode *[num_threads];
     threads_ = new pthread_t[num_threads];
@@ -228,7 +228,7 @@ MCTSMultiRoot::MCTSMultiRoot(Game *state, int num_threads) : state_(state), num_
     }
 }
 
-MCTSMultiRoot::~MCTSMultiRoot()
+MCTSMultiTree::~MCTSMultiTree()
 {
     for (int i = 0; i < num_threads_; i++)
     {
@@ -238,7 +238,7 @@ MCTSMultiRoot::~MCTSMultiRoot()
     delete threads_;
 }
 
-float MCTSMultiRoot::GetTotalSimulationCount()
+float MCTSMultiTree::GetTotalSimulationCount()
 {
     int total_counts = 0;
     for (int i = 0; i < num_threads_; i++)
@@ -249,7 +249,7 @@ float MCTSMultiRoot::GetTotalSimulationCount()
     return total_counts;
 }
 
-void MCTSMultiRoot::Search(SelectionStrategy *selection_strategy,
+void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
                            SimulationStrategy *simulation_strategy,
                            TimeControlStrategy *time_controller)
 {
@@ -271,7 +271,7 @@ void MCTSMultiRoot::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSMultiRoot::MakeDecision()
+int MCTSMultiTree::MakeDecision()
 {
     std::vector<int> selected_counts = roots_[0]->GetFrequencies();
 
@@ -297,7 +297,7 @@ int MCTSMultiRoot::MakeDecision()
     return best_move;
 }
 
-void *MCTSMultiRoot::LaunchSearchThread(void *args_void)
+void *MCTSMultiTree::LaunchSearchThread(void *args_void)
 {
     RootParallelInput *args = (RootParallelInput *)args_void;
     MCTSNode *root = args->root();

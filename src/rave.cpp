@@ -77,23 +77,23 @@ float RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
     return -q;
 }
 
-RaveRoot::RaveRoot(Game *state) : state_(state->Clone())
+RaveTree::RaveTree(Game *state) : state_(state->Clone())
 {
     root_ = new RaveNode();
 }
 
-RaveRoot::~RaveRoot()
+RaveTree::~RaveTree()
 {
     delete state_;
     delete root_;
 }
 
-float RaveRoot::GetTotalSimulationCount()
+float RaveTree::GetTotalSimulationCount()
 {
     return root_->N();
 }
 
-void RaveRoot::Search(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, TimeControlStrategy *time_controller)
+void RaveTree::Search(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, TimeControlStrategy *time_controller)
 {
     while (!time_controller->Stop())
     {
@@ -105,7 +105,7 @@ void RaveRoot::Search(SelectionStrategy *selection_strategy, SimulationStrategy 
     }
 }
 
-int RaveRoot::MakeDecision()
+int RaveTree::MakeDecision()
 {
     return root_->ChooseMoveWithMostFrequency();
 }

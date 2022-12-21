@@ -21,26 +21,26 @@ Action *Agent::SearchAction(Game *b)
 {
 	timer_.reset();
 	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
-	MCTSRoot_ *mcts_root;
+	MCTSTree_ *mcts_root;
 	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
-		mcts_root = new MCTSRootCS(b);
+		mcts_root = new MCTSTreeCS(b);
 	}
 	else if (algo_ == Algorithm::MCTS)
 	{
-		mcts_root = new MCTSRoot(b);
+		mcts_root = new MCTSTree(b);
 	}
 	else if (algo_ == Algorithm::RAVE)
 	{
-		mcts_root = new RaveRoot(b);
+		mcts_root = new RaveTree(b);
 	}
 	else if (algo_ == Algorithm::MCTS_LEAF_PARALLEL)
 	{
-		mcts_root = new MCTSRoot(b);
+		mcts_root = new MCTSTree(b);
 	}
 	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
 	{
-		mcts_root = new MCTSMultiRoot(b, num_threads_);
+		mcts_root = new MCTSMultiTree(b, num_threads_);
 	}
 	else
 	{
