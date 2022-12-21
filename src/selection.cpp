@@ -52,3 +52,37 @@ int RaveUCBHighest::Select(MCTSNode_ *node_abs) const
     }
     return best_move;
 }
+
+UCBHighestVirtualLoss::UCBHighestVirtualLoss(float C) : C_(C){};
+
+int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
+{
+    MCTSMutexNode *node = (MCTSMutexNode *)node_abs;
+    sem_wait(node->GetLock());
+    const std::vector<MCTSNode_ *> *children = node->GetChildren();
+
+    float best_value = -1e20;
+    int best_move = -1;
+    float logN = std::log(node->N() + 1.);
+    for (uint i = 0; i < children->size(); i++)
+    {
+        MCTSMutexNode *child = (MCTSMutexNode *)(children->at(i));
+        sem_wait(child->GetLock());
+
+        float Q = child->Q();
+        float N = child->N() + 1e-4;
+        float virtual_N = child->virtual_N_;
+        float value = -((Q * N + virtual_N) / (N + virtual_N)) + this->C_ * std::sqrt(logN / (N + virtual_N + 1));
+        sem_post(child->GetLock());
+
+        if (value > best_value)
+        {
+            best_value = value;
+            best_move = i;
+        }
+    }
+
+    ((MCTSMutexNode *)(children->at(best_move)))->virtual_N_++;
+    sem_post(node->GetLock());
+    return best_move;
+}

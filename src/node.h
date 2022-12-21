@@ -156,6 +156,35 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
+struct RootParallelInputMutex
+{
+    RootParallelInputMutex(Game *b,
+                           MCTSMutexNode *root,
+                           TimeControlStrategy *time_controller,
+                           SelectionStrategy *selection_strategy,
+                           SimulationStrategy *simulation_strategy)
+    {
+        b_ = b;
+        root_ = root;
+        time_controller_ = time_controller;
+        selection_strategy_ = selection_strategy;
+        simulation_strategy_ = simulation_strategy;
+    }
+
+    Game *b() { return b_; }
+    MCTSMutexNode *root() { return root_; }
+    TimeControlStrategy *time_controller() { return time_controller_; }
+    SelectionStrategy *selection_strategy() { return selection_strategy_; }
+    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
+
+private:
+    Game *b_;
+    MCTSMutexNode *root_;
+    TimeControlStrategy *time_controller_;
+    SelectionStrategy *selection_strategy_;
+    SimulationStrategy *simulation_strategy_;
+};
+
 class MCTSMultiTree : public MCTSTree_
 {
 public:
@@ -174,5 +203,50 @@ private:
     Game *state_;
     int num_threads_;
     MCTSNode **roots_;
+    pthread_t *threads_;
+};
+
+class MCTSMutexNode : public MCTSNodeImpl_
+{
+public:
+    MCTSMutexNode();
+
+    virtual ~MCTSMutexNode();
+
+    void Expansion(Game *state);
+
+    float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+
+    sem_t *GetLock();
+
+    void AddVirtualLoss();
+
+    void NPlusPlus();
+
+    int virtual_N_;
+
+protected:
+    ActionList *actions_;
+    sem_t lock;
+};
+
+class MCTSParallelTree : public MCTSTree_
+{
+public:
+    MCTSParallelTree(Game *state, int num_threads);
+    ~MCTSParallelTree();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *selection_strategy,
+                SimulationStrategy *simulation_strategy,
+                TimeControlStrategy *time_controller);
+    int MakeDecision();
+    std::vector<int> GetFrequencies();
+
+private:
+    static void *LaunchSearchThread(void *args_void);
+
+    Game *state_;
+    int num_threads_;
+    MCTSMutexNode *root_;
     pthread_t *threads_;
 };

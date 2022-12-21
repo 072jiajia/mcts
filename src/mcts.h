@@ -19,6 +19,7 @@ enum class Algorithm
 	RAVE,
 	MCTS_LEAF_PARALLEL,
 	MCTS_ROOT_PARALLEL,
+	MCTS_TREE_PARALLEL,
 };
 
 struct AgentOptions

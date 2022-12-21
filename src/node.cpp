@@ -364,3 +364,173 @@ std::vector<int> MCTSMultiTree::GetFrequencies()
 
     return output;
 }
+
+MCTSMutexNode::MCTSMutexNode() : MCTSNodeImpl_(), virtual_N_(0), actions_(nullptr), lock()
+{
+    sem_init(&lock, 0, 1);
+}
+
+MCTSMutexNode::~MCTSMutexNode()
+{
+    if (actions_ != nullptr)
+    {
+        delete actions_;
+    }
+}
+
+sem_t *MCTSMutexNode::GetLock()
+{
+    return &lock;
+}
+
+void MCTSMutexNode::Expansion(Game *state)
+{
+    actions_ = state->GetLegalMoves();
+
+    for (uint i = 0; i < actions_->GetSize(); i++)
+    {
+        this->children_.push_back(new MCTSMutexNode());
+    }
+    this->expanded_ = true;
+}
+
+float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+{
+    /* Simulation for leaf nodes */
+    if (state->IsGameOver())
+    {
+        sem_wait(&lock);
+
+        if (this->N_ == 0)
+            this->Q_ = EvaluateResult(state, state->GetPlayerThisTurn());
+        this->N_++;
+        this->virtual_N_--;
+        sem_post(&lock);
+        float output = -this->Q_;
+        return output;
+    }
+    if (this->N_ == 0)
+    {
+        sem_wait(&lock);
+        this->Q_ = simulation_strategy->SimulationOnce(state);
+        this->N_ = 1;
+        this->virtual_N_--;
+
+        sem_post(&lock);
+        float output = -this->Q_;
+        return output;
+    }
+
+    /* Instead of expanding the children 1-by-1
+       expand all of them at once */
+
+    sem_wait(&lock);
+    if (!this->expanded_)
+        this->Expansion(state);
+    sem_post(&lock);
+
+    /* Recursively select the child nodes */
+    int action_index = selection_strategy->Select(this);
+    state->DoAction(actions_->Get(action_index));
+    MCTSMutexNode *child = (MCTSMutexNode *)(this->children_[action_index]);
+    float q = child->SearchOnce(state, selection_strategy, simulation_strategy);
+
+    /* Back Propagation */
+    sem_wait(&lock);
+    this->Q_ += (q - this->Q_) / ++this->N_;
+    this->virtual_N_--;
+    sem_post(&lock);
+
+    return -q;
+}
+
+MCTSParallelTree::MCTSParallelTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
+{
+    root_ = new MCTSMutexNode();
+    threads_ = new pthread_t[num_threads];
+}
+
+MCTSParallelTree::~MCTSParallelTree()
+{
+    delete root_;
+    delete threads_;
+}
+
+float MCTSParallelTree::GetTotalSimulationCount()
+{
+    return root_->N();
+}
+
+void MCTSParallelTree::Search(SelectionStrategy *selection_strategy,
+                              SimulationStrategy *simulation_strategy,
+                              TimeControlStrategy *time_controller)
+{
+    for (int i = 0; i < num_threads_; i++)
+    {
+        RootParallelInputMutex *data = new RootParallelInputMutex(state_, root_, time_controller,
+                                                                  selection_strategy, simulation_strategy);
+        if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
+        {
+            perror("pthread_create() error");
+            exit(1);
+        }
+    }
+
+    for (int i = 0; i < num_threads_; i++)
+    {
+        pthread_join(threads_[i], NULL);
+    }
+}
+
+int MCTSParallelTree::MakeDecision()
+{
+    std::vector<int> freq = GetFrequencies();
+    int best_move = -1;
+    int best_value = -1;
+    for (int i = 0; i < freq.size(); i++)
+    {
+        if (freq[i] > best_value)
+        {
+            best_value = freq[i];
+            best_move = i;
+        }
+    }
+    return best_move;
+}
+
+void MCTSMutexNode::NPlusPlus()
+{
+    N_++;
+}
+
+void *MCTSParallelTree::LaunchSearchThread(void *args_void)
+{
+    RootParallelInputMutex *args = (RootParallelInputMutex *)args_void;
+    MCTSMutexNode *root = args->root();
+    Game *b = args->b();
+    TimeControlStrategy *time_controller = args->time_controller();
+    SelectionStrategy *selection_strategy = args->selection_strategy();
+    SimulationStrategy *simulation_strategy = args->simulation_strategy();
+
+    while (!time_controller->Stop())
+    {
+        Game *b_clone = b->Clone();
+        root->NPlusPlus();
+        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
+        delete b_clone;
+    }
+    delete args;
+    pthread_exit(NULL);
+}
+
+std::vector<int> MCTSParallelTree::GetFrequencies()
+{
+    std::vector<int> output;
+    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->N());
+    }
+    return output;
+}
