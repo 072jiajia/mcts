@@ -57,13 +57,13 @@ private:
     MCTSNodeCS *root_;
 };
 
-struct RootParallelInput
+struct MCTSThreadInput
 {
-    RootParallelInput(Game *b,
-                      MCTSNode *root,
-                      TimeControlStrategy *time_controller,
-                      SelectionStrategy *selection_strategy,
-                      SimulationStrategy *simulation_strategy)
+    MCTSThreadInput(Game *b,
+                    MCTSNode_ *root,
+                    TimeControlStrategy *time_controller,
+                    SelectionStrategy *selection_strategy,
+                    SimulationStrategy *simulation_strategy)
     {
         b_ = b;
         root_ = root;
@@ -73,43 +73,14 @@ struct RootParallelInput
     }
 
     Game *b() { return b_; }
-    MCTSNode *root() { return root_; }
+    MCTSNode_ *root() { return root_; }
     TimeControlStrategy *time_controller() { return time_controller_; }
     SelectionStrategy *selection_strategy() { return selection_strategy_; }
     SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
 
 private:
     Game *b_;
-    MCTSNode *root_;
-    TimeControlStrategy *time_controller_;
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
-};
-
-struct RootParallelInputMutex
-{
-    RootParallelInputMutex(Game *b,
-                           MCTSMutexNode *root,
-                           TimeControlStrategy *time_controller,
-                           SelectionStrategy *selection_strategy,
-                           SimulationStrategy *simulation_strategy)
-    {
-        b_ = b;
-        root_ = root;
-        time_controller_ = time_controller;
-        selection_strategy_ = selection_strategy;
-        simulation_strategy_ = simulation_strategy;
-    }
-
-    Game *b() { return b_; }
-    MCTSMutexNode *root() { return root_; }
-    TimeControlStrategy *time_controller() { return time_controller_; }
-    SelectionStrategy *selection_strategy() { return selection_strategy_; }
-    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
-
-private:
-    Game *b_;
-    MCTSMutexNode *root_;
+    MCTSNode_ *root_;
     TimeControlStrategy *time_controller_;
     SelectionStrategy *selection_strategy_;
     SimulationStrategy *simulation_strategy_;

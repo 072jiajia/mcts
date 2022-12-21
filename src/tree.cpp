@@ -124,8 +124,8 @@ void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
 {
     for (int i = 0; i < num_threads_; i++)
     {
-        RootParallelInput *data = new RootParallelInput(state_, roots_[i], time_controller,
-                                                        selection_strategy, simulation_strategy);
+        MCTSThreadInput *data = new MCTSThreadInput(state_, roots_[i], time_controller,
+                                                    selection_strategy, simulation_strategy);
         if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
         {
             perror("pthread_create() error");
@@ -157,8 +157,8 @@ int MCTSMultiTree::MakeDecision()
 
 void *MCTSMultiTree::LaunchSearchThread(void *args_void)
 {
-    RootParallelInput *args = (RootParallelInput *)args_void;
-    MCTSNode *root = args->root();
+    MCTSThreadInput *args = (MCTSThreadInput *)args_void;
+    MCTSNode *root = (MCTSNode *)(args->root());
     Game *b = args->b();
     TimeControlStrategy *time_controller = args->time_controller();
     SelectionStrategy *selection_strategy = args->selection_strategy();
@@ -244,8 +244,8 @@ void MCTSParallelTree::Search(SelectionStrategy *selection_strategy,
 {
     for (int i = 0; i < num_threads_; i++)
     {
-        RootParallelInputMutex *data = new RootParallelInputMutex(state_, root_, time_controller,
-                                                                  selection_strategy, simulation_strategy);
+        MCTSThreadInput *data = new MCTSThreadInput(state_, root_, time_controller,
+                                                    selection_strategy, simulation_strategy);
         if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
         {
             perror("pthread_create() error");
@@ -277,8 +277,8 @@ int MCTSParallelTree::MakeDecision()
 
 void *MCTSParallelTree::LaunchSearchThread(void *args_void)
 {
-    RootParallelInputMutex *args = (RootParallelInputMutex *)args_void;
-    MCTSMutexNode *root = args->root();
+    MCTSThreadInput *args = (MCTSThreadInput *)args_void;
+    MCTSMutexNode *root = (MCTSMutexNode *)(args->root());
     Game *b = args->b();
     TimeControlStrategy *time_controller = args->time_controller();
     SelectionStrategy *selection_strategy = args->selection_strategy();
