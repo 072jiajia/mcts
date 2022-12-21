@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <map>
 
 #include "utils.h"
 #include "selection.h"
@@ -70,129 +71,6 @@ protected:
     ActionList *actions_;
 };
 
-class MCTSTree_
-{
-public:
-    virtual ~MCTSTree_(){};
-    virtual float GetTotalSimulationCount() = 0;
-    virtual void Search(SelectionStrategy *, SimulationStrategy *, TimeControlStrategy *) = 0;
-    virtual int MakeDecision() = 0;
-    virtual std::vector<int> GetFrequencies() = 0;
-};
-
-class MCTSTree : public MCTSTree_
-{
-public:
-    MCTSTree(Game *);
-    ~MCTSTree();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *,
-                SimulationStrategy *,
-                TimeControlStrategy *);
-    int MakeDecision();
-    std::vector<int> GetFrequencies();
-
-private:
-    Game *state_;
-    MCTSNode *root_;
-};
-
-class MCTSTreeCS : public MCTSTree_
-{
-public:
-    MCTSTreeCS(Game *);
-    ~MCTSTreeCS();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *,
-                SimulationStrategy *,
-                TimeControlStrategy *);
-    int MakeDecision();
-    std::vector<int> GetFrequencies();
-
-private:
-    Game *state_;
-    MCTSNodeCS *root_;
-};
-
-struct RootParallelInput
-{
-    RootParallelInput(Game *b,
-                      MCTSNode *root,
-                      TimeControlStrategy *time_controller,
-                      SelectionStrategy *selection_strategy,
-                      SimulationStrategy *simulation_strategy)
-    {
-        b_ = b;
-        root_ = root;
-        time_controller_ = time_controller;
-        selection_strategy_ = selection_strategy;
-        simulation_strategy_ = simulation_strategy;
-    }
-
-    Game *b() { return b_; }
-    MCTSNode *root() { return root_; }
-    TimeControlStrategy *time_controller() { return time_controller_; }
-    SelectionStrategy *selection_strategy() { return selection_strategy_; }
-    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
-
-private:
-    Game *b_;
-    MCTSNode *root_;
-    TimeControlStrategy *time_controller_;
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
-};
-
-struct RootParallelInputMutex
-{
-    RootParallelInputMutex(Game *b,
-                           MCTSMutexNode *root,
-                           TimeControlStrategy *time_controller,
-                           SelectionStrategy *selection_strategy,
-                           SimulationStrategy *simulation_strategy)
-    {
-        b_ = b;
-        root_ = root;
-        time_controller_ = time_controller;
-        selection_strategy_ = selection_strategy;
-        simulation_strategy_ = simulation_strategy;
-    }
-
-    Game *b() { return b_; }
-    MCTSMutexNode *root() { return root_; }
-    TimeControlStrategy *time_controller() { return time_controller_; }
-    SelectionStrategy *selection_strategy() { return selection_strategy_; }
-    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
-
-private:
-    Game *b_;
-    MCTSMutexNode *root_;
-    TimeControlStrategy *time_controller_;
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
-};
-
-class MCTSMultiTree : public MCTSTree_
-{
-public:
-    MCTSMultiTree(Game *, int);
-    ~MCTSMultiTree();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *,
-                SimulationStrategy *,
-                TimeControlStrategy *);
-    int MakeDecision();
-    std::vector<int> GetFrequencies();
-
-private:
-    static void *LaunchSearchThread(void *);
-
-    Game *state_;
-    int num_threads_;
-    MCTSNode **roots_;
-    pthread_t *threads_;
-};
-
 class MCTSMutexNode : public MCTSNodeImpl_
 {
 public:
@@ -217,23 +95,22 @@ protected:
     sem_t lock;
 };
 
-class MCTSParallelTree : public MCTSTree_
+class RaveNode : public MCTSNode
 {
+    /*
+     * Implementation of this paper (https://doi.org/10.1016/j.artint.2011.03.007)
+     */
 public:
-    MCTSParallelTree(Game *, int);
-    ~MCTSParallelTree();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *,
-                SimulationStrategy *,
-                TimeControlStrategy *);
-    int MakeDecision();
-    std::vector<int> GetFrequencies();
+    RaveNode();
 
-private:
-    static void *LaunchSearchThread(void *);
+    virtual ~RaveNode();
 
-    Game *state_;
-    int num_threads_;
-    MCTSMutexNode *root_;
-    pthread_t *threads_;
+    void Expansion(Game *state);
+    float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action);
+
+    float rave_Q(int);
+    float rave_N(int);
+
+protected:
+    std::map<int, std::pair<float, float>> rave_QN_;
 };

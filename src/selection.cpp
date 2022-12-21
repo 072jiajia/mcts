@@ -1,5 +1,4 @@
 #include "node.h"
-#include "rave.h"
 #include "utils.h"
 
 UCBHighest::UCBHighest(float C) : C_(C){};

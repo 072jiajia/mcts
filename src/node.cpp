@@ -119,227 +119,6 @@ float MCTSNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
     return -q;
 }
 
-MCTSTree::MCTSTree(Game *state) : state_(state->Clone())
-{
-    root_ = new MCTSNode();
-}
-
-MCTSTree::~MCTSTree()
-{
-    delete state_;
-    delete root_;
-}
-
-float MCTSTree::GetTotalSimulationCount()
-{
-    return root_->N();
-}
-
-void MCTSTree::Search(SelectionStrategy *selection_strategy,
-                      SimulationStrategy *simulation_strategy,
-                      TimeControlStrategy *time_controller)
-{
-    while (!time_controller->Stop())
-    {
-        Game *cloned_state = state_->Clone();
-        root_->SearchOnce(cloned_state, selection_strategy, simulation_strategy);
-        delete cloned_state;
-    }
-}
-
-int MCTSTree::MakeDecision()
-{
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
-}
-
-MCTSTreeCS::MCTSTreeCS(Game *state) : state_(state->Clone())
-{
-    root_ = new MCTSNodeCS(state_);
-}
-
-MCTSTreeCS::~MCTSTreeCS()
-{
-    delete state_;
-    delete root_;
-}
-
-float MCTSTreeCS::GetTotalSimulationCount()
-{
-    return root_->N();
-}
-
-void MCTSTreeCS::Search(SelectionStrategy *selection_strategy,
-                        SimulationStrategy *simulation_strategy,
-                        TimeControlStrategy *time_controller)
-{
-    while (!time_controller->Stop())
-    {
-        root_->SearchOnce(selection_strategy, simulation_strategy);
-    }
-}
-
-int MCTSTreeCS::MakeDecision()
-{
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
-}
-
-MCTSMultiTree::MCTSMultiTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
-{
-    roots_ = new MCTSNode *[num_threads];
-    threads_ = new pthread_t[num_threads];
-
-    for (int i = 0; i < num_threads; i++)
-    {
-        roots_[i] = new MCTSNode();
-    }
-}
-
-MCTSMultiTree::~MCTSMultiTree()
-{
-    for (int i = 0; i < num_threads_; i++)
-    {
-        delete roots_[i];
-    }
-    delete roots_;
-    delete threads_;
-}
-
-float MCTSMultiTree::GetTotalSimulationCount()
-{
-    int total_counts = 0;
-    for (int i = 0; i < num_threads_; i++)
-    {
-        MCTSNode *root = roots_[i];
-        total_counts += root->N();
-    }
-    return total_counts;
-}
-
-void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
-                           SimulationStrategy *simulation_strategy,
-                           TimeControlStrategy *time_controller)
-{
-    for (int i = 0; i < num_threads_; i++)
-    {
-        RootParallelInput *data = new RootParallelInput(state_, roots_[i], time_controller,
-                                                        selection_strategy, simulation_strategy);
-        if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
-        {
-            perror("pthread_create() error");
-            exit(1);
-        }
-    }
-
-    for (int i = 0; i < num_threads_; i++)
-    {
-        pthread_join(threads_[i], NULL);
-    }
-}
-
-int MCTSMultiTree::MakeDecision()
-{
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
-}
-
-void *MCTSMultiTree::LaunchSearchThread(void *args_void)
-{
-    RootParallelInput *args = (RootParallelInput *)args_void;
-    MCTSNode *root = args->root();
-    Game *b = args->b();
-    TimeControlStrategy *time_controller = args->time_controller();
-    SelectionStrategy *selection_strategy = args->selection_strategy();
-    SimulationStrategy *simulation_strategy = args->simulation_strategy();
-
-    while (!time_controller->Stop())
-    {
-        Game *b_clone = b->Clone();
-        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
-        delete b_clone;
-    }
-    delete args;
-    pthread_exit(NULL);
-}
-
-std::vector<int> MCTSTree::GetFrequencies()
-{
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-    return output;
-}
-
-std::vector<int> MCTSTreeCS::GetFrequencies()
-{
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-    return output;
-}
-
-std::vector<int> MCTSMultiTree::GetFrequencies()
-{
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-
-    for (int i = 1; i < num_threads_; i++)
-    {
-        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
-        for (int j = 0; j < children->size(); j++)
-        {
-            MCTSNode_ *node = children->at(j);
-            output[j] += node->N();
-        }
-    }
-
-    return output;
-}
-
 MCTSMutexNode::MCTSMutexNode() : MCTSNodeImpl_(), virtual_N_(0), actions_(nullptr), lock()
 {
     sem_init(&lock, 0, 1);
@@ -419,93 +198,84 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     return -q;
 }
 
-MCTSParallelTree::MCTSParallelTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
-{
-    root_ = new MCTSMutexNode();
-    threads_ = new pthread_t[num_threads];
-}
-
-MCTSParallelTree::~MCTSParallelTree()
-{
-    delete root_;
-    delete threads_;
-}
-
-float MCTSParallelTree::GetTotalSimulationCount()
-{
-    return root_->N();
-}
-
-void MCTSParallelTree::Search(SelectionStrategy *selection_strategy,
-                              SimulationStrategy *simulation_strategy,
-                              TimeControlStrategy *time_controller)
-{
-    for (int i = 0; i < num_threads_; i++)
-    {
-        RootParallelInputMutex *data = new RootParallelInputMutex(state_, root_, time_controller,
-                                                                  selection_strategy, simulation_strategy);
-        if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
-        {
-            perror("pthread_create() error");
-            exit(1);
-        }
-    }
-
-    for (int i = 0; i < num_threads_; i++)
-    {
-        pthread_join(threads_[i], NULL);
-    }
-}
-
-int MCTSParallelTree::MakeDecision()
-{
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
-}
-
 void MCTSMutexNode::NPlusPlus()
 {
     N_++;
 }
 
-void *MCTSParallelTree::LaunchSearchThread(void *args_void)
-{
-    RootParallelInputMutex *args = (RootParallelInputMutex *)args_void;
-    MCTSMutexNode *root = args->root();
-    Game *b = args->b();
-    TimeControlStrategy *time_controller = args->time_controller();
-    SelectionStrategy *selection_strategy = args->selection_strategy();
-    SimulationStrategy *simulation_strategy = args->simulation_strategy();
+RaveNode::RaveNode() : MCTSNode(), rave_QN_() {}
 
-    while (!time_controller->Stop())
-    {
-        Game *b_clone = b->Clone();
-        root->NPlusPlus();
-        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
-        delete b_clone;
-    }
-    delete args;
-    pthread_exit(NULL);
+RaveNode::~RaveNode() {}
+
+float RaveNode::rave_Q(int index)
+{
+    int action_index = actions_->Get(index)->encoding();
+
+    if (rave_QN_.find(action_index) == rave_QN_.end())
+        return 0.;
+
+    return rave_QN_[action_index].first;
 }
 
-std::vector<int> MCTSParallelTree::GetFrequencies()
+float RaveNode::rave_N(int index)
 {
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
+    int action_index = actions_->Get(index)->encoding();
+
+    if (rave_QN_.find(action_index) == rave_QN_.end())
+        return 0.;
+
+    return rave_QN_[action_index].second;
+}
+
+void RaveNode::Expansion(Game *state)
+{
+    actions_ = state->GetLegalMoves();
+
+    for (uint i = 0; i < actions_->GetSize(); i++)
     {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
+        this->children_.push_back(new RaveNode());
     }
-    return output;
+    this->expanded_ = true;
+}
+
+float RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action)
+{
+    /* Simulation for leaf nodes */
+    if (state->IsGameOver())
+        return EvaluateGameOverNode(state);
+    if (this->N_ == 0)
+    {
+        this->Q_ = simulation_strategy->SimulationOnce(state);
+        this->N_ = 1;
+        return -this->Q_;
+    }
+
+    /* Instead of expanding the children 1-by-1
+       expand all of them at once */
+    if (!this->expanded_)
+        this->Expansion(state);
+
+    /* Recursively select the child nodes */
+    int action_index = selection_strategy->Select(this);
+    Action *selected_action = actions_->Get(action_index);
+    state->DoAction(selected_action);
+    RaveNode *child = (RaveNode *)(this->children_[action_index]);
+    float q = child->SearchOnce(state, selection_strategy, simulation_strategy, oppo_action, self_action);
+
+    /* Back Propagation */
+    this->Q_ += (q - this->Q_) / ++this->N_;
+
+    self_action.push_back(selected_action->encoding());
+    for (uint i = 0; i < self_action.size(); i++)
+    {
+        int action_enc = self_action[i];
+        if (rave_QN_.find(action_enc) == rave_QN_.end())
+        {
+            rave_QN_[action_enc] = {0., 0.};
+        }
+        std::pair<float, float> &QN = this->rave_QN_[action_enc];
+        QN.first += (q - QN.first) / ++QN.second;
+    }
+
+    return -q;
 }

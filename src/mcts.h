@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 #include "node.h"
-#include "rave.h"
+#include "tree.h"
 #include "utils.h"
 #include "simulation.h"
 #include "selection.h"
