@@ -41,6 +41,7 @@ public:
                 TimeControlStrategy *time_controller);
 
     int MakeDecision();
+    std::vector<int> GetFrequencies();
 
 private:
     Game *state_;

@@ -18,7 +18,7 @@ float MCTSNodeImpl_::Q() { return Q_; }
 float MCTSNodeImpl_::N() { return N_; }
 bool MCTSNodeImpl_::IsExpanded() { return expanded_; }
 
-std::vector<MCTSNode_ *> MCTSNodeImpl_::GetChildren() const { return children_; }
+const std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() const { return &children_; }
 
 int MCTSNodeImpl_::ChooseMoveWithMostFrequency()
 {
@@ -35,16 +35,6 @@ int MCTSNodeImpl_::ChooseMoveWithMostFrequency()
         }
     }
     return best_move;
-}
-
-std::vector<int> MCTSNodeImpl_::GetFrequencies()
-{
-    std::vector<int> output;
-    for (uint i = 0; i < children_.size(); i++)
-    {
-        output.push_back(children_[i]->N());
-    }
-    return output;
 }
 
 float MCTSNodeImpl_::EvaluateGameOverNode(Game *state)
@@ -183,7 +173,18 @@ void MCTSTree::Search(SelectionStrategy *selection_strategy,
 
 int MCTSTree::MakeDecision()
 {
-    return root_->ChooseMoveWithMostFrequency();
+    std::vector<int> freq = GetFrequencies();
+    int best_move = -1;
+    int best_value = -1;
+    for (int i = 0; i < freq.size(); i++)
+    {
+        if (freq[i] > best_value)
+        {
+            best_value = freq[i];
+            best_move = i;
+        }
+    }
+    return best_move;
 }
 
 MCTSTreeCS::MCTSTreeCS(Game *state) : state_(state->Clone())
@@ -214,7 +215,18 @@ void MCTSTreeCS::Search(SelectionStrategy *selection_strategy,
 
 int MCTSTreeCS::MakeDecision()
 {
-    return root_->ChooseMoveWithMostFrequency();
+    std::vector<int> freq = GetFrequencies();
+    int best_move = -1;
+    int best_value = -1;
+    for (int i = 0; i < freq.size(); i++)
+    {
+        if (freq[i] > best_value)
+        {
+            best_value = freq[i];
+            best_move = i;
+        }
+    }
+    return best_move;
 }
 
 MCTSMultiTree::MCTSMultiTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
@@ -273,25 +285,15 @@ void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
 
 int MCTSMultiTree::MakeDecision()
 {
-    std::vector<int> selected_counts = roots_[0]->GetFrequencies();
-
-    for (int i = 1; i < num_threads_; i++)
-    {
-        std::vector<int> temp = roots_[i]->GetFrequencies();
-        for (int j = 0; j < temp.size(); j++)
-        {
-            selected_counts[j] += temp[j];
-        }
-    }
-
+    std::vector<int> freq = GetFrequencies();
     int best_move = -1;
     int best_value = -1;
-    for (int i = 0; i < selected_counts.size(); i++)
+    for (int i = 0; i < freq.size(); i++)
     {
-        if (best_value < selected_counts[i])
+        if (freq[i] > best_value)
         {
+            best_value = freq[i];
             best_move = i;
-            best_value = selected_counts[i];
         }
     }
     return best_move;
@@ -314,4 +316,51 @@ void *MCTSMultiTree::LaunchSearchThread(void *args_void)
     }
     delete args;
     pthread_exit(NULL);
+}
+
+std::vector<int> MCTSTree::GetFrequencies()
+{
+    std::vector<int> output;
+    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->N());
+    }
+    return output;
+}
+
+std::vector<int> MCTSTreeCS::GetFrequencies()
+{
+    std::vector<int> output;
+    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->N());
+    }
+    return output;
+}
+
+std::vector<int> MCTSMultiTree::GetFrequencies()
+{
+    std::vector<int> output;
+    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->N());
+    }
+
+    for (int i = 1; i < num_threads_; i++)
+    {
+        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
+        for (int j = 0; j < children->size(); j++)
+        {
+            MCTSNode_ *node = children->at(j);
+            output[j] += node->N();
+        }
+    }
+
+    return output;
 }

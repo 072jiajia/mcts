@@ -21,10 +21,9 @@ public:
     virtual float Q() = 0;
     virtual float N() = 0;
     virtual bool IsExpanded() = 0;
-    virtual std::vector<MCTSNode_ *> GetChildren() const = 0;
+    virtual const std::vector<MCTSNode_ *> *GetChildren() const = 0;
 
     virtual int ChooseMoveWithMostFrequency() = 0;
-    virtual std::vector<int> GetFrequencies() = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -37,9 +36,8 @@ public:
     float Q();
     float N();
     bool IsExpanded();
-    std::vector<MCTSNode_ *> GetChildren() const;
+    const std::vector<MCTSNode_ *> *GetChildren() const;
     int ChooseMoveWithMostFrequency();
-    std::vector<int> GetFrequencies();
 
 protected:
     float EvaluateGameOverNode(Game *);
@@ -92,6 +90,7 @@ public:
     virtual float GetTotalSimulationCount() = 0;
     virtual void Search(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, TimeControlStrategy *time_controller) = 0;
     virtual int MakeDecision() = 0;
+    virtual std::vector<int> GetFrequencies() = 0;
 };
 
 class MCTSTree : public MCTSTree_
@@ -104,6 +103,7 @@ public:
                 SimulationStrategy *simulation_strategy,
                 TimeControlStrategy *time_controller);
     int MakeDecision();
+    std::vector<int> GetFrequencies();
 
 private:
     Game *state_;
@@ -120,6 +120,7 @@ public:
                 SimulationStrategy *simulation_strategy,
                 TimeControlStrategy *time_controller);
     int MakeDecision();
+    std::vector<int> GetFrequencies();
 
 private:
     Game *state_;
@@ -165,6 +166,7 @@ public:
                 SimulationStrategy *simulation_strategy,
                 TimeControlStrategy *time_controller);
     int MakeDecision();
+    std::vector<int> GetFrequencies();
 
 private:
     static void *LaunchSearchThread(void *args_void);

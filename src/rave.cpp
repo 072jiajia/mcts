@@ -107,5 +107,28 @@ void RaveTree::Search(SelectionStrategy *selection_strategy, SimulationStrategy 
 
 int RaveTree::MakeDecision()
 {
-    return root_->ChooseMoveWithMostFrequency();
+    std::vector<int> freq = GetFrequencies();
+    int best_move = -1;
+    int best_value = -1;
+    for (int i = 0; i < freq.size(); i++)
+    {
+        if (freq[i] > best_value)
+        {
+            best_value = freq[i];
+            best_move = i;
+        }
+    }
+    return best_move;
+}
+
+std::vector<int> RaveTree::GetFrequencies()
+{
+    std::vector<int> output;
+    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->N());
+    }
+    return output;
 }
