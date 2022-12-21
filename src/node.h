@@ -16,14 +16,10 @@ class MCTSNode_
 {
 public:
     virtual ~MCTSNode_(){};
-    virtual float GetValueForCurrentPlayer() = 0;
-    virtual float GetTotalSimulationCount() = 0;
     virtual float Q() = 0;
     virtual float N() = 0;
     virtual bool IsExpanded() = 0;
     virtual const std::vector<MCTSNode_ *> *GetChildren() const = 0;
-
-    virtual int ChooseMoveWithMostFrequency() = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -31,13 +27,10 @@ class MCTSNodeImpl_ : public MCTSNode_
 public:
     MCTSNodeImpl_();
     virtual ~MCTSNodeImpl_();
-    float GetValueForCurrentPlayer();
-    float GetTotalSimulationCount();
     float Q();
     float N();
     bool IsExpanded();
     const std::vector<MCTSNode_ *> *GetChildren() const;
-    int ChooseMoveWithMostFrequency();
 
 protected:
     float EvaluateGameOverNode(Game *);
@@ -51,13 +44,10 @@ protected:
 class MCTSNodeCS : public MCTSNodeImpl_
 {
 public:
-    Game *GetCurrentState();
-
     MCTSNodeCS(Game *s);
     virtual ~MCTSNodeCS();
     void Expansion();
-
-    float SearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+    float SearchOnce(SelectionStrategy *, SimulationStrategy *);
 
 protected:
     Game *state_;
@@ -72,12 +62,9 @@ class MCTSNode : public MCTSNodeImpl_
      */
 public:
     MCTSNode();
-
     virtual ~MCTSNode();
-
-    void Expansion(Game *state);
-
-    float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+    void Expansion(Game *);
+    float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
 protected:
     ActionList *actions_;
@@ -88,7 +75,7 @@ class MCTSTree_
 public:
     virtual ~MCTSTree_(){};
     virtual float GetTotalSimulationCount() = 0;
-    virtual void Search(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, TimeControlStrategy *time_controller) = 0;
+    virtual void Search(SelectionStrategy *, SimulationStrategy *, TimeControlStrategy *) = 0;
     virtual int MakeDecision() = 0;
     virtual std::vector<int> GetFrequencies() = 0;
 };
@@ -96,12 +83,12 @@ public:
 class MCTSTree : public MCTSTree_
 {
 public:
-    MCTSTree(Game *state);
+    MCTSTree(Game *);
     ~MCTSTree();
     float GetTotalSimulationCount();
-    void Search(SelectionStrategy *selection_strategy,
-                SimulationStrategy *simulation_strategy,
-                TimeControlStrategy *time_controller);
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
     int MakeDecision();
     std::vector<int> GetFrequencies();
 
@@ -113,12 +100,12 @@ private:
 class MCTSTreeCS : public MCTSTree_
 {
 public:
-    MCTSTreeCS(Game *state);
+    MCTSTreeCS(Game *);
     ~MCTSTreeCS();
     float GetTotalSimulationCount();
-    void Search(SelectionStrategy *selection_strategy,
-                SimulationStrategy *simulation_strategy,
-                TimeControlStrategy *time_controller);
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
     int MakeDecision();
     std::vector<int> GetFrequencies();
 
@@ -188,17 +175,17 @@ private:
 class MCTSMultiTree : public MCTSTree_
 {
 public:
-    MCTSMultiTree(Game *state, int num_threads);
+    MCTSMultiTree(Game *, int);
     ~MCTSMultiTree();
     float GetTotalSimulationCount();
-    void Search(SelectionStrategy *selection_strategy,
-                SimulationStrategy *simulation_strategy,
-                TimeControlStrategy *time_controller);
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
     int MakeDecision();
     std::vector<int> GetFrequencies();
 
 private:
-    static void *LaunchSearchThread(void *args_void);
+    static void *LaunchSearchThread(void *);
 
     Game *state_;
     int num_threads_;
@@ -213,9 +200,9 @@ public:
 
     virtual ~MCTSMutexNode();
 
-    void Expansion(Game *state);
+    void Expansion(Game *);
 
-    float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+    float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
     sem_t *GetLock();
 
@@ -233,17 +220,17 @@ protected:
 class MCTSParallelTree : public MCTSTree_
 {
 public:
-    MCTSParallelTree(Game *state, int num_threads);
+    MCTSParallelTree(Game *, int);
     ~MCTSParallelTree();
     float GetTotalSimulationCount();
-    void Search(SelectionStrategy *selection_strategy,
-                SimulationStrategy *simulation_strategy,
-                TimeControlStrategy *time_controller);
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
     int MakeDecision();
     std::vector<int> GetFrequencies();
 
 private:
-    static void *LaunchSearchThread(void *args_void);
+    static void *LaunchSearchThread(void *);
 
     Game *state_;
     int num_threads_;

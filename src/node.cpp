@@ -1,6 +1,6 @@
 #include "node.h"
 
-MCTSNodeImpl_::MCTSNodeImpl_() : Q_(rand() / RAND_MAX * 0.001), N_(0), expanded_(false) {}
+MCTSNodeImpl_::MCTSNodeImpl_() : children_(), Q_(rand() / RAND_MAX * 0.001), N_(0), expanded_(false) {}
 
 MCTSNodeImpl_::~MCTSNodeImpl_()
 {
@@ -10,32 +10,10 @@ MCTSNodeImpl_::~MCTSNodeImpl_()
     }
 }
 
-float MCTSNodeImpl_::GetValueForCurrentPlayer() { return Q_; }
-
-float MCTSNodeImpl_::GetTotalSimulationCount() { return N_; }
-
 float MCTSNodeImpl_::Q() { return Q_; }
 float MCTSNodeImpl_::N() { return N_; }
 bool MCTSNodeImpl_::IsExpanded() { return expanded_; }
-
 const std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() const { return &children_; }
-
-int MCTSNodeImpl_::ChooseMoveWithMostFrequency()
-{
-    float best_value = -1e20;
-    int best_move = -1;
-    for (uint i = 0; i < children_.size(); i++)
-    {
-        float value = children_[i]->N();
-
-        if (value > best_value)
-        {
-            best_value = value;
-            best_move = i;
-        }
-    }
-    return best_move;
-}
 
 float MCTSNodeImpl_::EvaluateGameOverNode(Game *state)
 {
@@ -44,8 +22,6 @@ float MCTSNodeImpl_::EvaluateGameOverNode(Game *state)
     this->N_++;
     return -this->Q_;
 }
-
-Game *MCTSNodeCS::GetCurrentState() { return state_; }
 
 MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
 
@@ -279,7 +255,6 @@ void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
     for (int i = 0; i < num_threads_; i++)
     {
         pthread_join(threads_[i], NULL);
-        std::cout << "Total Search Times: " << roots_[i]->GetTotalSimulationCount() << std::endl;
     }
 }
 
