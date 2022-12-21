@@ -287,7 +287,6 @@ void *MCTSParallelTree::LaunchSearchThread(void *args_void)
     while (!time_controller->Stop())
     {
         Game *b_clone = b->Clone();
-        root->NPlusPlus();
         root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
         delete b_clone;
     }

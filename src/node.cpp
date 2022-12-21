@@ -198,11 +198,6 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     return -q;
 }
 
-void MCTSMutexNode::NPlusPlus()
-{
-    N_++;
-}
-
 RaveNode::RaveNode() : MCTSNode(), rave_QN_() {}
 
 RaveNode::~RaveNode() {}

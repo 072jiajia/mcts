@@ -84,10 +84,6 @@ public:
 
     sem_t *GetLock();
 
-    void AddVirtualLoss();
-
-    void NPlusPlus();
-
     int virtual_N_;
 
 protected:
