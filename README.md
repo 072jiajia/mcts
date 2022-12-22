@@ -2,12 +2,10 @@
 
 This is a c++ implementation of Monte Carlo Tree Search algorithm.
 
-Also, this is a project for [myself](https://github.com/072jiajia) to practice software development,
-so I may update it occasionally.
-Of course, I will add other games & add further techniques of mcts.
+## Introduction
 
-If you have any advices for this project (including implementation / solid principles / naming convention / optimization / others...),
-please feel free to leave a message on the issue page or send me an [email](mailto:jijiawu.cs@gmail.com) to let me know!
+Monte Carlo tree search (MCTS) is an algorithm that is used to find the next best move in a game or a decision-making problem. It is particularly effective since it is able to balance the exploration of new game states with the exploitation of known good moves.
+Some parallel implementation of MCTS can further enhance its performance.
 
 ## Quick Start
 
@@ -18,16 +16,22 @@ please feel free to leave a message on the issue page or send me an [email](mail
     ./build/simpledemo
 ```
 
+## Supported Algorithms
+
+- MCTS
+- [RAVE](https://doi.org/10.1016/j.artint.2011.03.007)
+- [Root Parallel MCTS](https://dke.maastrichtuniversity.nl/m.winands/documents/multithreadedMCTS2.pdf)
+- [Leaf Parallel MCTS](https://dke.maastrichtuniversity.nl/m.winands/documents/multithreadedMCTS2.pdf)
+- [Tree Parallel MCTS](https://dke.maastrichtuniversity.nl/m.winands/documents/multithreadedMCTS2.pdf)
+
 ## How To Run It On Your Game?
 
 Implement your game and finish the functions which will be used in Monte Carlo Tree Search
 
 Here's an example
 
-your_game.h
-
 ```code=cpp
-#include "games/game_base.h"
+#include "mcts/game_base.h"
 
 class YourGameAction : public Action
 {
@@ -57,24 +61,11 @@ public:
 };
 ```
 
-your_game.cpp
+## Other Contents
 
-```code=cpp
-#inlcude "your_game.h"
+BTW, this is a project for [myself](https://github.com/072jiajia) to practice software development,
+so I may update it occasionally.
+Of course, I will add other games & add further techniques of mcts.
 
-/*
-    Your implementations of your game's action
-*/
-
-ActionList* YourGame::GetLegalMoves() { /* your implementation */ }
-void YourGame::DoAction(const Action action) { /* your implementation */ }
-YourGame *YourGame::Clone() { /* your implementation */ }
-void YourGame::switch_turn() { /* your implementation */ }
-void YourGame::PrintState() { /* your implementation */ }
-bool YourGame::IsGameOver() { /* your implementation */ }
-ResultType YourGame::GetResult() { /* your implementation */ }
-Player YourGame::GetPlayerThisTurn() { /* your implementation */ }
-
-```
-
-(On-going Readme.md contents...)
+If you have any advices for this project (including implementation / solid principles / naming convention / optimization / others...),
+please feel free to leave a message on the issue page or send me an [email](mailto:jijiawu.cs@gmail.com) to let me know!
