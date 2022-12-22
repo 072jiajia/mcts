@@ -28,7 +28,7 @@ class ActionList
 {
 public:
     ActionList();
-    virtual ~ActionList();
+    ~ActionList();
 
     void Add(Action *action);
     int GetSize();

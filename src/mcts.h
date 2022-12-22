@@ -40,7 +40,7 @@ class Agent
 {
 public:
 	Agent(AgentOptions &options);
-	virtual ~Agent();
+	~Agent();
 
 	Action *SearchAction(Game *b);
 
