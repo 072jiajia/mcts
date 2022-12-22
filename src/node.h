@@ -19,8 +19,12 @@ public:
     virtual ~MCTSNode_(){};
     virtual float Q() = 0;
     virtual float N() = 0;
+    virtual void SetQ(float) = 0;
+    virtual void SetN(float) = 0;
     virtual bool IsExpanded() = 0;
-    virtual const std::vector<MCTSNode_ *> *GetChildren() const = 0;
+    virtual void SetExpanded() = 0;
+    virtual void SetNotExpanded() = 0;
+    virtual std::vector<MCTSNode_ *> *GetChildren() = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -30,12 +34,17 @@ public:
     virtual ~MCTSNodeImpl_();
     float Q();
     float N();
+    void SetQ(float);
+    void SetN(float);
     bool IsExpanded();
-    const std::vector<MCTSNode_ *> *GetChildren() const;
+    void SetExpanded();
+    void SetNotExpanded();
+    std::vector<MCTSNode_ *> *GetChildren();
 
 protected:
     float EvaluateGameOverNode(Game *);
 
+private:
     std::vector<MCTSNode_ *> children_;
     float Q_;
     float N_;
@@ -50,7 +59,7 @@ public:
     void Expansion();
     float SearchOnce(SelectionStrategy *, SimulationStrategy *);
 
-protected:
+private:
     Game *state_;
 };
 
@@ -67,7 +76,7 @@ public:
     void Expansion(Game *);
     float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
-protected:
+private:
     ActionList *actions_;
 };
 
@@ -86,12 +95,12 @@ public:
 
     int virtual_N_;
 
-protected:
+private:
     ActionList *actions_;
     sem_t lock;
 };
 
-class RaveNode : public MCTSNode
+class RaveNode : public MCTSNodeImpl_
 {
     /*
      * Implementation of this paper (https://doi.org/10.1016/j.artint.2011.03.007)
@@ -107,6 +116,7 @@ public:
     float rave_Q(int);
     float rave_N(int);
 
-protected:
+private:
+    ActionList *actions_;
     std::map<int, std::pair<float, float>> rave_QN_;
 };
