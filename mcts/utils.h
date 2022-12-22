@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cstring>
 #include <time.h>
-#include "../games/game_base.h"
+#include "game_base.h"
 
 #define OPTION_ARG(T, name)                                \
 public:                                                    \

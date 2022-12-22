@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "game_base.h"
+#include "../mcts/game_base.h"
 
 class TicTacToeAction : public Action
 {

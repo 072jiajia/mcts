@@ -1,4 +1,4 @@
-#include "src/mcts.h"
+#include "mcts/mcts.h"
 #include "games/games.h"
 #include <iostream>
 #include <vector>

@@ -6,9 +6,7 @@
 #include <algorithm>
 #include <utility>
 #include <cmath>
-#include <vector>
-#include <map>
-#include "game_base.h"
+#include "../mcts/game_base.h"
 
 class NoGoAction : public Action
 {
