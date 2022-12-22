@@ -184,7 +184,9 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     sem_post(&lock);
 
     /* Recursively select the child nodes */
+    sem_wait(&lock);
     int action_index = selection_strategy->Select(this);
+    sem_post(&lock);
     state->DoAction(actions_->Get(action_index));
     MCTSMutexNode *child = (MCTSMutexNode *)(this->children_[action_index]);
     float q = child->SearchOnce(state, selection_strategy, simulation_strategy);
