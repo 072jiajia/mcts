@@ -55,7 +55,7 @@ class MCTSNodeCS : public MCTSNodeImpl_
 {
 public:
     MCTSNodeCS(Game *s);
-    virtual ~MCTSNodeCS();
+    ~MCTSNodeCS();
     void Expansion();
     float SearchOnce(SelectionStrategy *, SimulationStrategy *);
 
@@ -72,7 +72,7 @@ class MCTSNode : public MCTSNodeImpl_
      */
 public:
     MCTSNode();
-    virtual ~MCTSNode();
+    ~MCTSNode();
     void Expansion(Game *);
     float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
@@ -85,7 +85,7 @@ class MCTSMutexNode : public MCTSNodeImpl_
 public:
     MCTSMutexNode();
 
-    virtual ~MCTSMutexNode();
+    ~MCTSMutexNode();
 
     void Expansion(Game *);
 
@@ -111,7 +111,7 @@ class RaveNode : public MCTSNodeImpl_
 public:
     RaveNode();
 
-    virtual ~RaveNode();
+    ~RaveNode();
 
     void Expansion(Game *state);
     float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action);
