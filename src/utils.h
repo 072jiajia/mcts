@@ -47,7 +47,7 @@ class Timer
 {
 public:
 	Timer();
-	virtual ~Timer();
+	~Timer();
 	void reset();
 	double get_duration();
 
