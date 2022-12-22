@@ -156,6 +156,16 @@ void MCTSMutexNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
+float MCTSMutexNode::GetVirtualN()
+{
+    return virtual_N_;
+}
+
+void MCTSMutexNode::SetVirtualN(float virtual_N)
+{
+    virtual_N_ = virtual_N;
+}
+
 float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
 {
     /* Simulation for leaf nodes */
@@ -167,7 +177,7 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
             this->SetQ(EvaluateResult(state, state->GetPlayerThisTurn()));
 
         this->SetN(this->N() + 1);
-        this->virtual_N_--;
+        this->SetVirtualN(this->GetVirtualN() - 1);
         float output = -this->Q();
         sem_post(&lock);
         return output;
@@ -178,7 +188,7 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
         this->SetQ(simulation_strategy->SimulationOnce(state));
         this->SetN(1);
 
-        this->virtual_N_--;
+        this->SetVirtualN(this->GetVirtualN() - 1);
         float output = -this->Q();
 
         sem_post(&lock);
@@ -206,7 +216,7 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     float newQ = this->Q() + (q - this->Q()) / (this->N() + 1);
     this->SetQ(newQ);
     this->SetN(this->N() + 1);
-    this->virtual_N_--;
+    this->SetVirtualN(this->GetVirtualN() - 1);
     sem_post(&lock);
 
     return -q;

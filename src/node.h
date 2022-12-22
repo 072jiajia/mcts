@@ -93,11 +93,14 @@ public:
 
     sem_t *GetLock();
 
-    int virtual_N_;
+    float GetVirtualN();
+
+    void SetVirtualN(float virtual_N);
 
 private:
     ActionList *actions_;
     sem_t lock;
+    int virtual_N_;
 };
 
 class RaveNode : public MCTSNodeImpl_
