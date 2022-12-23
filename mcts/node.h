@@ -91,7 +91,8 @@ public:
 
     float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
-    sem_t *GetLock();
+    void Lock();
+    void Release();
 
     float GetVirtualN();
 

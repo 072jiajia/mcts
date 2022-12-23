@@ -140,9 +140,14 @@ MCTSMutexNode::~MCTSMutexNode()
     }
 }
 
-sem_t *MCTSMutexNode::GetLock()
+void MCTSMutexNode::Lock()
 {
-    return &lock;
+    sem_wait(&lock);
+}
+
+void MCTSMutexNode::Release()
+{
+    sem_post(&lock);
 }
 
 void MCTSMutexNode::Expansion(Game *state)
@@ -171,7 +176,7 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     /* Simulation for leaf nodes */
     if (state->IsGameOver())
     {
-        sem_wait(&lock);
+        this->Lock();
 
         if (this->N() == 0)
             this->SetQ(EvaluateResult(state, state->GetPlayerThisTurn()));
@@ -179,45 +184,45 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
         this->SetN(this->N() + 1);
         this->SetVirtualN(this->GetVirtualN() - 1);
         float output = -this->Q();
-        sem_post(&lock);
+        this->Release();
         return output;
     }
     if (this->N() == 0)
     {
-        sem_wait(&lock);
+        this->Lock();
         this->SetQ(simulation_strategy->SimulationOnce(state));
         this->SetN(1);
 
         this->SetVirtualN(this->GetVirtualN() - 1);
         float output = -this->Q();
 
-        sem_post(&lock);
+        this->Release();
         return output;
     }
 
     /* Instead of expanding the children 1-by-1
        expand all of them at once */
 
-    sem_wait(&lock);
+    this->Lock();
     if (!this->IsExpanded())
         this->Expansion(state);
-    sem_post(&lock);
+    this->Release();
 
     /* Recursively select the child nodes */
-    sem_wait(&lock);
+    this->Lock();
     int action_index = selection_strategy->Select(this);
-    sem_post(&lock);
+    this->Release();
     state->DoAction(actions_->Get(action_index));
     MCTSMutexNode *child = (MCTSMutexNode *)(this->GetChildren()->at(action_index));
     float q = child->SearchOnce(state, selection_strategy, simulation_strategy);
 
     /* Back Propagation */
-    sem_wait(&lock);
+    this->Lock();
     float newQ = this->Q() + (q - this->Q()) / (this->N() + 1);
     this->SetQ(newQ);
     this->SetN(this->N() + 1);
     this->SetVirtualN(this->GetVirtualN() - 1);
-    sem_post(&lock);
+    this->Release();
 
     return -q;
 }

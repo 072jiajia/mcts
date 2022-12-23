@@ -65,13 +65,13 @@ int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
     for (uint i = 0; i < children->size(); i++)
     {
         MCTSMutexNode *child = (MCTSMutexNode *)(children->at(i));
-        sem_wait(child->GetLock());
+        child->Lock();
 
         float Q = child->Q();
         float N = child->N() + 1e-4;
         float virtual_N = child->GetVirtualN();
         float value = -((Q * N + virtual_N) / (N + virtual_N)) + this->C_ * std::sqrt(logN / (N + virtual_N + 1));
-        sem_post(child->GetLock());
+        child->Release();
 
         if (value > best_value)
         {
@@ -81,8 +81,8 @@ int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
     }
 
     MCTSMutexNode *selected_node = ((MCTSMutexNode *)(children->at(best_move)));
-    sem_wait(selected_node->GetLock());
+    selected_node->Lock();
     selected_node->SetVirtualN(selected_node->GetVirtualN() + 1);
-    sem_post(selected_node->GetLock());
+    selected_node->Release();
     return best_move;
 }
