@@ -21,6 +21,7 @@ public:
     virtual float N() = 0;
     virtual void SetQ(float) = 0;
     virtual void SetN(float) = 0;
+    virtual void UpdateResult(float) = 0;
     virtual bool IsExpanded() = 0;
     virtual void SetExpanded() = 0;
     virtual void SetNotExpanded() = 0;
@@ -36,6 +37,7 @@ public:
     float N();
     void SetQ(float);
     void SetN(float);
+    void UpdateResult(float);
     bool IsExpanded();
     void SetExpanded();
     void SetNotExpanded();

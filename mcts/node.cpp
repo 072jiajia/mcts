@@ -19,6 +19,11 @@ void MCTSNodeImpl_::SetExpanded() { expanded_ = true; }
 void MCTSNodeImpl_::SetNotExpanded() { expanded_ = false; }
 std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() { return &children_; }
 
+void MCTSNodeImpl_::UpdateResult(float q)
+{
+    Q_ += (q - Q_) / ++N_;
+}
+
 float MCTSNodeImpl_::EvaluateGameOverNode(Game *state)
 {
     if (this->N() == 0)
@@ -54,8 +59,7 @@ float MCTSNodeCS::SearchOnce(SelectionStrategy *selection_strategy, SimulationSt
         return EvaluateGameOverNode(state_);
     if (this->N() == 0)
     {
-        this->SetQ(simulation_strategy->SimulationOnce(state_));
-        this->SetN(1);
+        this->UpdateResult(simulation_strategy->SimulationOnce(state_));
         return -this->Q();
     }
 
@@ -70,9 +74,8 @@ float MCTSNodeCS::SearchOnce(SelectionStrategy *selection_strategy, SimulationSt
     float q = child->SearchOnce(selection_strategy, simulation_strategy);
 
     /* Back Propagation */
-    float newQ = this->Q() + (q - this->Q()) / (this->N() + 1);
-    this->SetQ(newQ);
-    this->SetN(this->N() + 1);
+    this->UpdateResult(q);
+
     return -q;
 }
 
@@ -104,8 +107,7 @@ float MCTSNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
         return EvaluateGameOverNode(state);
     if (this->N() == 0)
     {
-        this->SetQ(simulation_strategy->SimulationOnce(state));
-        this->SetN(1);
+        this->UpdateResult(simulation_strategy->SimulationOnce(state));
         return -this->Q();
     }
 
@@ -121,9 +123,8 @@ float MCTSNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
     float q = child->SearchOnce(state, selection_strategy, simulation_strategy);
 
     /* Back Propagation */
-    float newQ = this->Q() + (q - this->Q()) / (this->N() + 1);
-    this->SetQ(newQ);
-    this->SetN(this->N() + 1);
+    this->UpdateResult(q);
+
     return -q;
 }
 
@@ -190,8 +191,7 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     if (this->N() == 0)
     {
         this->Lock();
-        this->SetQ(simulation_strategy->SimulationOnce(state));
-        this->SetN(1);
+        this->UpdateResult(simulation_strategy->SimulationOnce(state));
 
         this->SetVirtualN(this->GetVirtualN() - 1);
         float output = -this->Q();
@@ -218,9 +218,7 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
 
     /* Back Propagation */
     this->Lock();
-    float newQ = this->Q() + (q - this->Q()) / (this->N() + 1);
-    this->SetQ(newQ);
-    this->SetN(this->N() + 1);
+    this->UpdateResult(q);
     this->SetVirtualN(this->GetVirtualN() - 1);
     this->Release();
 
@@ -269,8 +267,7 @@ float RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
         return EvaluateGameOverNode(state);
     if (this->N() == 0)
     {
-        this->SetQ(simulation_strategy->SimulationOnce(state));
-        this->SetN(1);
+        this->UpdateResult(simulation_strategy->SimulationOnce(state));
         return -this->Q();
     }
 
@@ -287,9 +284,7 @@ float RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, S
     float q = child->SearchOnce(state, selection_strategy, simulation_strategy, oppo_action, self_action);
 
     /* Back Propagation */
-    float newQ = this->Q() + (q - this->Q()) / (this->N() + 1);
-    this->SetQ(newQ);
-    this->SetN(this->N() + 1);
+    this->UpdateResult(q);
 
     self_action.push_back(selected_action->encoding());
     for (uint i = 0; i < self_action.size(); i++)
