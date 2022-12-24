@@ -21,7 +21,7 @@ class Action
 {
 public:
     virtual ~Action();
-    virtual int encoding();
+    virtual int encoding() const;
 };
 
 class ActionList
@@ -31,7 +31,7 @@ public:
     ~ActionList();
 
     void Add(Action *action);
-    int GetSize();
+    int GetSize() const;
     Action *Pop(int index);
     Action *Get(int index) const;
 
@@ -43,11 +43,11 @@ class Game
 {
 public:
     virtual ~Game();
-    virtual Game *Clone() = 0;
-    virtual ActionList *GetLegalMoves() = 0;
+    virtual Game *Clone() const = 0;
+    virtual ActionList *GetLegalMoves() const = 0;
     virtual void DoAction(const Action *) = 0;
-    virtual Player GetPlayerThisTurn() = 0;
-    virtual ResultType GetResult() = 0;
-    virtual bool IsGameOver() = 0;
-    virtual void PrintState() = 0;
+    virtual Player GetPlayerThisTurn() const = 0;
+    virtual ResultType GetResult() const = 0;
+    virtual bool IsGameOver() const = 0;
+    virtual void PrintState() const = 0;
 };

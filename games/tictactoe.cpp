@@ -4,7 +4,7 @@ TicTacToe::TicTacToe() : board(), whos_turn(Player::PLAYER1) {}
 
 TicTacToe::~TicTacToe() {}
 
-TicTacToe::TicTacToe(TicTacToe *src)
+TicTacToe::TicTacToe(const TicTacToe *src)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -16,7 +16,7 @@ TicTacToe::TicTacToe(TicTacToe *src)
     whos_turn = src->whos_turn;
 }
 
-ActionList *TicTacToe::GetLegalMoves()
+ActionList *TicTacToe::GetLegalMoves() const
 {
     ActionList *output = new ActionList();
     for (int i = 0; i < 3; i++)
@@ -41,7 +41,7 @@ void TicTacToe::DoAction(const Action *action_abs)
     switch_turn();
 }
 
-TicTacToe *TicTacToe::Clone()
+TicTacToe *TicTacToe::Clone() const
 {
     return new TicTacToe(this);
 }
@@ -50,7 +50,7 @@ void TicTacToe::switch_turn()
     whos_turn = whos_turn == Player::PLAYER1 ? Player::PLAYER2 : Player::PLAYER1;
 }
 
-void TicTacToe::PrintState()
+void TicTacToe::PrintState() const
 {
 
     std::cout << "Current state" << std::endl;
@@ -85,13 +85,13 @@ void TicTacToe::PrintState()
     std::cout << std::endl;
 }
 
-bool TicTacToe::IsGameOver()
+bool TicTacToe::IsGameOver() const
 {
     ResultType result = GetResult();
     return result != ResultType::NOT_FINISH_YET;
 }
 
-ResultType TicTacToe::GetResult()
+ResultType TicTacToe::GetResult() const
 {
     for (int i = 0; i < 3; i++)
     {
@@ -175,4 +175,4 @@ ResultType TicTacToe::GetResult()
     return ResultType::DRAW;
 }
 
-Player TicTacToe::GetPlayerThisTurn() { return whos_turn; }
+Player TicTacToe::GetPlayerThisTurn() const { return whos_turn; }

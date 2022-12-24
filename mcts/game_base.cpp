@@ -1,6 +1,6 @@
 #include "game_base.h"
 
-int Action::encoding()
+int Action::encoding() const
 {
     throw std::invalid_argument("virtual int YourGameAction::encoding() not implemented");
 }
@@ -37,7 +37,7 @@ Action *ActionList::Get(int index) const
     return actions_[index];
 }
 
-int ActionList::GetSize()
+int ActionList::GetSize() const
 {
     return actions_.size();
 }

@@ -11,7 +11,7 @@ public:
     TicTacToeAction(int x, int y) : x_(x), y_(y) {}
     TicTacToeAction(const TicTacToeAction &) = default;
 
-    int encoding() { return (x_ << 16) + y_; }
+    int encoding() const { return (x_ << 16) + y_; }
     inline int x() { return x_; }
     inline int y() { return y_; }
 
@@ -24,16 +24,16 @@ class TicTacToe : public Game
 {
 public:
     TicTacToe();
-    TicTacToe(TicTacToe *);
+    TicTacToe(const TicTacToe *);
     ~TicTacToe();
 
-    TicTacToe *Clone();
-    ActionList *GetLegalMoves();
+    TicTacToe *Clone() const;
+    ActionList *GetLegalMoves() const;
     void DoAction(const Action *);
-    Player GetPlayerThisTurn();
-    ResultType GetResult();
-    bool IsGameOver();
-    void PrintState();
+    Player GetPlayerThisTurn() const;
+    ResultType GetResult() const;
+    bool IsGameOver() const;
+    void PrintState() const;
 
 private:
     enum class PieceType

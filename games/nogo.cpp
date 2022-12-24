@@ -8,7 +8,7 @@ NoGo::NoGo(int size_x, int size_y)
     flat_board_ = new PieceType[size_x * size_y]();
 }
 
-NoGo::NoGo(NoGo *src)
+NoGo::NoGo(const NoGo *src)
     : size_x_(src->size_x_),
       size_y_(src->size_y_),
       whos_turn_(src->whos_turn_)
@@ -21,11 +21,11 @@ NoGo::NoGo(NoGo *src)
 }
 
 NoGo::~NoGo() { delete flat_board_; }
-NoGo *NoGo::Clone() { return new NoGo(this); }
+NoGo *NoGo::Clone() const { return new NoGo(this); }
 
-Player NoGo::GetPlayerThisTurn() { return whos_turn_; }
+Player NoGo::GetPlayerThisTurn() const { return whos_turn_; }
 
-ActionList *NoGo::GetLegalMoves()
+ActionList *NoGo::GetLegalMoves() const
 {
     ActionList *output = new ActionList();
     for (int i = 0; i < size_x_; i++)
@@ -58,7 +58,7 @@ NoGo::PieceType NoGo::GetPlayersPiece(Player p)
     return p == Player::PLAYER1 ? PieceType::PLAYER1 : PieceType::PLAYER2;
 }
 
-ResultType NoGo::GetResult()
+ResultType NoGo::GetResult() const
 {
     for (int i = 0; i < size_x_; i++)
     {
@@ -74,7 +74,7 @@ ResultType NoGo::GetResult()
     return whos_turn_ == Player::PLAYER1 ? ResultType::PLAYER2_WIN : ResultType::PLAYER1_WIN;
 }
 
-bool NoGo::IsGameOver()
+bool NoGo::IsGameOver() const
 {
     ResultType result = GetResult();
     return result != ResultType::NOT_FINISH_YET;
@@ -85,7 +85,7 @@ void NoGo::switch_turn()
     whos_turn_ = whos_turn_ == Player::PLAYER1 ? Player::PLAYER2 : Player::PLAYER1;
 }
 
-void NoGo::PrintState()
+void NoGo::PrintState() const
 {
     std::cout << "Current state" << std::endl;
     for (int i = 0; i < size_x_; i++)
@@ -119,7 +119,7 @@ void NoGo::PrintState()
     std::cout << std::endl;
 }
 
-bool NoGo::IsMovable(NoGo &state, const Action *action_abs)
+bool NoGo::IsMovable(const NoGo &state, const Action *action_abs)
 {
     NoGoAction *action = (NoGoAction *)action_abs;
     int x = action->x();

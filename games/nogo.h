@@ -13,7 +13,7 @@ class NoGoAction : public Action
 public:
     NoGoAction(int x, int y) : x_(x), y_(y) {}
     NoGoAction(const NoGoAction &) = default;
-    int encoding() { return (x_ << 16) + y_; }
+    int encoding() const { return (x_ << 16) + y_; }
 
     inline int x() { return x_; }
     inline int y() { return y_; }
@@ -27,19 +27,19 @@ class NoGo : public Game
 {
 public:
     NoGo(int size_x, int size_y);
-    NoGo(NoGo *src);
+    NoGo(const NoGo *src);
     ~NoGo();
 
-    NoGo *Clone();
-    ActionList *GetLegalMoves();
+    NoGo *Clone() const;
+    ActionList *GetLegalMoves() const;
     void DoAction(const Action *);
-    Player GetPlayerThisTurn();
-    ResultType GetResult();
-    bool IsGameOver();
-    void PrintState();
+    Player GetPlayerThisTurn() const;
+    ResultType GetResult() const;
+    bool IsGameOver() const;
+    void PrintState() const;
 
     ActionList *GetActionSpace();
-    static bool IsMovable(NoGo &state, const Action *action);
+    static bool IsMovable(const NoGo &state, const Action *action);
 
 private:
     enum class PieceType
