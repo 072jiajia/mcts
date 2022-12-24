@@ -80,9 +80,5 @@ int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
         }
     }
 
-    MCTSMutexNode *selected_node = ((MCTSMutexNode *)(children->at(best_move)));
-    selected_node->Lock();
-    selected_node->SetVirtualN(selected_node->GetVirtualN() + 1);
-    selected_node->Release();
     return best_move;
 }

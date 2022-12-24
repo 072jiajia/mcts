@@ -206,14 +206,18 @@ float MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strate
     this->Lock();
     if (!this->IsExpanded())
         this->Expansion(state);
-    this->Release();
 
     /* Recursively select the child nodes */
-    this->Lock();
     int action_index = selection_strategy->Select(this);
-    this->Release();
     state->DoAction(actions_->Get(action_index));
     MCTSMutexNode *child = (MCTSMutexNode *)(this->GetChildren()->at(action_index));
+
+    child->Lock();
+    child->SetVirtualN(child->GetVirtualN() + 1);
+    child->Release();
+
+    this->Release();
+
     float q = child->SearchOnce(state, selection_strategy, simulation_strategy);
 
     /* Back Propagation */
