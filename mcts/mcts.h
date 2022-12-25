@@ -8,9 +8,9 @@
 #include "node.h"
 #include "tree.h"
 #include "utils.h"
-#include "simulation.h"
-#include "selection.h"
-#include "timecontrol.h"
+#include "strategies/simulation.h"
+#include "strategies/selection.h"
+#include "strategies/timecontrol.h"
 
 enum class Algorithm
 {

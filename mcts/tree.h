@@ -9,9 +9,9 @@
 
 #include "utils.h"
 #include "node.h"
-#include "selection.h"
-#include "simulation.h"
-#include "timecontrol.h"
+#include "strategies/simulation.h"
+#include "strategies/selection.h"
+#include "strategies/timecontrol.h"
 
 class MCTSTree_
 {
