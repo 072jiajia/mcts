@@ -18,9 +18,9 @@ class MCTSNode_
 public:
     virtual ~MCTSNode_(){};
     virtual float Q() = 0;
-    virtual float N() = 0;
+    virtual int N() = 0;
     virtual void SetQ(float) = 0;
-    virtual void SetN(float) = 0;
+    virtual void SetN(int) = 0;
     virtual void UpdateResult(float) = 0;
     virtual bool IsExpanded() = 0;
     virtual void SetExpanded() = 0;
@@ -34,9 +34,9 @@ public:
     MCTSNodeImpl_();
     virtual ~MCTSNodeImpl_();
     float Q();
-    float N();
+    int N();
     void SetQ(float);
-    void SetN(float);
+    void SetN(int);
     void UpdateResult(float);
     bool IsExpanded();
     void SetExpanded();
@@ -96,9 +96,9 @@ public:
     void Lock();
     void Release();
 
-    float GetVirtualN();
+    int GetVirtualN();
 
-    void SetVirtualN(float virtual_N);
+    void SetVirtualN(int virtual_N);
 
 private:
     ActionList *actions_;

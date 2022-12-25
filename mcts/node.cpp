@@ -11,9 +11,9 @@ MCTSNodeImpl_::~MCTSNodeImpl_()
 }
 
 float MCTSNodeImpl_::Q() { return Q_; }
-float MCTSNodeImpl_::N() { return N_; }
+int MCTSNodeImpl_::N() { return N_; }
 void MCTSNodeImpl_::SetQ(float Q) { Q_ = Q; }
-void MCTSNodeImpl_::SetN(float N) { N_ = N; }
+void MCTSNodeImpl_::SetN(int N) { N_ = N; }
 bool MCTSNodeImpl_::IsExpanded() { return expanded_; }
 void MCTSNodeImpl_::SetExpanded() { expanded_ = true; }
 void MCTSNodeImpl_::SetNotExpanded() { expanded_ = false; }
@@ -162,12 +162,12 @@ void MCTSMutexNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-float MCTSMutexNode::GetVirtualN()
+int MCTSMutexNode::GetVirtualN()
 {
     return virtual_N_;
 }
 
-void MCTSMutexNode::SetVirtualN(float virtual_N)
+void MCTSMutexNode::SetVirtualN(int virtual_N)
 {
     virtual_N_ = virtual_N;
 }
