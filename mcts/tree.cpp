@@ -95,118 +95,6 @@ int MCTSTreeCS::MakeDecision()
     return best_move;
 }
 
-RootParallel::RootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
-{
-    ActionList *action_list = state->GetLegalMoves();
-    action_size_ = action_list->GetSize();
-
-    shm_id_ = shmget(0, sizeof(int) * num_processes * action_size_, IPC_CREAT | 0600);
-    if (shm_id_ == -1)
-    {
-        perror("shmget: shmget failed");
-        exit(1);
-    }
-
-    shm_ = static_cast<int *>(shmat(shm_id_, NULL, 0));
-    if (shm_ == (int *)-1)
-    {
-        perror("shmat: attach error");
-        exit(1);
-    }
-}
-
-RootParallel::~RootParallel()
-{
-    shmctl(shm_id_, IPC_RMID, NULL);
-    delete tree_;
-}
-
-float RootParallel::GetTotalSimulationCount()
-{
-    int total_counts = 0;
-    for (int i = 0; i < num_processes_ * action_size_; i++)
-    {
-        total_counts += shm_[i];
-    }
-    return total_counts;
-}
-
-void RootParallel::Search(SelectionStrategy *selection_strategy,
-                          SimulationStrategy *simulation_strategy,
-                          TimeControlStrategy *time_controller)
-{
-    for (int process_id = 0; process_id < num_processes_; process_id++)
-    {
-        pid_t pid;
-        pid = fork();
-        if (pid < 0)
-        {
-            fprintf(stderr, "Fork Failed");
-            exit(-1);
-        }
-        else if (pid == 0)
-        {
-            // shm_[threadid] = getpid();
-            srand(getpid());
-            tree_->Search(selection_strategy, simulation_strategy, time_controller);
-
-            std::vector<int> freqs = tree_->GetFrequencies();
-            for (int i = 0; i < freqs.size(); i++)
-            {
-                shm_[process_id * action_size_ + i] = freqs[i];
-            }
-
-            exit(EXIT_SUCCESS);
-        }
-    }
-
-    for (int i = 0; i < num_processes_; i++)
-    {
-        wait(NULL);
-    }
-
-    for (int j = 0; j < num_processes_; j++)
-    {
-        for (int i = 0; i < action_size_; i++)
-        {
-            std::cout << shm_[j * action_size_ + i] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-
-int RootParallel::MakeDecision()
-{
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
-}
-
-std::vector<int> RootParallel::GetFrequencies()
-{
-    std::vector<int> output(action_size_, 0);
-    for (int i = 0; i < action_size_; i++)
-    {
-        int sum = 0;
-        for (int j = 0; j < num_processes_; j++)
-        {
-            sum += shm_[j * action_size_ + i];
-        }
-        output[i] = sum;
-    }
-    return output;
-}
-
 std::vector<int> MCTSTree::GetFrequencies()
 {
     std::vector<int> output;
@@ -368,6 +256,122 @@ std::vector<int> RaveTree::GetFrequencies()
     {
         MCTSNode_ *node = children->at(i);
         output.push_back(node->N());
+    }
+    return output;
+}
+
+RootParallel::RootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
+{
+    ActionList *action_list = state->GetLegalMoves();
+    action_size_ = action_list->GetSize();
+
+    shm_id_ = shmget(0, sizeof(int) * num_processes * action_size_, IPC_CREAT | 0600);
+    if (shm_id_ == -1)
+    {
+        perror("shmget: shmget failed");
+        exit(1);
+    }
+
+    shm_ = static_cast<int *>(shmat(shm_id_, NULL, 0));
+    if (shm_ == (int *)-1)
+    {
+        perror("shmat: attach error");
+        exit(1);
+    }
+}
+
+RootParallel::~RootParallel()
+{
+    if (shmdt(shm_) == -1)
+    {
+        fprintf(stderr, "shmdt failed\n");
+        exit(1);
+    }
+    shmctl(shm_id_, IPC_RMID, NULL);
+    delete tree_;
+}
+
+float RootParallel::GetTotalSimulationCount()
+{
+    int total_counts = 0;
+    for (int i = 0; i < num_processes_ * action_size_; i++)
+    {
+        total_counts += shm_[i];
+    }
+    return total_counts;
+}
+
+void RootParallel::Search(SelectionStrategy *selection_strategy,
+                          SimulationStrategy *simulation_strategy,
+                          TimeControlStrategy *time_controller)
+{
+    for (int process_id = 0; process_id < num_processes_; process_id++)
+    {
+        pid_t pid;
+        pid = fork();
+        if (pid < 0)
+        {
+            fprintf(stderr, "Fork Failed");
+            exit(-1);
+        }
+        else if (pid == 0)
+        {
+            srand(getpid());
+            tree_->Search(selection_strategy, simulation_strategy, time_controller);
+
+            std::vector<int> freqs = tree_->GetFrequencies();
+            for (int i = 0; i < freqs.size(); i++)
+            {
+                shm_[process_id * action_size_ + i] = freqs[i];
+            }
+
+            exit(EXIT_SUCCESS);
+        }
+    }
+
+    for (int i = 0; i < num_processes_; i++)
+    {
+        wait(NULL);
+    }
+
+    for (int j = 0; j < num_processes_; j++)
+    {
+        for (int i = 0; i < action_size_; i++)
+        {
+            std::cout << shm_[j * action_size_ + i] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+int RootParallel::MakeDecision()
+{
+    std::vector<int> freq = GetFrequencies();
+    int best_move = -1;
+    int best_value = -1;
+    for (int i = 0; i < freq.size(); i++)
+    {
+        if (freq[i] > best_value)
+        {
+            best_value = freq[i];
+            best_move = i;
+        }
+    }
+    return best_move;
+}
+
+std::vector<int> RootParallel::GetFrequencies()
+{
+    std::vector<int> output(action_size_, 0);
+    for (int i = 0; i < action_size_; i++)
+    {
+        int sum = 0;
+        for (int j = 0; j < num_processes_; j++)
+        {
+            sum += shm_[j * action_size_ + i];
+        }
+        output[i] = sum;
     }
     return output;
 }

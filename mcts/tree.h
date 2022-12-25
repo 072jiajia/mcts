@@ -86,27 +86,6 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class RootParallel : public MCTSTree_
-{
-public:
-    RootParallel(Game *, MCTSTree_ *, int);
-    ~RootParallel();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *,
-                SimulationStrategy *,
-                TimeControlStrategy *);
-    int MakeDecision();
-    std::vector<int> GetFrequencies();
-
-private:
-    Game *state_;
-    int num_processes_;
-    MCTSTree_ *tree_;
-    int action_size_;
-    int shm_id_;
-    int *shm_;
-};
-
 class MCTSParallelTree : public MCTSTree_
 {
 public:
@@ -144,4 +123,24 @@ public:
 private:
     Game *state_;
     RaveNode *root_;
+};
+
+class RootParallel : public MCTSTree_
+{
+public:
+    RootParallel(Game *, MCTSTree_ *, int);
+    ~RootParallel();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
+    int MakeDecision();
+    std::vector<int> GetFrequencies();
+
+private:
+    int num_processes_;
+    MCTSTree_ *tree_;
+    int action_size_;
+    int shm_id_;
+    int *shm_;
 };
