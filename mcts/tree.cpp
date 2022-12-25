@@ -1,3 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
+#include <sys/time.h>
+
 #include "tree.h"
 
 MCTSTree::MCTSTree(Game *state) : state_(state->Clone())
@@ -122,21 +131,69 @@ void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
                            SimulationStrategy *simulation_strategy,
                            TimeControlStrategy *time_controller)
 {
-    for (int i = 0; i < num_threads_; i++)
+    ActionList *action_list = state_->GetLegalMoves();
+    shm_id_ = shmget(0, sizeof(int) * num_threads_ * action_list->GetSize(), IPC_CREAT | 0600);
+    if (shm_id_ == -1)
     {
-        MCTSThreadInput *data = new MCTSThreadInput(state_, roots_[i], time_controller,
-                                                    selection_strategy, simulation_strategy);
-        if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
+        perror("shmget: shmget failed");
+        exit(1);
+    }
+
+    shm_ = static_cast<int *>(shmat(shm_id_, NULL, 0));
+    if (shm_ == (int *)-1)
+    {
+        perror("shmat: attach error");
+        exit(1);
+    }
+
+    for (int threadid = 0; threadid < num_threads_; threadid++)
+    {
+        pid_t pid;
+        pid = fork();
+        if (pid < 0)
         {
-            perror("pthread_create() error");
-            exit(1);
+            fprintf(stderr, "Fork Failed");
+            exit(-1);
+        }
+        else if (pid == 0)
+        {
+            // shm_[threadid] = getpid();
+
+            while (!time_controller->Stop())
+            {
+                Game *b_clone = state_->Clone();
+                roots_[threadid]->SearchOnce(b_clone, selection_strategy, simulation_strategy);
+                delete b_clone;
+            }
+
+            std::vector<MCTSNode_ *> *children = roots_[threadid]->GetChildren();
+            for (int i = 0; i < children->size(); i++)
+            {
+                shm_[threadid * children->size() + i] = children->at(i)->N();
+            }
+
+            exit(EXIT_SUCCESS);
         }
     }
 
     for (int i = 0; i < num_threads_; i++)
     {
-        pthread_join(threads_[i], NULL);
+        wait(NULL);
     }
+
+    for (int j = 0; j < num_threads_; j++)
+    {
+        for (int i = 0; i < action_list->GetSize(); i++)
+        {
+            std::cout << shm_[j * action_list->GetSize() + i] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+    shmctl(shm_id_, IPC_RMID, NULL);
+
+    delete action_list;
 }
 
 int MCTSMultiTree::MakeDecision()

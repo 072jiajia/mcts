@@ -105,6 +105,8 @@ private:
     int num_threads_;
     MCTSNode **roots_;
     pthread_t *threads_;
+    int shm_id_;
+    int *shm_;
 };
 
 class MCTSParallelTree : public MCTSTree_

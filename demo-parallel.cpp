@@ -6,13 +6,14 @@
 
 int main()
 {
-    // AgentOptions p1_options = AgentOptions(Algorithm::MCTS_ROOT_PARALLEL)
-    //                               .selection_strategy(new UCBHighest(1.4))
-    //                               .num_threads(16);
+    AgentOptions p1_options = AgentOptions(Algorithm::MCTS_ROOT_PARALLEL)
+                                  .selection_strategy(new UCBHighest(1.4))
+                                  .time_limit_ms(1500.)
+                                  .num_threads(16);
 
-    AgentOptions p1_options = AgentOptions(Algorithm::MCTS_TREE_PARALLEL)
-                                  .selection_strategy(new UCBHighestVirtualLoss(1.4))
-                                  .num_threads(8);
+    // AgentOptions p1_options = AgentOptions(Algorithm::MCTS_TREE_PARALLEL)
+    //                               .selection_strategy(new UCBHighestVirtualLoss(1.4))
+    //                               .num_threads(8);
 
     AgentOptions p2_options = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
 
