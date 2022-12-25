@@ -95,44 +95,12 @@ int MCTSTreeCS::MakeDecision()
     return best_move;
 }
 
-MCTSMultiTree::MCTSMultiTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
+RootParallel::RootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
 {
-    roots_ = new MCTSNode *[num_threads];
-    threads_ = new pthread_t[num_threads];
+    ActionList *action_list = state->GetLegalMoves();
+    action_size_ = action_list->GetSize();
 
-    for (int i = 0; i < num_threads; i++)
-    {
-        roots_[i] = new MCTSNode();
-    }
-}
-
-MCTSMultiTree::~MCTSMultiTree()
-{
-    for (int i = 0; i < num_threads_; i++)
-    {
-        delete roots_[i];
-    }
-    delete roots_;
-    delete threads_;
-}
-
-float MCTSMultiTree::GetTotalSimulationCount()
-{
-    int total_counts = 0;
-    for (int i = 0; i < num_threads_; i++)
-    {
-        MCTSNode *root = roots_[i];
-        total_counts += root->N();
-    }
-    return total_counts;
-}
-
-void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
-                           SimulationStrategy *simulation_strategy,
-                           TimeControlStrategy *time_controller)
-{
-    ActionList *action_list = state_->GetLegalMoves();
-    shm_id_ = shmget(0, sizeof(int) * num_threads_ * action_list->GetSize(), IPC_CREAT | 0600);
+    shm_id_ = shmget(0, sizeof(int) * num_processes * action_size_, IPC_CREAT | 0600);
     if (shm_id_ == -1)
     {
         perror("shmget: shmget failed");
@@ -145,8 +113,29 @@ void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
         perror("shmat: attach error");
         exit(1);
     }
+}
 
-    for (int threadid = 0; threadid < num_threads_; threadid++)
+RootParallel::~RootParallel()
+{
+    shmctl(shm_id_, IPC_RMID, NULL);
+    delete tree_;
+}
+
+float RootParallel::GetTotalSimulationCount()
+{
+    int total_counts = 0;
+    for (int i = 0; i < num_processes_ * action_size_; i++)
+    {
+        total_counts += shm_[i];
+    }
+    return total_counts;
+}
+
+void RootParallel::Search(SelectionStrategy *selection_strategy,
+                          SimulationStrategy *simulation_strategy,
+                          TimeControlStrategy *time_controller)
+{
+    for (int process_id = 0; process_id < num_processes_; process_id++)
     {
         pid_t pid;
         pid = fork();
@@ -158,45 +147,36 @@ void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
         else if (pid == 0)
         {
             // shm_[threadid] = getpid();
+            srand(getpid());
+            tree_->Search(selection_strategy, simulation_strategy, time_controller);
 
-            while (!time_controller->Stop())
+            std::vector<int> freqs = tree_->GetFrequencies();
+            for (int i = 0; i < freqs.size(); i++)
             {
-                Game *b_clone = state_->Clone();
-                roots_[threadid]->SearchOnce(b_clone, selection_strategy, simulation_strategy);
-                delete b_clone;
-            }
-
-            std::vector<MCTSNode_ *> *children = roots_[threadid]->GetChildren();
-            for (int i = 0; i < children->size(); i++)
-            {
-                shm_[threadid * children->size() + i] = children->at(i)->N();
+                shm_[process_id * action_size_ + i] = freqs[i];
             }
 
             exit(EXIT_SUCCESS);
         }
     }
 
-    for (int i = 0; i < num_threads_; i++)
+    for (int i = 0; i < num_processes_; i++)
     {
         wait(NULL);
     }
 
-    for (int j = 0; j < num_threads_; j++)
+    for (int j = 0; j < num_processes_; j++)
     {
-        for (int i = 0; i < action_list->GetSize(); i++)
+        for (int i = 0; i < action_size_; i++)
         {
-            std::cout << shm_[j * action_list->GetSize() + i] << " ";
+            std::cout << shm_[j * action_size_ + i] << " ";
         }
         std::cout << std::endl;
     }
     std::cout << std::endl;
-
-    shmctl(shm_id_, IPC_RMID, NULL);
-
-    delete action_list;
 }
 
-int MCTSMultiTree::MakeDecision()
+int RootParallel::MakeDecision()
 {
     std::vector<int> freq = GetFrequencies();
     int best_move = -1;
@@ -212,23 +192,19 @@ int MCTSMultiTree::MakeDecision()
     return best_move;
 }
 
-void *MCTSMultiTree::LaunchSearchThread(void *args_void)
+std::vector<int> RootParallel::GetFrequencies()
 {
-    MCTSThreadInput *args = (MCTSThreadInput *)args_void;
-    MCTSNode *root = (MCTSNode *)(args->root());
-    Game *b = args->b();
-    TimeControlStrategy *time_controller = args->time_controller();
-    SelectionStrategy *selection_strategy = args->selection_strategy();
-    SimulationStrategy *simulation_strategy = args->simulation_strategy();
-
-    while (!time_controller->Stop())
+    std::vector<int> output(action_size_, 0);
+    for (int i = 0; i < action_size_; i++)
     {
-        Game *b_clone = b->Clone();
-        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
-        delete b_clone;
+        int sum = 0;
+        for (int j = 0; j < num_processes_; j++)
+        {
+            sum += shm_[j * action_size_ + i];
+        }
+        output[i] = sum;
     }
-    delete args;
-    pthread_exit(NULL);
+    return output;
 }
 
 std::vector<int> MCTSTree::GetFrequencies()
@@ -252,29 +228,6 @@ std::vector<int> MCTSTreeCS::GetFrequencies()
         MCTSNode_ *node = children->at(i);
         output.push_back(node->N());
     }
-    return output;
-}
-
-std::vector<int> MCTSMultiTree::GetFrequencies()
-{
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-
-    for (int i = 1; i < num_threads_; i++)
-    {
-        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
-        for (int j = 0; j < children->size(); j++)
-        {
-            MCTSNode_ *node = children->at(j);
-            output[j] += node->N();
-        }
-    }
-
     return output;
 }
 

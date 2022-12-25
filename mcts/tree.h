@@ -86,11 +86,11 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class MCTSMultiTree : public MCTSTree_
+class RootParallel : public MCTSTree_
 {
 public:
-    MCTSMultiTree(Game *, int);
-    ~MCTSMultiTree();
+    RootParallel(Game *, MCTSTree_ *, int);
+    ~RootParallel();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
@@ -99,12 +99,10 @@ public:
     std::vector<int> GetFrequencies();
 
 private:
-    static void *LaunchSearchThread(void *);
-
     Game *state_;
-    int num_threads_;
-    MCTSNode **roots_;
-    pthread_t *threads_;
+    int num_processes_;
+    MCTSTree_ *tree_;
+    int action_size_;
     int shm_id_;
     int *shm_;
 };

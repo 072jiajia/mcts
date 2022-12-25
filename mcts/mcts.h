@@ -34,6 +34,7 @@ struct AgentOptions
 	OPTION_POINTER_ARG(SelectionStrategy *, selection_strategy) = nullptr;
 	OPTION_POINTER_ARG(SimulationStrategy *, simulation_strategy) = nullptr;
 	OPTION_ARG(int, num_threads) = 1;
+	OPTION_ARG(int, num_processes) = 1;
 };
 
 class Agent
@@ -52,4 +53,5 @@ private:
 	SelectionStrategy *selection_strategy_;
 	SimulationStrategy *simulation_strategy_;
 	int num_threads_;
+	int num_processes_;
 };

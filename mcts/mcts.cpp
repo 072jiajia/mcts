@@ -6,7 +6,8 @@ Agent::Agent(AgentOptions &options)
 	  min_iter_(options.min_iter()),
 	  selection_strategy_(options.selection_strategy()),
 	  simulation_strategy_(options.simulation_strategy()),
-	  num_threads_(options.num_threads())
+	  num_threads_(options.num_threads()),
+	  num_processes_(options.num_processes())
 {
 	if (!selection_strategy_)
 		selection_strategy_ = new UCBHighest();
@@ -38,10 +39,6 @@ Action *Agent::SearchAction(Game *b)
 	{
 		mcts_root = new MCTSTree(b);
 	}
-	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
-	{
-		mcts_root = new MCTSMultiTree(b, num_threads_);
-	}
 	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
 	{
 		mcts_root = new MCTSParallelTree(b, num_threads_);
@@ -49,6 +46,11 @@ Action *Agent::SearchAction(Game *b)
 	else
 	{
 		throw std::invalid_argument("Unknown Algorithm");
+	}
+
+	if (num_processes_ > 1)
+	{
+		mcts_root = new RootParallel(b, mcts_root, num_processes_);
 	}
 
 	mcts_root->Search(selection_strategy_, simulation_strategy_, time_controller);
