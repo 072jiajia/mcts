@@ -37,20 +37,9 @@ void MCTSTree::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSTree::MakeDecision()
+int MCTSTree::MakeDecision(DecisionStrategy *decision_strategy)
 {
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
+    return decision_strategy->Choose(this);
 }
 
 MCTSTreeCS::MCTSTreeCS(Game *state) : state_(state->Clone())
@@ -79,20 +68,9 @@ void MCTSTreeCS::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSTreeCS::MakeDecision()
+int MCTSTreeCS::MakeDecision(DecisionStrategy *decision_strategy)
 {
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
+    return decision_strategy->Choose(this);
 }
 
 std::vector<int> MCTSTree::GetFrequencies()
@@ -157,20 +135,9 @@ void MCTSParallelTree::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSParallelTree::MakeDecision()
+int MCTSParallelTree::MakeDecision(DecisionStrategy *decision_strategy)
 {
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
+    return decision_strategy->Choose(this);
 }
 
 void *MCTSParallelTree::LaunchSearchThread(void *args_void)
@@ -232,20 +199,9 @@ void RaveTree::Search(SelectionStrategy *selection_strategy, SimulationStrategy 
     }
 }
 
-int RaveTree::MakeDecision()
+int RaveTree::MakeDecision(DecisionStrategy *decision_strategy)
 {
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
+    return decision_strategy->Choose(this);
 }
 
 std::vector<int> RaveTree::GetFrequencies()
@@ -345,20 +301,9 @@ void RootParallel::Search(SelectionStrategy *selection_strategy,
     std::cout << std::endl;
 }
 
-int RootParallel::MakeDecision()
+int RootParallel::MakeDecision(DecisionStrategy *decision_strategy)
 {
-    std::vector<int> freq = GetFrequencies();
-    int best_move = -1;
-    int best_value = -1;
-    for (int i = 0; i < freq.size(); i++)
-    {
-        if (freq[i] > best_value)
-        {
-            best_value = freq[i];
-            best_move = i;
-        }
-    }
-    return best_move;
+    return decision_strategy->Choose(this);
 }
 
 std::vector<int> RootParallel::GetFrequencies()

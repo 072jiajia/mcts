@@ -11,6 +11,7 @@
 #include "strategies/simulation.h"
 #include "strategies/selection.h"
 #include "strategies/timecontrol.h"
+#include "strategies/decision.h"
 
 enum class Algorithm
 {
@@ -33,6 +34,7 @@ struct AgentOptions
 	OPTION_ARG(int, min_iter) = 1000;
 	OPTION_POINTER_ARG(SelectionStrategy *, selection_strategy) = nullptr;
 	OPTION_POINTER_ARG(SimulationStrategy *, simulation_strategy) = nullptr;
+	OPTION_POINTER_ARG(DecisionStrategy *, decision_strategy) = nullptr;
 	OPTION_ARG(int, num_threads) = 1;
 	OPTION_ARG(int, num_processes) = 1;
 };
@@ -52,6 +54,7 @@ private:
 	Timer timer_;
 	SelectionStrategy *selection_strategy_;
 	SimulationStrategy *simulation_strategy_;
+	DecisionStrategy *decision_strategy_;
 	int num_threads_;
 	int num_processes_;
 };

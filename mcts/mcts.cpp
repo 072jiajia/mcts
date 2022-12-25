@@ -6,6 +6,7 @@ Agent::Agent(AgentOptions &options)
 	  min_iter_(options.min_iter()),
 	  selection_strategy_(options.selection_strategy()),
 	  simulation_strategy_(options.simulation_strategy()),
+	  decision_strategy_(options.decision_strategy()),
 	  num_threads_(options.num_threads()),
 	  num_processes_(options.num_processes())
 {
@@ -14,6 +15,9 @@ Agent::Agent(AgentOptions &options)
 
 	if (!simulation_strategy_)
 		simulation_strategy_ = new SimulationDefaultStrategy();
+
+	if (!decision_strategy_)
+		decision_strategy_ = new MostFrequency();
 }
 
 Agent::~Agent() {}
@@ -54,7 +58,7 @@ Action *Agent::SearchAction(Game *b)
 	}
 
 	mcts_root->Search(selection_strategy_, simulation_strategy_, time_controller);
-	int best_move = mcts_root->MakeDecision();
+	int best_move = mcts_root->MakeDecision(decision_strategy_);
 	std::cout << "Total Search Times: " << mcts_root->GetTotalSimulationCount() << std::endl;
 	delete mcts_root;
 

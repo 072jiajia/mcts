@@ -12,6 +12,7 @@
 #include "strategies/simulation.h"
 #include "strategies/selection.h"
 #include "strategies/timecontrol.h"
+#include "strategies/decision.h"
 
 class MCTSTree_
 {
@@ -19,7 +20,7 @@ public:
     virtual ~MCTSTree_(){};
     virtual float GetTotalSimulationCount() = 0;
     virtual void Search(SelectionStrategy *, SimulationStrategy *, TimeControlStrategy *) = 0;
-    virtual int MakeDecision() = 0;
+    virtual int MakeDecision(DecisionStrategy *) = 0;
     virtual std::vector<int> GetFrequencies() = 0;
 };
 
@@ -32,7 +33,7 @@ public:
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
                 TimeControlStrategy *);
-    int MakeDecision();
+    int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
 
 private:
@@ -49,7 +50,7 @@ public:
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
                 TimeControlStrategy *);
-    int MakeDecision();
+    int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
 
 private:
@@ -95,7 +96,7 @@ public:
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
                 TimeControlStrategy *);
-    int MakeDecision();
+    int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
 
 private:
@@ -117,7 +118,7 @@ public:
                 SimulationStrategy *simulation_strategy,
                 TimeControlStrategy *time_controller);
 
-    int MakeDecision();
+    int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
 
 private:
@@ -134,7 +135,7 @@ public:
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
                 TimeControlStrategy *);
-    int MakeDecision();
+    int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
 
 private:
