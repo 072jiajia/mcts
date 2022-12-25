@@ -26,4 +26,9 @@ demo-parallel:
 clean-demo-parallel:
 	rm build/demo-parallel
 
+demo-othello:
+	mkdir -p build
+	g++ -O3 -pthread demo-othello.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-othello
 
+clean-demo-othello:
+	rm build/demo-othello

@@ -24,6 +24,13 @@ Some parallel implementation of MCTS can further enhance its performance.
 - [Leaf Parallel MCTS](https://dke.maastrichtuniversity.nl/m.winands/documents/multithreadedMCTS2.pdf)
 - [Tree Parallel MCTS](https://dke.maastrichtuniversity.nl/m.winands/documents/multithreadedMCTS2.pdf)
 
+## Supported Board Games
+
+- [Tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe)
+- [Othello (Reversi)](https://en.wikipedia.org/wiki/Reversi)
+- [NoGo](https://webdocs.cs.ualberta.ca/~mmueller/nogo/rules.html)
+- [Other Games](#How-To-Run-It-On-Your-Game)
+
 ## How To Run It On Your Game?
 
 Implement your game and finish the functions which will be used in Monte Carlo Tree Search
@@ -47,13 +54,13 @@ public:
     YourGame(YourGame *);
     ~YourGame();
 
-    YourGame *Clone();
-    ActionList* GetLegalMoves();
+    YourGame *Clone() const;
+    ActionList* GetLegalMoves() const;
     void DoAction(const Action *);
-    Player GetPlayerThisTurn();
-    ResultType GetResult();
-    bool IsGameOver();
-    void PrintState();
+    Player GetPlayerThisTurn() const;
+    ResultType GetResult() const;
+    bool IsGameOver() const;
+    void PrintState() const;
 
     /*
         Other members & functions of your implementations
