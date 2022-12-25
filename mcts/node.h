@@ -26,6 +26,9 @@ public:
     virtual void SetExpanded() = 0;
     virtual void SetNotExpanded() = 0;
     virtual std::vector<MCTSNode_ *> *GetChildren() = 0;
+    virtual std::vector<int> GetChildrenN() = 0;
+    virtual std::vector<float> GetChildrenQ() = 0;
+    virtual std::vector<std::pair<int, float>> GetChildrenQN() = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -42,6 +45,9 @@ public:
     void SetExpanded();
     void SetNotExpanded();
     std::vector<MCTSNode_ *> *GetChildren();
+    std::vector<int> GetChildrenN();
+    std::vector<float> GetChildrenQ();
+    std::vector<std::pair<int, float>> GetChildrenQN();
 
 protected:
     float EvaluateGameOverNode(Game *);

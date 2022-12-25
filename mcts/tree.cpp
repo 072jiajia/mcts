@@ -75,26 +75,12 @@ int MCTSTreeCS::MakeDecision(DecisionStrategy *decision_strategy)
 
 std::vector<int> MCTSTree::GetFrequencies()
 {
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-    return output;
+    return root_->GetChildrenN();
 }
 
 std::vector<int> MCTSTreeCS::GetFrequencies()
 {
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-    return output;
+    return root_->GetChildrenN();
 }
 
 MCTSParallelTree::MCTSParallelTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
@@ -161,14 +147,7 @@ void *MCTSParallelTree::LaunchSearchThread(void *args_void)
 
 std::vector<int> MCTSParallelTree::GetFrequencies()
 {
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-    return output;
+    return root_->GetChildrenN();
 }
 
 RaveTree::RaveTree(Game *state) : state_(state->Clone())
@@ -206,14 +185,7 @@ int RaveTree::MakeDecision(DecisionStrategy *decision_strategy)
 
 std::vector<int> RaveTree::GetFrequencies()
 {
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = root_->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
-    return output;
+    return root_->GetChildrenN();
 }
 
 RootParallel::RootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)

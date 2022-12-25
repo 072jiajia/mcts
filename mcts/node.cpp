@@ -19,6 +19,39 @@ void MCTSNodeImpl_::SetExpanded() { expanded_ = true; }
 void MCTSNodeImpl_::SetNotExpanded() { expanded_ = false; }
 std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() { return &children_; }
 
+std::vector<int> MCTSNodeImpl_::GetChildrenN()
+{
+    std::vector<int> output;
+    for (int i = 0; i < children_.size(); i++)
+    {
+        MCTSNode_ *node = children_.at(i);
+        output.push_back(node->N());
+    }
+    return output;
+}
+
+std::vector<float> MCTSNodeImpl_::GetChildrenQ()
+{
+    std::vector<float> output;
+    for (int i = 0; i < children_.size(); i++)
+    {
+        MCTSNode_ *node = children_.at(i);
+        output.push_back(node->Q());
+    }
+    return output;
+}
+
+std::vector<std::pair<int, float>> MCTSNodeImpl_::GetChildrenQN()
+{
+    std::vector<std::pair<int, float>> output;
+    for (int i = 0; i < children_.size(); i++)
+    {
+        MCTSNode_ *node = children_.at(i);
+        output.push_back({node->Q(), node->N()});
+    }
+    return output;
+}
+
 void MCTSNodeImpl_::UpdateResult(float q)
 {
     Q_ += (q - Q_) / ++N_;
