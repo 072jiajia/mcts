@@ -6,6 +6,7 @@
 #include <sys/shm.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#include <iomanip>
 
 #include "tree.h"
 
@@ -83,6 +84,16 @@ std::vector<int> MCTSTreeCS::GetFrequencies()
     return root_->GetChildrenN();
 }
 
+std::vector<float> MCTSTree::GetValues()
+{
+    return root_->GetChildrenQ();
+}
+
+std::vector<float> MCTSTreeCS::GetValues()
+{
+    return root_->GetChildrenQ();
+}
+
 MCTSParallelTree::MCTSParallelTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
 {
     root_ = new MCTSMutexNode();
@@ -150,6 +161,11 @@ std::vector<int> MCTSParallelTree::GetFrequencies()
     return root_->GetChildrenN();
 }
 
+std::vector<float> MCTSParallelTree::GetValues()
+{
+    return root_->GetChildrenQ();
+}
+
 RaveTree::RaveTree(Game *state) : state_(state->Clone())
 {
     root_ = new RaveNode();
@@ -188,6 +204,11 @@ std::vector<int> RaveTree::GetFrequencies()
     return root_->GetChildrenN();
 }
 
+std::vector<float> RaveTree::GetValues()
+{
+    return root_->GetChildrenQ();
+}
+
 RootParallel::RootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
 {
     ActionList *action_list = state->GetLegalMoves();
@@ -206,6 +227,20 @@ RootParallel::RootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tr
         perror("shmat: attach error");
         exit(1);
     }
+
+    shm_value_id_ = shmget(0, sizeof(float) * num_processes * action_size_, IPC_CREAT | 0600);
+    if (shm_value_id_ == -1)
+    {
+        perror("shmget: shmget failed");
+        exit(1);
+    }
+
+    shm_value_ = static_cast<float *>(shmat(shm_value_id_, NULL, 0));
+    if (shm_value_ == (float *)-1)
+    {
+        perror("shmat: attach error");
+        exit(1);
+    }
 }
 
 RootParallel::~RootParallel()
@@ -216,6 +251,13 @@ RootParallel::~RootParallel()
         exit(1);
     }
     shmctl(shm_id_, IPC_RMID, NULL);
+
+    if (shmdt(shm_value_) == -1)
+    {
+        fprintf(stderr, "shmdt failed\n");
+        exit(1);
+    }
+    shmctl(shm_value_id_, IPC_RMID, NULL);
     delete tree_;
 }
 
@@ -248,9 +290,11 @@ void RootParallel::Search(SelectionStrategy *selection_strategy,
             tree_->Search(selection_strategy, simulation_strategy, time_controller);
 
             std::vector<int> freqs = tree_->GetFrequencies();
+            std::vector<float> values = tree_->GetValues();
             for (int i = 0; i < freqs.size(); i++)
             {
                 shm_[process_id * action_size_ + i] = freqs[i];
+                shm_value_[process_id * action_size_ + i] = values[i];
             }
 
             exit(EXIT_SUCCESS);
@@ -287,6 +331,21 @@ std::vector<int> RootParallel::GetFrequencies()
         for (int j = 0; j < num_processes_; j++)
         {
             sum += shm_[j * action_size_ + i];
+        }
+        output[i] = sum;
+    }
+    return output;
+}
+
+std::vector<float> RootParallel::GetValues()
+{
+    std::vector<float> output(action_size_, 0);
+    for (int i = 0; i < action_size_; i++)
+    {
+        float sum = 0;
+        for (int j = 0; j < num_processes_; j++)
+        {
+            sum += shm_value_[j * action_size_ + i];
         }
         output[i] = sum;
     }

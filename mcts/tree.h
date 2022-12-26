@@ -22,6 +22,7 @@ public:
     virtual void Search(SelectionStrategy *, SimulationStrategy *, TimeControlStrategy *) = 0;
     virtual int MakeDecision(DecisionStrategy *) = 0;
     virtual std::vector<int> GetFrequencies() = 0;
+    virtual std::vector<float> GetValues() = 0;
 };
 
 class MCTSTree : public MCTSTree_
@@ -35,6 +36,7 @@ public:
                 TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
 
 private:
     Game *state_;
@@ -52,6 +54,7 @@ public:
                 TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
 
 private:
     Game *state_;
@@ -98,6 +101,7 @@ public:
                 TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
 
 private:
     static void *LaunchSearchThread(void *);
@@ -120,6 +124,7 @@ public:
 
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
 
 private:
     Game *state_;
@@ -137,6 +142,7 @@ public:
                 TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
 
 private:
     int num_processes_;
@@ -144,4 +150,6 @@ private:
     int action_size_;
     int shm_id_;
     int *shm_;
+    int shm_value_id_;
+    float *shm_value_;
 };

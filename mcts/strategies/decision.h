@@ -21,3 +21,10 @@ public:
     ~MostFrequency();
     int Choose(MCTSTree_ *) const;
 };
+
+class HighestValue : public DecisionStrategy
+{
+public:
+    ~HighestValue();
+    int Choose(MCTSTree_ *) const;
+};
