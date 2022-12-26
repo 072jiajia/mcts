@@ -43,6 +43,10 @@ Action *Agent::SearchAction(Game *b)
 	{
 		mcts_root = new MCTSTree(b);
 	}
+	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
+	{
+		mcts_root = new MCTSMultiTree(b, num_threads_);
+	}
 	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
 	{
 		mcts_root = new MCTSParallelTree(b, num_threads_);

@@ -94,6 +94,129 @@ std::vector<float> MCTSTreeCS::GetValues()
     return root_->GetChildrenQ();
 }
 
+MCTSMultiTree::MCTSMultiTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
+{
+    roots_ = new MCTSNode *[num_threads];
+    threads_ = new pthread_t[num_threads];
+
+    for (int i = 0; i < num_threads; i++)
+    {
+        roots_[i] = new MCTSNode();
+    }
+}
+
+MCTSMultiTree::~MCTSMultiTree()
+{
+    for (int i = 0; i < num_threads_; i++)
+    {
+        delete roots_[i];
+    }
+    delete roots_;
+    delete threads_;
+}
+
+float MCTSMultiTree::GetTotalSimulationCount()
+{
+    int total_counts = 0;
+    for (int i = 0; i < num_threads_; i++)
+    {
+        MCTSNode *root = roots_[i];
+        total_counts += root->N();
+    }
+    return total_counts;
+}
+
+void MCTSMultiTree::Search(SelectionStrategy *selection_strategy,
+                           SimulationStrategy *simulation_strategy,
+                           TimeControlStrategy *time_controller)
+{
+    for (int i = 0; i < num_threads_; i++)
+    {
+        MCTSThreadInput *data = new MCTSThreadInput(state_, roots_[i], time_controller,
+                                                    selection_strategy, simulation_strategy);
+        if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
+        {
+            perror("pthread_create() error");
+            exit(1);
+        }
+    }
+
+    for (int i = 0; i < num_threads_; i++)
+    {
+        pthread_join(threads_[i], NULL);
+    }
+}
+
+int MCTSMultiTree::MakeDecision(DecisionStrategy *decision_strategy)
+{
+    return decision_strategy->Choose(this);
+}
+
+void *MCTSMultiTree::LaunchSearchThread(void *args_void)
+{
+    MCTSThreadInput *args = (MCTSThreadInput *)args_void;
+    MCTSNode *root = (MCTSNode *)(args->root());
+    Game *b = args->b();
+    TimeControlStrategy *time_controller = args->time_controller();
+    SelectionStrategy *selection_strategy = args->selection_strategy();
+    SimulationStrategy *simulation_strategy = args->simulation_strategy();
+
+    while (!time_controller->Stop())
+    {
+        Game *b_clone = b->Clone();
+        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
+        delete b_clone;
+    }
+    delete args;
+    pthread_exit(NULL);
+}
+
+std::vector<int> MCTSMultiTree::GetFrequencies()
+{
+    std::vector<int> output;
+    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->N());
+    }
+
+    for (int i = 1; i < num_threads_; i++)
+    {
+        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
+        for (int j = 0; j < children->size(); j++)
+        {
+            MCTSNode_ *node = children->at(j);
+            output[j] += node->N();
+        }
+    }
+
+    return output;
+}
+
+std::vector<float> MCTSMultiTree::GetValues()
+{
+    std::vector<float> output;
+    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
+    for (int i = 0; i < children->size(); i++)
+    {
+        MCTSNode_ *node = children->at(i);
+        output.push_back(node->Q());
+    }
+
+    for (int i = 1; i < num_threads_; i++)
+    {
+        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
+        for (int j = 0; j < children->size(); j++)
+        {
+            MCTSNode_ *node = children->at(j);
+            output[j] += node->Q();
+        }
+    }
+
+    return output;
+}
+
 MCTSParallelTree::MCTSParallelTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
 {
     root_ = new MCTSMutexNode();

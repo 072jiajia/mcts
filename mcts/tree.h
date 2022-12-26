@@ -90,6 +90,28 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
+class MCTSMultiTree : public MCTSTree_
+{
+public:
+    MCTSMultiTree(Game *, int);
+    ~MCTSMultiTree();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
+    int MakeDecision(DecisionStrategy *);
+    std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
+
+private:
+    static void *LaunchSearchThread(void *);
+
+    Game *state_;
+    int num_threads_;
+    MCTSNode **roots_;
+    pthread_t *threads_;
+};
+
 class MCTSParallelTree : public MCTSTree_
 {
 public:

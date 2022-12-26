@@ -7,10 +7,11 @@
 int main()
 {
     /* Use MCTS with root parallel with 30 processes */
-    AgentOptions p1_options = AgentOptions(Algorithm::MCTS)
+    AgentOptions p1_options = AgentOptions(Algorithm::MCTS_ROOT_PARALLEL)
                                   .selection_strategy(new UCBHighest(1.4))
                                   .decision_strategy(new HighestValue())
-                                  .time_limit_ms(1500.)
+                                  .time_limit_ms(1000.)
+                                  .num_threads(4)
                                   .num_processes(30);
 
     /* Use MCTS with tree parallel with 4 threads */
