@@ -173,21 +173,14 @@ void *MCTSMultiTree::LaunchSearchThread(void *args_void)
 
 std::vector<int> MCTSMultiTree::GetFrequencies()
 {
-    std::vector<int> output;
-    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->N());
-    }
+    std::vector<int> output = roots_[0]->GetChildrenN();
 
     for (int i = 1; i < num_threads_; i++)
     {
-        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
-        for (int j = 0; j < children->size(); j++)
+        std::vector<int> temp = roots_[i]->GetChildrenN();
+        for (int j = 0; j < temp.size(); j++)
         {
-            MCTSNode_ *node = children->at(j);
-            output[j] += node->N();
+            output[j] += temp[j];
         }
     }
 
@@ -196,21 +189,14 @@ std::vector<int> MCTSMultiTree::GetFrequencies()
 
 std::vector<float> MCTSMultiTree::GetValues()
 {
-    std::vector<float> output;
-    const std::vector<MCTSNode_ *> *children = roots_[0]->GetChildren();
-    for (int i = 0; i < children->size(); i++)
-    {
-        MCTSNode_ *node = children->at(i);
-        output.push_back(node->Q());
-    }
+    std::vector<float> output = roots_[0]->GetChildrenQ();
 
     for (int i = 1; i < num_threads_; i++)
     {
-        const std::vector<MCTSNode_ *> *children = roots_[i]->GetChildren();
-        for (int j = 0; j < children->size(); j++)
+        std::vector<float> temp = roots_[i]->GetChildrenQ();
+        for (int j = 0; j < temp.size(); j++)
         {
-            MCTSNode_ *node = children->at(j);
-            output[j] += node->Q();
+            output[j] += temp[j];
         }
     }
 
