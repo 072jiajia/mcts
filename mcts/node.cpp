@@ -308,7 +308,7 @@ void RaveNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action)
+void RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
 {
     std::vector<RaveNode *> traversed_nodes;
     RaveNode *current_node = this;

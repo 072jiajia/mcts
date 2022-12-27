@@ -114,10 +114,8 @@ void RaveTree::Search(SelectionStrategy *selection_strategy, SimulationStrategy 
 {
     while (!time_controller->Stop())
     {
-        std::vector<int> self_action;
-        std::vector<int> oppo_action;
         Game *cloned_state = state_->Clone();
-        root_->SearchOnce(cloned_state, selection_strategy, simulation_strategy, self_action, oppo_action);
+        root_->SearchOnce(cloned_state, selection_strategy, simulation_strategy);
         delete cloned_state;
     }
 }

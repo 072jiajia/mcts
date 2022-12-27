@@ -125,7 +125,7 @@ public:
     ~RaveNode();
 
     void Expansion(Game *state);
-    void SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action);
+    void SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
 
     float rave_Q(int);
     float rave_N(int);
