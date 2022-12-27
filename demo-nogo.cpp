@@ -6,7 +6,9 @@
 
 int main()
 {
-    AgentOptions p1_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+    AgentOptions p1_args = AgentOptions(Algorithm::MCTS)
+                               .selection_strategy(new UCBHighest(1.4))
+                               .simulation_strategy(new QuickRandomRollout(NoGo::GetActionSpace(5, 5)));
     AgentOptions p2_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
     Agent p1(p1_args);
     Agent p2(p2_args);

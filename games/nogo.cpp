@@ -33,7 +33,7 @@ ActionList *NoGo::GetLegalMoves() const
         for (int j = 0; j < size_y_; j++)
         {
             Action *action = new NoGoAction(i, j);
-            if (IsMovable(*this, action))
+            if (this->IsMovable(action))
             {
                 output->Add(action);
             }
@@ -65,7 +65,7 @@ ResultType NoGo::GetResult() const
         for (int j = 0; j < size_y_; j++)
         {
             NoGoAction action(i, j);
-            if (IsMovable(*this, &action))
+            if (this->IsMovable(&action))
             {
                 return ResultType::NOT_FINISH_YET;
             }
@@ -119,8 +119,9 @@ void NoGo::PrintState() const
     std::cout << std::endl;
 }
 
-bool NoGo::IsMovable(const NoGo &state, const Action *action_abs)
+bool NoGo::IsMovable(const Action *action_abs) const
 {
+    const NoGo &state = *this;
     NoGoAction *action = (NoGoAction *)action_abs;
     int x = action->x();
     int y = action->y();
@@ -197,12 +198,12 @@ bool NoGo::DoesHaveLiberty(NoGo &state, int x, int y, PieceType who)
     return false;
 }
 
-ActionList *NoGo::GetActionSpace()
+ActionList *NoGo::GetActionSpace(int size_x, int size_y)
 {
     ActionList *output = new ActionList();
-    for (int i = 0; i < size_x_; i++)
+    for (int i = 0; i < size_x; i++)
     {
-        for (int j = 0; j < size_y_; j++)
+        for (int j = 0; j < size_y; j++)
         {
             output->Add(new NoGoAction(i, j));
         }

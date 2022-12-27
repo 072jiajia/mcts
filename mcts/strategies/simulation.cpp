@@ -72,41 +72,43 @@ float ParallelSimulationStrategy::SimulationOnce(Game *b) const
     return output / num_threads_;
 }
 
-// class QuickRandomRollout : public SimulationStrategy
-// {
-// public:
-//     QuickRandomRollout(std::vector<Action *> *action_space)
-//         : action_space_(action_space){};
+QuickRandomRollout::QuickRandomRollout(ActionList *action_list)
+    : action_list_(action_list), indices_(new std::vector<int>())
+{
+    for (int i = 0; i < action_list->GetSize(); i++)
+    {
+        indices_->push_back(i);
+    }
+};
 
-//     ~QuickRandomRollout() { delete action_space_; }
+QuickRandomRollout::~QuickRandomRollout()
+{
+    delete action_list_;
+    delete indices_;
+}
 
-// public:
-//     float SimulationOnce(Game *b) const override
-//     {
-//         Game *traverse_b = b->Clone();
-//         Player turn = traverse_b->GetPlayerThisTurn();
-//         while (!traverse_b->IsGameOver())
-//         {
-//             Action *move = GetRandomMove(b);
-//             traverse_b->DoAction(move);
-//         }
-//         return EvaluateResult(traverse_b, turn);
-//     }
+float QuickRandomRollout::SimulationOnce(Game *b) const
+{
+    Game *traverse_b = b->Clone();
+    Player turn = traverse_b->GetPlayerThisTurn();
+    while (!traverse_b->IsGameOver())
+    {
+        Action *move = GetRandomMove(b);
+        traverse_b->DoAction(move);
+    }
+    return EvaluateResult(traverse_b, turn);
+}
 
-// private:
-//     std::vector<Action *> *action_space_;
+Action *QuickRandomRollout::GetRandomMove(Game *b) const
+{
+    std::random_shuffle(indices_->begin(), indices_->end());
 
-//     inline Action *GetRandomMove(Game *b) const
-//     {
-//         std::random_shuffle(action_space_->begin(), action_space_->end());
+    for (int i = 0; i < indices_->size(); i++)
+    {
+        Action *action = action_list_->Get(indices_->at(i));
+        if (b->IsMovable(action))
+            return action;
+    }
 
-//         for (int i = 0; i < action_space_->size(); i++)
-//         {
-//             Action *action = action_space_->at(i);
-//             if (Game::IsMovable(*b, action))
-//                 return action;
-//         }
-
-//         throw std::invalid_argument("QuickRandomRollout::GetRandomMove, No valid actions are found");
-//     }
-// };
+    throw std::invalid_argument("QuickRandomRollout::GetRandomMove, No valid actions are found");
+}

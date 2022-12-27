@@ -50,4 +50,5 @@ public:
     virtual ResultType GetResult() const = 0;
     virtual bool IsGameOver() const = 0;
     virtual void PrintState() const = 0;
+    virtual bool IsMovable(const Action *) const { throw std::logic_error("bool Game::IsMovable not yet implemented"); }
 };

@@ -37,9 +37,9 @@ public:
     ResultType GetResult() const;
     bool IsGameOver() const;
     void PrintState() const;
+    bool IsMovable(const Action *) const;
 
-    ActionList *GetActionSpace();
-    static bool IsMovable(const NoGo &state, const Action *action);
+    static ActionList *GetActionSpace(int size_x, int size_y);
 
 private:
     enum class PieceType
