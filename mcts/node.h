@@ -51,9 +51,6 @@ public:
     std::vector<float> GetChildrenQ();
     std::vector<std::pair<int, float>> GetChildrenQN();
 
-protected:
-    float EvaluateGameOverNode(Game *);
-
 private:
     std::vector<MCTSNode_ *> children_;
     float Q_;

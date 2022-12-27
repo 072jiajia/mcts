@@ -58,14 +58,6 @@ void MCTSNodeImpl_::UpdateResult(float q)
     Q_ += (q - Q_) / ++N_;
 }
 
-float MCTSNodeImpl_::EvaluateGameOverNode(Game *state)
-{
-    if (this->N() == 0)
-        this->SetQ(EvaluateResult(state, state->GetPlayerThisTurn()));
-    this->SetN(this->N() + 1);
-    return -this->Q();
-}
-
 MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
 
 MCTSNodeCS::~MCTSNodeCS() { delete state_; }
