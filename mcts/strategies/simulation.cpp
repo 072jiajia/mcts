@@ -72,10 +72,10 @@ float ParallelSimulationStrategy::SimulationOnce(Game *b) const
     return output / num_threads_;
 }
 
-QuickRandomRollout::QuickRandomRollout(ActionList *action_list)
-    : action_list_(action_list), indices_(new std::vector<int>())
+QuickRandomRollout::QuickRandomRollout(ActionList *action_space)
+    : action_space_(action_space), indices_(new std::vector<int>())
 {
-    for (int i = 0; i < action_list->GetSize(); i++)
+    for (int i = 0; i < action_space->GetSize(); i++)
     {
         indices_->push_back(i);
     }
@@ -83,7 +83,7 @@ QuickRandomRollout::QuickRandomRollout(ActionList *action_list)
 
 QuickRandomRollout::~QuickRandomRollout()
 {
-    delete action_list_;
+    delete action_space_;
     delete indices_;
 }
 
@@ -105,7 +105,7 @@ Action *QuickRandomRollout::GetRandomMove(Game *b) const
 
     for (int i = 0; i < indices_->size(); i++)
     {
-        Action *action = action_list_->Get(indices_->at(i));
+        Action *action = action_space_->Get(indices_->at(i));
         if (b->IsMovable(action))
             return action;
     }

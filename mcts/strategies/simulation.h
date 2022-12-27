@@ -59,13 +59,13 @@ private:
 class QuickRandomRollout : public SimulationStrategy
 {
 public:
-    QuickRandomRollout(ActionList *action_list);
+    QuickRandomRollout(ActionList *action_space);
     ~QuickRandomRollout();
 
     float SimulationOnce(Game *b) const;
 
 private:
-    ActionList *action_list_;
+    ActionList *action_space_;
     std::vector<int> *indices_;
 
     inline Action *GetRandomMove(Game *b) const;
