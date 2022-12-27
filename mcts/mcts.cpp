@@ -45,11 +45,11 @@ Action *Agent::SearchAction(Game *b)
 	}
 	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
 	{
-		mcts_root = new MCTSMultiTree(b, num_threads_);
+		mcts_root = new ThreadRootParallel(b, num_threads_);
 	}
 	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
 	{
-		mcts_root = new MCTSParallelTree(b, num_threads_);
+		mcts_root = new VirtualLossTree(b, num_threads_);
 	}
 	else
 	{
@@ -58,7 +58,7 @@ Action *Agent::SearchAction(Game *b)
 
 	if (num_processes_ > 1)
 	{
-		mcts_root = new RootParallel(b, mcts_root, num_processes_);
+		mcts_root = new ProcessRootParallel(b, mcts_root, num_processes_);
 	}
 
 	mcts_root->Search(selection_strategy_, simulation_strategy_, time_controller);

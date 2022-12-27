@@ -90,11 +90,11 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class MCTSMultiTree : public MCTSTree_
+class ThreadRootParallel : public MCTSTree_
 {
 public:
-    MCTSMultiTree(Game *, int);
-    ~MCTSMultiTree();
+    ThreadRootParallel(Game *, int);
+    ~ThreadRootParallel();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
@@ -112,11 +112,11 @@ private:
     pthread_t *threads_;
 };
 
-class MCTSParallelTree : public MCTSTree_
+class VirtualLossTree : public MCTSTree_
 {
 public:
-    MCTSParallelTree(Game *, int);
-    ~MCTSParallelTree();
+    VirtualLossTree(Game *, int);
+    ~VirtualLossTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
@@ -153,11 +153,11 @@ private:
     RaveNode *root_;
 };
 
-class RootParallel : public MCTSTree_
+class ProcessRootParallel : public MCTSTree_
 {
 public:
-    RootParallel(Game *, MCTSTree_ *, int);
-    ~RootParallel();
+    ProcessRootParallel(Game *, MCTSTree_ *, int);
+    ~ProcessRootParallel();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
