@@ -67,7 +67,7 @@ public:
     MCTSNodeCS(Game *s);
     ~MCTSNodeCS();
     void Expansion();
-    float SearchOnce(SelectionStrategy *, SimulationStrategy *);
+    void SearchOnce(SelectionStrategy *, SimulationStrategy *);
 
 private:
     Game *state_;
@@ -84,7 +84,7 @@ public:
     MCTSNode();
     ~MCTSNode();
     void Expansion(Game *);
-    float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
+    void SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
 private:
     ActionList *actions_;
@@ -99,7 +99,7 @@ public:
 
     void Expansion(Game *);
 
-    float SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
+    void SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
 
     void Lock();
     void Release();
@@ -125,7 +125,7 @@ public:
     ~RaveNode();
 
     void Expansion(Game *state);
-    float SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action);
+    void SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy, std::vector<int> &self_action, std::vector<int> &oppo_action);
 
     float rave_Q(int);
     float rave_N(int);
