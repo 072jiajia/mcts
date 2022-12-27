@@ -33,7 +33,8 @@ void MCTSTree::Search(SelectionStrategy *selection_strategy,
     while (!time_controller->Stop())
     {
         Game *cloned_state = state_->Clone();
-        root_->SearchOnce(cloned_state, selection_strategy, simulation_strategy);
+        SearchStateParam temp{cloned_state, selection_strategy, simulation_strategy};
+        root_->SearchOnce(&temp);
         delete cloned_state;
     }
 }
@@ -65,7 +66,8 @@ void MCTSTreeCS::Search(SelectionStrategy *selection_strategy,
 {
     while (!time_controller->Stop())
     {
-        root_->SearchOnce(selection_strategy, simulation_strategy);
+        SearchParam temp{selection_strategy, simulation_strategy};
+        root_->SearchOnce(&temp);
     }
 }
 
@@ -115,7 +117,8 @@ void RaveTree::Search(SelectionStrategy *selection_strategy, SimulationStrategy 
     while (!time_controller->Stop())
     {
         Game *cloned_state = state_->Clone();
-        root_->SearchOnce(cloned_state, selection_strategy, simulation_strategy);
+        SearchStateParam temp{cloned_state, selection_strategy, simulation_strategy};
+        root_->SearchOnce(&temp);
         delete cloned_state;
     }
 }

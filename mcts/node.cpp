@@ -78,8 +78,11 @@ void MCTSNodeCS::Expansion()
     delete movable_actions;
 }
 
-void MCTSNodeCS::SearchOnce(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+void MCTSNodeCS::SearchOnce(SearchParam *input)
 {
+    SelectionStrategy *selection_strategy = input->selection_strategy();
+    SimulationStrategy *simulation_strategy = input->simulation_strategy();
+
     std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = this;
 
@@ -135,8 +138,13 @@ void MCTSNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void MCTSNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+void MCTSNode::SearchOnce(SearchParam *input_abs)
 {
+    SearchStateParam *input = (SearchStateParam *)input_abs;
+    Game *state = input->state();
+    SelectionStrategy *selection_strategy = input->selection_strategy();
+    SimulationStrategy *simulation_strategy = input->simulation_strategy();
+
     std::vector<MCTSNode *> traversed_nodes;
     MCTSNode *current_node = this;
 
@@ -215,8 +223,13 @@ void MCTSMutexNode::SetVirtualN(int virtual_N)
     virtual_N_ = virtual_N;
 }
 
-void MCTSMutexNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+void MCTSMutexNode::SearchOnce(SearchParam *input_abs)
 {
+    SearchStateParam *input = (SearchStateParam *)input_abs;
+    Game *state = input->state();
+    SelectionStrategy *selection_strategy = input->selection_strategy();
+    SimulationStrategy *simulation_strategy = input->simulation_strategy();
+
     std::vector<MCTSMutexNode *> traversed_nodes;
     MCTSMutexNode *current_node = this;
 
@@ -300,8 +313,13 @@ void RaveNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void RaveNode::SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+void RaveNode::SearchOnce(SearchParam *input_abs)
 {
+    SearchStateParam *input = (SearchStateParam *)input_abs;
+    Game *state = input->state();
+    SelectionStrategy *selection_strategy = input->selection_strategy();
+    SimulationStrategy *simulation_strategy = input->simulation_strategy();
+
     std::vector<RaveNode *> traversed_nodes;
     RaveNode *current_node = this;
 

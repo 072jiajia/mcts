@@ -80,7 +80,8 @@ void *ThreadRootParallel::LaunchSearchThread(void *args_void)
     while (!time_controller->Stop())
     {
         Game *b_clone = b->Clone();
-        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
+        SearchStateParam temp{b_clone, selection_strategy, simulation_strategy};
+        root->SearchOnce(&temp);
         delete b_clone;
     }
     delete args;
@@ -174,7 +175,8 @@ void *VirtualLossTree::LaunchSearchThread(void *args_void)
     while (!time_controller->Stop())
     {
         Game *b_clone = b->Clone();
-        root->SearchOnce(b_clone, selection_strategy, simulation_strategy);
+        SearchStateParam temp{b_clone, selection_strategy, simulation_strategy};
+        root->SearchOnce(&temp);
         delete b_clone;
     }
     delete args;

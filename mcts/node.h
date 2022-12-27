@@ -13,6 +13,30 @@
 #include "strategies/selection.h"
 #include "strategies/timecontrol.h"
 
+struct SearchParam
+{
+    SearchParam(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+        : selection_strategy_{selection_strategy}, simulation_strategy_{simulation_strategy} {}
+
+    SelectionStrategy *selection_strategy() { return selection_strategy_; }
+    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
+
+private:
+    SelectionStrategy *selection_strategy_;
+    SimulationStrategy *simulation_strategy_;
+};
+
+struct SearchStateParam : public SearchParam
+{
+    SearchStateParam(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+        : SearchParam{selection_strategy, simulation_strategy}, state_{state} {}
+
+    Game *state() { return state_; }
+
+private:
+    Game *state_;
+};
+
 class MCTSNode_
 {
 public:
@@ -30,6 +54,7 @@ public:
     virtual std::vector<int> GetChildrenN() = 0;
     virtual std::vector<float> GetChildrenQ() = 0;
     virtual std::vector<std::pair<int, float>> GetChildrenQN() = 0;
+    virtual void SearchOnce(SearchParam *) = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -64,7 +89,7 @@ public:
     MCTSNodeCS(Game *s);
     ~MCTSNodeCS();
     void Expansion();
-    void SearchOnce(SelectionStrategy *, SimulationStrategy *);
+    void SearchOnce(SearchParam *);
 
 private:
     Game *state_;
@@ -81,7 +106,7 @@ public:
     MCTSNode();
     ~MCTSNode();
     void Expansion(Game *);
-    void SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
+    void SearchOnce(SearchParam *);
 
 private:
     ActionList *actions_;
@@ -96,7 +121,7 @@ public:
 
     void Expansion(Game *);
 
-    void SearchOnce(Game *, SelectionStrategy *, SimulationStrategy *);
+    void SearchOnce(SearchParam *);
 
     void Lock();
     void Release();
@@ -122,7 +147,7 @@ public:
     ~RaveNode();
 
     void Expansion(Game *state);
-    void SearchOnce(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy);
+    void SearchOnce(SearchParam *);
 
     float rave_Q(int);
     float rave_N(int);
