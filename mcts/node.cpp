@@ -17,7 +17,8 @@ void MCTSNodeImpl_::SetN(int N) { N_ = N; }
 bool MCTSNodeImpl_::IsExpanded() { return expanded_; }
 void MCTSNodeImpl_::SetExpanded() { expanded_ = true; }
 void MCTSNodeImpl_::SetNotExpanded() { expanded_ = false; }
-std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() { return &children_; }
+const std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() { return &children_; }
+void MCTSNodeImpl_::AppendChild(MCTSNode_ *new_child) { children_.push_back(new_child); }
 
 std::vector<int> MCTSNodeImpl_::GetChildrenN()
 {
@@ -77,7 +78,7 @@ void MCTSNodeCS::Expansion()
     {
         MCTSNodeCS *new_node = new MCTSNodeCS(state_);
         new_node->state_->DoAction(movable_actions->Get(i));
-        this->GetChildren()->push_back(new_node);
+        this->AppendChild(new_node);
     }
 
     this->SetExpanded();
@@ -128,7 +129,7 @@ void MCTSNode::Expansion(Game *state)
 
     for (uint i = 0; i < actions_->GetSize(); i++)
     {
-        this->GetChildren()->push_back(new MCTSNode());
+        this->AppendChild(new MCTSNode());
     }
     this->SetExpanded();
 }
@@ -190,7 +191,7 @@ void MCTSMutexNode::Expansion(Game *state)
 
     for (uint i = 0; i < actions_->GetSize(); i++)
     {
-        this->GetChildren()->push_back(new MCTSMutexNode());
+        this->AppendChild(new MCTSMutexNode());
     }
     this->SetExpanded();
 }
@@ -292,7 +293,7 @@ void RaveNode::Expansion(Game *state)
 
     for (uint i = 0; i < actions_->GetSize(); i++)
     {
-        this->GetChildren()->push_back(new RaveNode());
+        this->AppendChild(new RaveNode());
     }
     this->SetExpanded();
 }
