@@ -28,7 +28,7 @@ public:
 class MCTSTree : public MCTSTree_
 {
 public:
-    MCTSTree(Game *);
+    MCTSTree(MCTSNode_ *, Game *);
     ~MCTSTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
@@ -40,13 +40,13 @@ public:
 
 private:
     Game *state_;
-    MCTSNode *root_;
+    MCTSNode_ *root_;
 };
 
 class MCTSTreeCS : public MCTSTree_
 {
 public:
-    MCTSTreeCS(Game *);
+    MCTSTreeCS(MCTSNode_ *, Game *);
     ~MCTSTreeCS();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
@@ -58,24 +58,5 @@ public:
 
 private:
     Game *state_;
-    MCTSNodeCS *root_;
-};
-
-class RaveTree : public MCTSTree_
-{
-public:
-    RaveTree(Game *state);
-    ~RaveTree();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *selection_strategy,
-                SimulationStrategy *simulation_strategy,
-                TimeControlStrategy *time_controller);
-
-    int MakeDecision(DecisionStrategy *);
-    std::vector<int> GetFrequencies();
-    std::vector<float> GetValues();
-
-private:
-    Game *state_;
-    RaveNode *root_;
+    MCTSNode_ *root_;
 };

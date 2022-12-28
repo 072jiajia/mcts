@@ -26,30 +26,36 @@ Action *Agent::SearchAction(Game *b)
 {
 	timer_.reset();
 	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
-	MCTSTree_ *mcts_root;
+	MCTSNode_ *mcts_root;
+	MCTSTree_ *mcts_tree;
 	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
-		mcts_root = new MCTSTreeCS(b);
+		mcts_root = new MCTSNodeCS(b);
+		mcts_tree = new MCTSTreeCS(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS)
 	{
-		mcts_root = new MCTSTree(b);
+		mcts_root = new MCTSNode();
+		mcts_tree = new MCTSTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::RAVE)
 	{
-		mcts_root = new RaveTree(b);
+		mcts_root = new RaveNode();
+		mcts_tree = new MCTSTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS_LEAF_PARALLEL)
 	{
-		mcts_root = new MCTSTree(b);
+		mcts_root = new MCTSNode();
+		mcts_tree = new MCTSTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
 	{
-		mcts_root = new ThreadRootParallel(b, num_threads_);
+		throw std::invalid_argument("Not Implemented Yet");
 	}
 	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
 	{
-		mcts_root = new VirtualLossTree(b, num_threads_);
+		mcts_root = new MCTSMutexNode();
+		mcts_tree = new VirtualLossTree(mcts_root, b, num_threads_);
 	}
 	else
 	{
@@ -58,13 +64,13 @@ Action *Agent::SearchAction(Game *b)
 
 	if (num_processes_ > 1)
 	{
-		mcts_root = new ProcessRootParallel(b, mcts_root, num_processes_);
+		mcts_tree = new ProcessRootParallel(b, mcts_tree, num_processes_);
 	}
 
-	mcts_root->Search(selection_strategy_, simulation_strategy_, time_controller);
-	int best_move = mcts_root->MakeDecision(decision_strategy_);
-	std::cout << "Total Search Times: " << mcts_root->GetTotalSimulationCount() << std::endl;
-	delete mcts_root;
+	mcts_tree->Search(selection_strategy_, simulation_strategy_, time_controller);
+	int best_move = mcts_tree->MakeDecision(decision_strategy_);
+	std::cout << "Total Search Times: " << mcts_tree->GetTotalSimulationCount() << std::endl;
+	delete mcts_tree;
 
 	ActionList *action_list = b->GetLegalMoves();
 	Action *output = action_list->Pop(best_move);

@@ -120,9 +120,8 @@ std::vector<float> ThreadRootParallel::GetValues()
     return output;
 }
 
-VirtualLossTree::VirtualLossTree(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
+VirtualLossTree::VirtualLossTree(MCTSNode_ *root, Game *state, int num_threads) : root_(root), state_(state), num_threads_(num_threads)
 {
-    root_ = new MCTSMutexNode();
     threads_ = new pthread_t[num_threads];
 }
 

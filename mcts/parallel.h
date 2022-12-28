@@ -69,7 +69,7 @@ private:
 class VirtualLossTree : public MCTSTree_
 {
 public:
-    VirtualLossTree(Game *, int);
+    VirtualLossTree(MCTSNode_ *, Game *, int);
     ~VirtualLossTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
@@ -84,7 +84,7 @@ private:
 
     Game *state_;
     int num_threads_;
-    MCTSMutexNode *root_;
+    MCTSNode_ *root_;
     pthread_t *threads_;
 };
 
