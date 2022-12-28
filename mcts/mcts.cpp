@@ -50,7 +50,12 @@ Action *Agent::SearchAction(Game *b)
 	}
 	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
 	{
-		throw std::invalid_argument("Not Implemented Yet");
+		MCTSNode_ **mcts_roots = new MCTSNode_ *[num_threads_];
+		for (int i = 0; i < num_threads_; i++)
+		{
+			mcts_roots[i] = new MCTSNode();
+		}
+		mcts_tree = new ThreadRootParallel(mcts_roots, b, num_threads_);
 	}
 	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
 	{

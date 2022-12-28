@@ -10,15 +10,9 @@
 
 #include "parallel.h"
 
-ThreadRootParallel::ThreadRootParallel(Game *state, int num_threads) : state_(state), num_threads_(num_threads)
+ThreadRootParallel::ThreadRootParallel(MCTSNode_ **roots, Game *state, int num_threads) : roots_(roots), state_(state), num_threads_(num_threads)
 {
-    roots_ = new MCTSNode *[num_threads];
     threads_ = new pthread_t[num_threads];
-
-    for (int i = 0; i < num_threads; i++)
-    {
-        roots_[i] = new MCTSNode();
-    }
 }
 
 ThreadRootParallel::~ThreadRootParallel()
@@ -36,7 +30,7 @@ float ThreadRootParallel::GetTotalSimulationCount()
     int total_counts = 0;
     for (int i = 0; i < num_threads_; i++)
     {
-        MCTSNode *root = roots_[i];
+        MCTSNode_ *root = roots_[i];
         total_counts += root->N();
     }
     return total_counts;

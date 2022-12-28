@@ -47,7 +47,7 @@ private:
 class ThreadRootParallel : public MCTSTree_
 {
 public:
-    ThreadRootParallel(Game *, int);
+    ThreadRootParallel(MCTSNode_ **, Game *, int);
     ~ThreadRootParallel();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
@@ -62,7 +62,7 @@ private:
 
     Game *state_;
     int num_threads_;
-    MCTSNode **roots_;
+    MCTSNode_ **roots_;
     pthread_t *threads_;
 };
 
