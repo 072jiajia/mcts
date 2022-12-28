@@ -32,3 +32,10 @@ demo-othello:
 
 clean-demo-othello:
 	rm build/demo-othello
+
+demo-gomoku:
+	mkdir -p build
+	g++ -O3 -pthread demo-gomoku.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-gomoku
+
+clean-demo-gomoku:
+	rm build/demo-gomoku

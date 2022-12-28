@@ -29,6 +29,7 @@ Some parallel implementation of MCTS can further enhance its performance.
 - [Tic-tac-toe](https://en.wikipedia.org/wiki/Tic-tac-toe)
 - [Othello (Reversi)](https://en.wikipedia.org/wiki/Reversi)
 - [NoGo](https://webdocs.cs.ualberta.ca/~mmueller/nogo/rules.html)
+- [Gomoku](https://en.wikipedia.org/wiki/Gomoku)
 - [Other Games](#How-To-Run-It-On-Your-Game)
 
 ## How To Run It On Your Game?

@@ -1,6 +1,6 @@
 #include "node.h"
 
-MCTSNodeImpl_::MCTSNodeImpl_() : children_(), Q_(rand() / RAND_MAX * 0.001), N_(0), expanded_(false) {}
+MCTSNodeImpl_::MCTSNodeImpl_() : children_(), Q_(rand() * 0.001 / RAND_MAX), N_(0), expanded_(false) {}
 
 MCTSNodeImpl_::~MCTSNodeImpl_()
 {
