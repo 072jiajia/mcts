@@ -15,26 +15,17 @@
 
 struct SearchParam
 {
-    SearchParam(SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
-        : selection_strategy_{selection_strategy}, simulation_strategy_{simulation_strategy} {}
+    SearchParam(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
+        : state_(state), selection_strategy_{selection_strategy}, simulation_strategy_{simulation_strategy} {}
 
+    Game *state() { return state_; }
     SelectionStrategy *selection_strategy() { return selection_strategy_; }
     SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
 
 private:
+    Game *state_;
     SelectionStrategy *selection_strategy_;
     SimulationStrategy *simulation_strategy_;
-};
-
-struct SearchStateParam : public SearchParam
-{
-    SearchStateParam(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
-        : SearchParam{selection_strategy, simulation_strategy}, state_{state} {}
-
-    Game *state() { return state_; }
-
-private:
-    Game *state_;
 };
 
 class MCTSNode_

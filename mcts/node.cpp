@@ -138,10 +138,9 @@ void MCTSNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void MCTSNode::SearchOnce(SearchParam *input_abs)
+void MCTSNode::SearchOnce(SearchParam *input)
 {
-    SearchStateParam *input = (SearchStateParam *)input_abs;
-    Game *state = input->state();
+    Game *state = input->state()->Clone();
     SelectionStrategy *selection_strategy = input->selection_strategy();
     SimulationStrategy *simulation_strategy = input->simulation_strategy();
 
@@ -177,6 +176,7 @@ void MCTSNode::SearchOnce(SearchParam *input_abs)
         traversed_nodes[i]->UpdateResult(value);
         value = -value;
     }
+    delete state;
 }
 
 MCTSMutexNode::MCTSMutexNode() : MCTSNodeImpl_(), virtual_N_(0), actions_(nullptr), lock()
@@ -223,10 +223,9 @@ void MCTSMutexNode::SetVirtualN(int virtual_N)
     virtual_N_ = virtual_N;
 }
 
-void MCTSMutexNode::SearchOnce(SearchParam *input_abs)
+void MCTSMutexNode::SearchOnce(SearchParam *input)
 {
-    SearchStateParam *input = (SearchStateParam *)input_abs;
-    Game *state = input->state();
+    Game *state = input->state()->Clone();
     SelectionStrategy *selection_strategy = input->selection_strategy();
     SimulationStrategy *simulation_strategy = input->simulation_strategy();
 
@@ -276,6 +275,7 @@ void MCTSMutexNode::SearchOnce(SearchParam *input_abs)
 
         value = -value;
     }
+    delete state;
 }
 
 RaveNode::RaveNode() : MCTSNodeImpl_(), actions_(nullptr), rave_QN_() {}
@@ -313,10 +313,9 @@ void RaveNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void RaveNode::SearchOnce(SearchParam *input_abs)
+void RaveNode::SearchOnce(SearchParam *input)
 {
-    SearchStateParam *input = (SearchStateParam *)input_abs;
-    Game *state = input->state();
+    Game *state = input->state()->Clone();
     SelectionStrategy *selection_strategy = input->selection_strategy();
     SimulationStrategy *simulation_strategy = input->simulation_strategy();
 
@@ -371,4 +370,5 @@ void RaveNode::SearchOnce(SearchParam *input_abs)
 
         value = -value;
     }
+    delete state;
 }

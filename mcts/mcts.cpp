@@ -31,7 +31,7 @@ Action *Agent::SearchAction(Game *b)
 	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
 		mcts_root = new MCTSNodeCS(b);
-		mcts_tree = new MCTSTreeCS(mcts_root, b);
+		mcts_tree = new MCTSTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS)
 	{

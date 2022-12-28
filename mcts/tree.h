@@ -42,21 +42,3 @@ private:
     Game *state_;
     MCTSNode_ *root_;
 };
-
-class MCTSTreeCS : public MCTSTree_
-{
-public:
-    MCTSTreeCS(MCTSNode_ *, Game *);
-    ~MCTSTreeCS();
-    float GetTotalSimulationCount();
-    void Search(SelectionStrategy *,
-                SimulationStrategy *,
-                TimeControlStrategy *);
-    int MakeDecision(DecisionStrategy *);
-    std::vector<int> GetFrequencies();
-    std::vector<float> GetValues();
-
-private:
-    Game *state_;
-    MCTSNode_ *root_;
-};
