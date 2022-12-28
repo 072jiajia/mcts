@@ -147,3 +147,20 @@ private:
     ActionList *actions_;
     std::map<int, std::pair<float, float>> rave_QN_;
 };
+
+class MCTSPolicyNode : public MCTSNodeImpl_
+{
+public:
+    MCTSPolicyNode();
+
+    ~MCTSPolicyNode();
+
+    const std::vector<float> *GetPolicy() const;
+
+    void Expansion(Game *state);
+    void SearchOnce(SearchParam *);
+
+private:
+    ActionList *actions_;
+    std::vector<float> policy_;
+};

@@ -43,6 +43,11 @@ Action *Agent::SearchAction(Game *b)
 		mcts_root = new RaveNode();
 		mcts_tree = new MCTSTree(mcts_root, b);
 	}
+	else if (algo_ == Algorithm::MCTS_PUCT)
+	{
+		mcts_root = new MCTSPolicyNode();
+		mcts_tree = new MCTSTree(mcts_root, b);
+	}
 	else if (algo_ == Algorithm::MCTS_LEAF_PARALLEL)
 	{
 		mcts_root = new MCTSNode();

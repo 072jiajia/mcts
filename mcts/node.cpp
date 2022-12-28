@@ -372,3 +372,70 @@ void RaveNode::SearchOnce(SearchParam *input)
     }
     delete state;
 }
+
+MCTSPolicyNode::MCTSPolicyNode() : MCTSNodeImpl_(), actions_(nullptr), policy_() {}
+
+MCTSPolicyNode::~MCTSPolicyNode()
+{
+    if (actions_ != nullptr)
+    {
+        delete actions_;
+    }
+}
+
+const std::vector<float> *MCTSPolicyNode::GetPolicy() const
+{
+    return &policy_;
+}
+
+void MCTSPolicyNode::Expansion(Game *state)
+{
+    actions_ = state->GetLegalMoves();
+    policy_.resize(actions_->GetSize(), 1. / actions_->GetSize());
+    for (uint i = 0; i < actions_->GetSize(); i++)
+    {
+        this->AppendChild(new MCTSPolicyNode());
+    }
+    this->SetExpanded();
+}
+
+void MCTSPolicyNode::SearchOnce(SearchParam *input)
+{
+    Game *state = input->state()->Clone();
+    SelectionStrategy *selection_strategy = input->selection_strategy();
+    SimulationStrategy *simulation_strategy = input->simulation_strategy();
+
+    std::vector<MCTSPolicyNode *> traversed_nodes;
+    MCTSPolicyNode *current_node = this;
+
+    float value;
+
+    while (true)
+    {
+        traversed_nodes.push_back(current_node);
+        if (state->IsGameOver())
+        {
+            value = EvaluateResult(state, state->GetPlayerThisTurn());
+            break;
+        }
+        if (current_node->N() == 0)
+        {
+            value = simulation_strategy->SimulationOnce(state);
+            break;
+        }
+
+        if (!current_node->IsExpanded())
+            current_node->Expansion(state);
+
+        int action_index = selection_strategy->Select(current_node);
+        state->DoAction(current_node->actions_->Get(action_index));
+        current_node = (MCTSPolicyNode *)(current_node->GetChildren()->at(action_index));
+    }
+
+    for (int i = traversed_nodes.size() - 1; i >= 0; i--)
+    {
+        traversed_nodes[i]->UpdateResult(value);
+        value = -value;
+    }
+    delete state;
+}

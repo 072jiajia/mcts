@@ -82,3 +82,26 @@ int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
 
     return best_move;
 }
+
+PUCT::PUCT(float C) : C_(C){};
+
+int PUCT::Select(MCTSNode_ *node) const
+{
+    const std::vector<MCTSNode_ *> *children = node->GetChildren();
+    const std::vector<float> *policy = ((MCTSPolicyNode *)node)->GetPolicy();
+
+    float best_value = -1e20;
+    int best_move = -1;
+    float CsqrtN = this->C_ * std::sqrt(node->N() + 1.);
+    for (uint i = 0; i < children->size(); i++)
+    {
+        float value = -children->at(i)->Q() + policy->at(i) * CsqrtN / (children->at(i)->N() + 1);
+
+        if (value > best_value)
+        {
+            best_value = value;
+            best_move = i;
+        }
+    }
+    return best_move;
+}

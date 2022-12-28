@@ -22,6 +22,7 @@ enum class Algorithm
 	MCTS_LEAF_PARALLEL,
 	MCTS_ROOT_PARALLEL,
 	MCTS_TREE_PARALLEL,
+	MCTS_PUCT,
 };
 
 struct AgentOptions

@@ -4,6 +4,7 @@
 class MCTSNode_;
 class RaveNode;
 class MCTSMutexNode;
+class MCTSPolicyNode;
 
 class SelectionStrategy
 {
@@ -38,6 +39,17 @@ class UCBHighestVirtualLoss : public SelectionStrategy
 {
 public:
     UCBHighestVirtualLoss(float C = 1.4);
+
+    int Select(MCTSNode_ *node) const;
+
+private:
+    float C_;
+};
+
+class PUCT : public SelectionStrategy
+{
+public:
+    PUCT(float C = 1.4);
 
     int Select(MCTSNode_ *node) const;
 
