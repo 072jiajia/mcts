@@ -46,6 +46,7 @@ public:
     virtual std::vector<float> GetChildrenQ() = 0;
     virtual std::vector<std::pair<int, float>> GetChildrenQN() = 0;
     virtual void SearchOnce(SearchParam *) = 0;
+    virtual Game *GetNextState(Game *state, int action_index) = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -81,6 +82,7 @@ public:
     ~MCTSNodeCS();
     void Expansion();
     void SearchOnce(SearchParam *);
+    Game *GetNextState(Game *state, int action_index);
 
 private:
     Game *state_;
@@ -98,6 +100,7 @@ public:
     ~MCTSNode();
     void Expansion(Game *);
     void SearchOnce(SearchParam *);
+    Game *GetNextState(Game *state, int action_index);
 
 private:
     ActionList *actions_;
@@ -120,6 +123,7 @@ public:
     int GetVirtualN();
 
     void SetVirtualN(int virtual_N);
+    Game *GetNextState(Game *state, int action_index);
 
 private:
     ActionList *actions_;
@@ -142,6 +146,7 @@ public:
 
     float rave_Q(int);
     float rave_N(int);
+    Game *GetNextState(Game *state, int action_index);
 
 private:
     ActionList *actions_;
@@ -159,6 +164,7 @@ public:
 
     void Expansion(Game *state);
     void SearchOnce(SearchParam *);
+    Game *GetNextState(Game *state, int action_index);
 
 private:
     ActionList *actions_;

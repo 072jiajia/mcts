@@ -78,6 +78,12 @@ void MCTSNodeCS::Expansion()
     delete movable_actions;
 }
 
+Game *MCTSNodeCS::GetNextState(Game *state, int action_index)
+{
+    MCTSNodeCS *node = (MCTSNodeCS *)(GetChildren()->at(action_index));
+    return node->state_;
+}
+
 void MCTSNodeCS::SearchOnce(SearchParam *input)
 {
     SelectionStrategy *selection_strategy = input->selection_strategy();
@@ -86,11 +92,12 @@ void MCTSNodeCS::SearchOnce(SearchParam *input)
     std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = this;
 
+    Game *state = current_node->state_;
+
     float value;
 
     while (true)
     {
-        Game *state = current_node->state_;
         traversed_nodes.push_back(current_node);
         if (state->IsGameOver())
         {
@@ -107,6 +114,7 @@ void MCTSNodeCS::SearchOnce(SearchParam *input)
             current_node->Expansion();
 
         int action_index = selection_strategy->Select(current_node);
+        state = current_node->GetNextState(state, action_index);
         current_node = (MCTSNodeCS *)(current_node->GetChildren()->at(action_index));
     }
 
@@ -138,6 +146,12 @@ void MCTSNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
+Game *MCTSNode::GetNextState(Game *state, int action_index)
+{
+    state->DoAction(actions_->Get(action_index));
+    return state;
+}
+
 void MCTSNode::SearchOnce(SearchParam *input)
 {
     Game *state = input->state()->Clone();
@@ -167,7 +181,7 @@ void MCTSNode::SearchOnce(SearchParam *input)
             current_node->Expansion(state);
 
         int action_index = selection_strategy->Select(current_node);
-        state->DoAction(current_node->actions_->Get(action_index));
+        state = current_node->GetNextState(state, action_index);
         current_node = (MCTSNode *)(current_node->GetChildren()->at(action_index));
     }
 
@@ -221,6 +235,12 @@ int MCTSMutexNode::GetVirtualN()
 void MCTSMutexNode::SetVirtualN(int virtual_N)
 {
     virtual_N_ = virtual_N;
+}
+
+Game *MCTSMutexNode::GetNextState(Game *state, int action_index)
+{
+    state->DoAction(actions_->Get(action_index));
+    return state;
 }
 
 void MCTSMutexNode::SearchOnce(SearchParam *input)
@@ -313,6 +333,12 @@ void RaveNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
+Game *RaveNode::GetNextState(Game *state, int action_index)
+{
+    state->DoAction(actions_->Get(action_index));
+    return state;
+}
+
 void RaveNode::SearchOnce(SearchParam *input)
 {
     Game *state = input->state()->Clone();
@@ -397,6 +423,12 @@ void MCTSPolicyNode::Expansion(Game *state)
         this->AppendChild(new MCTSPolicyNode());
     }
     this->SetExpanded();
+}
+
+Game *MCTSPolicyNode::GetNextState(Game *state, int action_index)
+{
+    state->DoAction(actions_->Get(action_index));
+    return state;
 }
 
 void MCTSPolicyNode::SearchOnce(SearchParam *input)
