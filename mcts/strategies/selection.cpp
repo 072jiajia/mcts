@@ -1,7 +1,7 @@
 #include "../node.h"
 #include "../utils.h"
 
-UCBHighest::UCBHighest(float C) : C_(C){};
+UCBHighest::UCBHighest(float C) : C_(C) {}
 
 int UCBHighest::Select(MCTSNode_ *node) const
 {
@@ -24,7 +24,7 @@ int UCBHighest::Select(MCTSNode_ *node) const
     return best_move;
 }
 
-RaveUCBHighest::RaveUCBHighest(float C) : C_(C){};
+RaveUCBHighest::RaveUCBHighest(float C, float beta) : C_(C), beta_(beta) {}
 
 int RaveUCBHighest::Select(MCTSNode_ *node_abs) const
 {
@@ -40,7 +40,7 @@ int RaveUCBHighest::Select(MCTSNode_ *node_abs) const
         float child_N = children->at(i)->N();
         float rave_Q = node->rave_Q(i);
         float rave_N = node->rave_N(i);
-        float beta = rave_N / (child_N + rave_N + 4 * child_N * rave_N * 0.1 + 1e-8);
+        float beta = rave_N / (child_N + rave_N + 4 * beta_ * child_N * rave_N + 1e-8);
         float value = (child_Q * (1 - beta) + beta * rave_Q) + this->C_ * std::sqrt(logN / (child_N + 1));
 
         if (value > best_value)
@@ -52,7 +52,7 @@ int RaveUCBHighest::Select(MCTSNode_ *node_abs) const
     return best_move;
 }
 
-UCBHighestVirtualLoss::UCBHighestVirtualLoss(float C) : C_(C){};
+UCBHighestVirtualLoss::UCBHighestVirtualLoss(float C) : C_(C) {}
 
 int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
 {
@@ -83,7 +83,7 @@ int UCBHighestVirtualLoss::Select(MCTSNode_ *node_abs) const
     return best_move;
 }
 
-PUCT::PUCT(float C) : C_(C){};
+PUCT::PUCT(float C) : C_(C) {}
 
 int PUCT::Select(MCTSNode_ *node) const
 {

@@ -27,12 +27,13 @@ private:
 class RaveUCBHighest : public SelectionStrategy
 {
 public:
-    RaveUCBHighest(float C = 1.4);
+    RaveUCBHighest(float C = 1.4, float beta = 0.1);
 
     int Select(MCTSNode_ *node) const;
 
 private:
     float C_;
+    float beta_;
 };
 
 class UCBHighestVirtualLoss : public SelectionStrategy
