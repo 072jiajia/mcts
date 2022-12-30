@@ -17,18 +17,14 @@
 
 struct MCTSThreadInput
 {
-    MCTSThreadInput(Game *b,
-                    MCTSNode_ *root,
+    MCTSThreadInput(Game *b, MCTSNode_ *root,
                     TimeControlStrategy *time_controller,
                     SelectionStrategy *selection_strategy,
                     SimulationStrategy *simulation_strategy)
-    {
-        b_ = b;
-        root_ = root;
-        time_controller_ = time_controller;
-        selection_strategy_ = selection_strategy;
-        simulation_strategy_ = simulation_strategy;
-    }
+        : b_{b}, root_{root},
+          time_controller_{time_controller},
+          selection_strategy_{selection_strategy},
+          simulation_strategy_{simulation_strategy} {}
 
     Game *b() { return b_; }
     MCTSNode_ *root() { return root_; }
@@ -44,6 +40,8 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
+void *LaunchSearchThread(void *);
+
 class ThreadRootParallel : public MCTSTree_
 {
 public:
@@ -58,8 +56,6 @@ public:
     std::vector<float> GetValues();
 
 private:
-    static void *LaunchSearchThread(void *);
-
     Game *state_;
     int num_threads_;
     MCTSNode_ **roots_;
@@ -80,8 +76,6 @@ public:
     std::vector<float> GetValues();
 
 private:
-    static void *LaunchSearchThread(void *);
-
     Game *state_;
     int num_threads_;
     MCTSNode_ *root_;

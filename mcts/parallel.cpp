@@ -62,7 +62,7 @@ int ThreadRootParallel::MakeDecision(DecisionStrategy *decision_strategy)
     return decision_strategy->Choose(this);
 }
 
-void *ThreadRootParallel::LaunchSearchThread(void *args_void)
+void *LaunchSearchThread(void *args_void)
 {
     MCTSThreadInput *args = (MCTSThreadInput *)args_void;
     MCTSNode_ *root = args->root();
@@ -152,24 +152,6 @@ void VirtualLossTree::Search(SelectionStrategy *selection_strategy,
 int VirtualLossTree::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
-}
-
-void *VirtualLossTree::LaunchSearchThread(void *args_void)
-{
-    MCTSThreadInput *args = (MCTSThreadInput *)args_void;
-    MCTSMutexNode *root = (MCTSMutexNode *)(args->root());
-    Game *b = args->b();
-    TimeControlStrategy *time_controller = args->time_controller();
-    SelectionStrategy *selection_strategy = args->selection_strategy();
-    SimulationStrategy *simulation_strategy = args->simulation_strategy();
-
-    while (!time_controller->Stop())
-    {
-        SearchParam temp{b, selection_strategy, simulation_strategy};
-        root->SearchOnce(&temp);
-    }
-    delete args;
-    pthread_exit(NULL);
 }
 
 std::vector<int> VirtualLossTree::GetFrequencies()
