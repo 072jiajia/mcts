@@ -18,10 +18,8 @@ enum class Algorithm
 	MCTS,
 	MCTS_COPY_STATE,
 	RAVE,
-	MCTS_LEAF_PARALLEL,
-	MCTS_ROOT_PARALLEL,
-	MCTS_TREE_PARALLEL,
 	MCTS_PUCT,
+	MCTS_VIRTUAL_LOSS
 };
 
 struct AgentOptions
@@ -49,6 +47,8 @@ public:
 	Action *SearchAction(Game *b);
 
 private:
+	MCTSNode_ *CreateNode(const Algorithm &algo, Game *state);
+
 	Algorithm algo_;
 	double time_limit_ms_;
 	int min_iter_;

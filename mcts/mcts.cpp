@@ -22,54 +22,53 @@ Agent::Agent(AgentOptions &options)
 
 Agent::~Agent() {}
 
+MCTSNode_ *Agent::CreateNode(const Algorithm &algo, Game *state)
+{
+	if (algo == Algorithm::MCTS_COPY_STATE)
+	{
+		return new MCTSNodeCS(state);
+	}
+	else if (algo == Algorithm::MCTS)
+	{
+		return new MCTSNode();
+	}
+	else if (algo == Algorithm::RAVE)
+	{
+		return new RaveNode();
+	}
+	else if (algo == Algorithm::MCTS_PUCT)
+	{
+		return new MCTSPolicyNode();
+	}
+	throw std::invalid_argument("Unknown Algorithm");
+}
+
 Action *Agent::SearchAction(Game *b)
 {
 	timer_.reset();
 	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
-	MCTSNode_ *mcts_root;
 	MCTSTree_ *mcts_tree;
-	if (algo_ == Algorithm::MCTS_COPY_STATE)
+	if (num_threads_ == 1)
 	{
-		mcts_root = new MCTSNodeCS(b);
+		MCTSNode_ *mcts_root = CreateNode(algo_, b);
 		mcts_tree = new SingleTree(mcts_root, b);
-	}
-	else if (algo_ == Algorithm::MCTS)
-	{
-		mcts_root = new MCTSNode();
-		mcts_tree = new SingleTree(mcts_root, b);
-	}
-	else if (algo_ == Algorithm::RAVE)
-	{
-		mcts_root = new RaveNode();
-		mcts_tree = new SingleTree(mcts_root, b);
-	}
-	else if (algo_ == Algorithm::MCTS_PUCT)
-	{
-		mcts_root = new MCTSPolicyNode();
-		mcts_tree = new SingleTree(mcts_root, b);
-	}
-	else if (algo_ == Algorithm::MCTS_LEAF_PARALLEL)
-	{
-		mcts_root = new MCTSNode();
-		mcts_tree = new SingleTree(mcts_root, b);
-	}
-	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
-	{
-		MCTSNode_ **mcts_roots = new MCTSNode_ *[num_threads_];
-		for (int i = 0; i < num_threads_; i++)
-		{
-			mcts_roots[i] = new MCTSNode();
-		}
-		mcts_tree = new ThreadParallel(mcts_roots, b, num_threads_);
-	}
-	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
-	{
-		mcts_root = new MCTSMutexNode();
-		mcts_tree = new MultiThreadSingleTree(mcts_root, b, num_threads_);
 	}
 	else
 	{
-		throw std::invalid_argument("Unknown Algorithm");
+		if (algo_ == Algorithm::MCTS_VIRTUAL_LOSS)
+		{
+			MCTSNode_ *mcts_root = CreateNode(algo_, b);
+			mcts_tree = new MultiThreadSingleTree(mcts_root, b, num_threads_);
+		}
+		else
+		{
+			MCTSNode_ **mcts_roots = new MCTSNode_ *[num_threads_];
+			for (int i = 0; i < num_threads_; i++)
+			{
+				mcts_roots[i] = CreateNode(algo_, b);
+			}
+			mcts_tree = new ThreadParallel(mcts_roots, b, num_threads_);
+		}
 	}
 
 	if (num_processes_ > 1)
