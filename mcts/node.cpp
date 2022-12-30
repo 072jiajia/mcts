@@ -62,7 +62,7 @@ MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
 
 MCTSNodeCS::~MCTSNodeCS() { delete state_; }
 
-void MCTSNodeCS::Expansion()
+void MCTSNodeCS::Expansion(Game *dummy)
 {
     ActionList *movable_actions = state_->GetLegalMoves();
 
@@ -86,13 +86,14 @@ Game *MCTSNodeCS::GetNextState(Game *state, int action_index)
 
 void MCTSNodeCS::SearchOnce(SearchParam *input)
 {
+    Game *cloned_state = input->state()->Clone();
     SelectionStrategy *selection_strategy = input->selection_strategy();
     SimulationStrategy *simulation_strategy = input->simulation_strategy();
 
-    std::vector<MCTSNodeCS *> traversed_nodes;
-    MCTSNodeCS *current_node = this;
+    std::vector<MCTSNode_ *> traversed_nodes;
+    MCTSNode_ *current_node = this;
 
-    Game *state = current_node->state_;
+    Game *state = cloned_state;
 
     float value;
 
@@ -111,11 +112,11 @@ void MCTSNodeCS::SearchOnce(SearchParam *input)
         }
 
         if (!current_node->IsExpanded())
-            current_node->Expansion();
+            current_node->Expansion(state);
 
         int action_index = selection_strategy->Select(current_node);
         state = current_node->GetNextState(state, action_index);
-        current_node = (MCTSNodeCS *)(current_node->GetChildren()->at(action_index));
+        current_node = current_node->GetChildren()->at(action_index);
     }
 
     for (int i = traversed_nodes.size() - 1; i >= 0; i--)
@@ -123,6 +124,7 @@ void MCTSNodeCS::SearchOnce(SearchParam *input)
         traversed_nodes[i]->UpdateResult(value);
         value = -value;
     }
+    delete cloned_state;
 }
 
 MCTSNode::MCTSNode() : MCTSNodeImpl_(), actions_(nullptr) {}
@@ -154,12 +156,14 @@ Game *MCTSNode::GetNextState(Game *state, int action_index)
 
 void MCTSNode::SearchOnce(SearchParam *input)
 {
-    Game *state = input->state()->Clone();
+    Game *cloned_state = input->state()->Clone();
     SelectionStrategy *selection_strategy = input->selection_strategy();
     SimulationStrategy *simulation_strategy = input->simulation_strategy();
 
-    std::vector<MCTSNode *> traversed_nodes;
-    MCTSNode *current_node = this;
+    std::vector<MCTSNode_ *> traversed_nodes;
+    MCTSNode_ *current_node = this;
+
+    Game *state = cloned_state;
 
     float value;
 
@@ -182,7 +186,7 @@ void MCTSNode::SearchOnce(SearchParam *input)
 
         int action_index = selection_strategy->Select(current_node);
         state = current_node->GetNextState(state, action_index);
-        current_node = (MCTSNode *)(current_node->GetChildren()->at(action_index));
+        current_node = current_node->GetChildren()->at(action_index);
     }
 
     for (int i = traversed_nodes.size() - 1; i >= 0; i--)
@@ -190,7 +194,7 @@ void MCTSNode::SearchOnce(SearchParam *input)
         traversed_nodes[i]->UpdateResult(value);
         value = -value;
     }
-    delete state;
+    delete cloned_state;
 }
 
 MCTSMutexNode::MCTSMutexNode() : MCTSNodeImpl_(), virtual_N_(0), actions_(nullptr), lock()
