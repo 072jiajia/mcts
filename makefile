@@ -39,3 +39,10 @@ demo-gomoku:
 
 clean-demo-gomoku:
 	rm build/demo-gomoku
+
+play-gomoku:
+	mkdir -p build
+	g++ -O3 -pthread play-gomoku.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/play-gomoku
+
+clean-play-gomoku:
+	rm build/play-gomoku

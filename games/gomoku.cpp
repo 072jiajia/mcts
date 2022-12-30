@@ -69,16 +69,22 @@ void Gomoku::switch_turn()
 
 void Gomoku::PrintState() const
 {
-
     std::cout << "Current state" << std::endl;
+
+    std::cout << "   ";
     for (int i = 0; i < 15; i++)
     {
-        std::cout << "--";
+        std::cout << " " << char('A' + i);
     }
-    std::cout << "-" << std::endl;
+    std::cout << " " << std::endl;
 
     for (int i = 0; i < 15; i++)
     {
+        if (i + 1 < 10)
+            std::cout << " " << i + 1 << " ";
+        else
+            std::cout << i + 1 << " ";
+
         for (int j = 0; j < 15; j++)
         {
             char c;
@@ -92,13 +98,16 @@ void Gomoku::PrintState() const
                 c = '?';
             std::cout << "|" << c;
         }
-        std::cout << "|" << std::endl;
+        std::cout << "| " << i + 1 << std::endl;
     }
+
+    std::cout << "   ";
     for (int i = 0; i < 15; i++)
     {
-        std::cout << "--";
+        std::cout << " " << char('A' + i);
     }
-    std::cout << "-" << std::endl;
+    std::cout << " " << std::endl;
+
     std::cout << std::endl;
 }
 
