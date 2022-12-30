@@ -65,7 +65,7 @@ int ThreadRootParallel::MakeDecision(DecisionStrategy *decision_strategy)
 void *ThreadRootParallel::LaunchSearchThread(void *args_void)
 {
     MCTSThreadInput *args = (MCTSThreadInput *)args_void;
-    MCTSNode *root = (MCTSNode *)(args->root());
+    MCTSNode_ *root = args->root();
     Game *b = args->b();
     TimeControlStrategy *time_controller = args->time_controller();
     SelectionStrategy *selection_strategy = args->selection_strategy();
