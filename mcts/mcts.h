@@ -7,7 +7,6 @@
 
 #include "node.h"
 #include "tree.h"
-#include "parallel.h"
 #include "utils.h"
 #include "strategies/simulation.h"
 #include "strategies/selection.h"
