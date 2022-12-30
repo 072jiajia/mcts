@@ -31,27 +31,27 @@ Action *Agent::SearchAction(Game *b)
 	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
 		mcts_root = new MCTSNodeCS(b);
-		mcts_tree = new MCTSTree(mcts_root, b);
+		mcts_tree = new SingleTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS)
 	{
 		mcts_root = new MCTSNode();
-		mcts_tree = new MCTSTree(mcts_root, b);
+		mcts_tree = new SingleTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::RAVE)
 	{
 		mcts_root = new RaveNode();
-		mcts_tree = new MCTSTree(mcts_root, b);
+		mcts_tree = new SingleTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS_PUCT)
 	{
 		mcts_root = new MCTSPolicyNode();
-		mcts_tree = new MCTSTree(mcts_root, b);
+		mcts_tree = new SingleTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS_LEAF_PARALLEL)
 	{
 		mcts_root = new MCTSNode();
-		mcts_tree = new MCTSTree(mcts_root, b);
+		mcts_tree = new SingleTree(mcts_root, b);
 	}
 	else if (algo_ == Algorithm::MCTS_ROOT_PARALLEL)
 	{
@@ -60,12 +60,12 @@ Action *Agent::SearchAction(Game *b)
 		{
 			mcts_roots[i] = new MCTSNode();
 		}
-		mcts_tree = new ThreadRootParallel(mcts_roots, b, num_threads_);
+		mcts_tree = new ThreadParallel(mcts_roots, b, num_threads_);
 	}
 	else if (algo_ == Algorithm::MCTS_TREE_PARALLEL)
 	{
 		mcts_root = new MCTSMutexNode();
-		mcts_tree = new VirtualLossTree(mcts_root, b, num_threads_);
+		mcts_tree = new MultiThreadSingleTree(mcts_root, b, num_threads_);
 	}
 	else
 	{
@@ -74,7 +74,7 @@ Action *Agent::SearchAction(Game *b)
 
 	if (num_processes_ > 1)
 	{
-		mcts_tree = new ProcessRootParallel(b, mcts_tree, num_processes_);
+		mcts_tree = new ProcessParallel(b, mcts_tree, num_processes_);
 	}
 
 	mcts_tree->Search(selection_strategy_, simulation_strategy_, time_controller);

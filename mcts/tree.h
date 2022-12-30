@@ -25,11 +25,11 @@ public:
     virtual std::vector<float> GetValues() = 0;
 };
 
-class MCTSTree : public MCTSTree_
+class SingleTree : public MCTSTree_
 {
 public:
-    MCTSTree(MCTSNode_ *, Game *);
-    ~MCTSTree();
+    SingleTree(MCTSNode_ *, Game *);
+    ~SingleTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,

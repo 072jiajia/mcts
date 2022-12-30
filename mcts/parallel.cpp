@@ -10,12 +10,12 @@
 
 #include "parallel.h"
 
-ThreadRootParallel::ThreadRootParallel(MCTSNode_ **roots, Game *state, int num_threads) : roots_(roots), state_(state), num_threads_(num_threads)
+ThreadParallel::ThreadParallel(MCTSNode_ **roots, Game *state, int num_threads) : roots_(roots), state_(state), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
 }
 
-ThreadRootParallel::~ThreadRootParallel()
+ThreadParallel::~ThreadParallel()
 {
     for (int i = 0; i < num_threads_; i++)
     {
@@ -25,7 +25,7 @@ ThreadRootParallel::~ThreadRootParallel()
     delete threads_;
 }
 
-float ThreadRootParallel::GetTotalSimulationCount()
+float ThreadParallel::GetTotalSimulationCount()
 {
     int total_counts = 0;
     for (int i = 0; i < num_threads_; i++)
@@ -36,9 +36,9 @@ float ThreadRootParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ThreadRootParallel::Search(SelectionStrategy *selection_strategy,
-                                SimulationStrategy *simulation_strategy,
-                                TimeControlStrategy *time_controller)
+void ThreadParallel::Search(SelectionStrategy *selection_strategy,
+                            SimulationStrategy *simulation_strategy,
+                            TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
     {
@@ -57,7 +57,7 @@ void ThreadRootParallel::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int ThreadRootParallel::MakeDecision(DecisionStrategy *decision_strategy)
+int ThreadParallel::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
 }
@@ -80,7 +80,7 @@ void *LaunchSearchThread(void *args_void)
     pthread_exit(NULL);
 }
 
-std::vector<int> ThreadRootParallel::GetFrequencies()
+std::vector<int> ThreadParallel::GetFrequencies()
 {
     std::vector<int> output = roots_[0]->GetChildrenN();
 
@@ -96,7 +96,7 @@ std::vector<int> ThreadRootParallel::GetFrequencies()
     return output;
 }
 
-std::vector<float> ThreadRootParallel::GetValues()
+std::vector<float> ThreadParallel::GetValues()
 {
     std::vector<float> output = roots_[0]->GetChildrenQ();
 
@@ -112,25 +112,25 @@ std::vector<float> ThreadRootParallel::GetValues()
     return output;
 }
 
-VirtualLossTree::VirtualLossTree(MCTSNode_ *root, Game *state, int num_threads) : root_(root), state_(state), num_threads_(num_threads)
+MultiThreadSingleTree::MultiThreadSingleTree(MCTSNode_ *root, Game *state, int num_threads) : root_(root), state_(state), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
 }
 
-VirtualLossTree::~VirtualLossTree()
+MultiThreadSingleTree::~MultiThreadSingleTree()
 {
     delete root_;
     delete threads_;
 }
 
-float VirtualLossTree::GetTotalSimulationCount()
+float MultiThreadSingleTree::GetTotalSimulationCount()
 {
     return root_->N();
 }
 
-void VirtualLossTree::Search(SelectionStrategy *selection_strategy,
-                             SimulationStrategy *simulation_strategy,
-                             TimeControlStrategy *time_controller)
+void MultiThreadSingleTree::Search(SelectionStrategy *selection_strategy,
+                                   SimulationStrategy *simulation_strategy,
+                                   TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
     {
@@ -149,22 +149,22 @@ void VirtualLossTree::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int VirtualLossTree::MakeDecision(DecisionStrategy *decision_strategy)
+int MultiThreadSingleTree::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
 }
 
-std::vector<int> VirtualLossTree::GetFrequencies()
+std::vector<int> MultiThreadSingleTree::GetFrequencies()
 {
     return root_->GetChildrenN();
 }
 
-std::vector<float> VirtualLossTree::GetValues()
+std::vector<float> MultiThreadSingleTree::GetValues()
 {
     return root_->GetChildrenQ();
 }
 
-ProcessRootParallel::ProcessRootParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
+ProcessParallel::ProcessParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
 {
     ActionList *action_list = state->GetLegalMoves();
     action_size_ = action_list->GetSize();
@@ -198,7 +198,7 @@ ProcessRootParallel::ProcessRootParallel(Game *state, MCTSTree_ *tree, int num_p
     }
 }
 
-ProcessRootParallel::~ProcessRootParallel()
+ProcessParallel::~ProcessParallel()
 {
     if (shmdt(shm_) == -1)
     {
@@ -216,7 +216,7 @@ ProcessRootParallel::~ProcessRootParallel()
     delete tree_;
 }
 
-float ProcessRootParallel::GetTotalSimulationCount()
+float ProcessParallel::GetTotalSimulationCount()
 {
     int total_counts = 0;
     for (int i = 0; i < num_processes_ * action_size_; i++)
@@ -226,9 +226,9 @@ float ProcessRootParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ProcessRootParallel::Search(SelectionStrategy *selection_strategy,
-                                 SimulationStrategy *simulation_strategy,
-                                 TimeControlStrategy *time_controller)
+void ProcessParallel::Search(SelectionStrategy *selection_strategy,
+                             SimulationStrategy *simulation_strategy,
+                             TimeControlStrategy *time_controller)
 {
     for (int process_id = 0; process_id < num_processes_; process_id++)
     {
@@ -272,12 +272,12 @@ void ProcessRootParallel::Search(SelectionStrategy *selection_strategy,
     std::cout << std::endl;
 }
 
-int ProcessRootParallel::MakeDecision(DecisionStrategy *decision_strategy)
+int ProcessParallel::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
 }
 
-std::vector<int> ProcessRootParallel::GetFrequencies()
+std::vector<int> ProcessParallel::GetFrequencies()
 {
     std::vector<int> output(action_size_, 0);
     for (int i = 0; i < action_size_; i++)
@@ -292,7 +292,7 @@ std::vector<int> ProcessRootParallel::GetFrequencies()
     return output;
 }
 
-std::vector<float> ProcessRootParallel::GetValues()
+std::vector<float> ProcessParallel::GetValues()
 {
     std::vector<float> output(action_size_, 0);
     for (int i = 0; i < action_size_; i++)

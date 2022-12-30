@@ -42,11 +42,11 @@ private:
 
 void *LaunchSearchThread(void *);
 
-class ThreadRootParallel : public MCTSTree_
+class ThreadParallel : public MCTSTree_
 {
 public:
-    ThreadRootParallel(MCTSNode_ **, Game *, int);
-    ~ThreadRootParallel();
+    ThreadParallel(MCTSNode_ **, Game *, int);
+    ~ThreadParallel();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
@@ -62,11 +62,11 @@ private:
     pthread_t *threads_;
 };
 
-class VirtualLossTree : public MCTSTree_
+class MultiThreadSingleTree : public MCTSTree_
 {
 public:
-    VirtualLossTree(MCTSNode_ *, Game *, int);
-    ~VirtualLossTree();
+    MultiThreadSingleTree(MCTSNode_ *, Game *, int);
+    ~MultiThreadSingleTree();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,
@@ -82,11 +82,11 @@ private:
     pthread_t *threads_;
 };
 
-class ProcessRootParallel : public MCTSTree_
+class ProcessParallel : public MCTSTree_
 {
 public:
-    ProcessRootParallel(Game *, MCTSTree_ *, int);
-    ~ProcessRootParallel();
+    ProcessParallel(Game *, MCTSTree_ *, int);
+    ~ProcessParallel();
     float GetTotalSimulationCount();
     void Search(SelectionStrategy *,
                 SimulationStrategy *,

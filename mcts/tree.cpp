@@ -10,20 +10,20 @@
 
 #include "tree.h"
 
-MCTSTree::MCTSTree(MCTSNode_ *root, Game *state) : root_(root), state_(state->Clone()) {}
+SingleTree::SingleTree(MCTSNode_ *root, Game *state) : root_(root), state_(state->Clone()) {}
 
-MCTSTree::~MCTSTree()
+SingleTree::~SingleTree()
 {
     delete state_;
     delete root_;
 }
 
-float MCTSTree::GetTotalSimulationCount()
+float SingleTree::GetTotalSimulationCount()
 {
     return root_->N();
 }
 
-void MCTSTree::Search(SelectionStrategy *selection_strategy,
+void SingleTree::Search(SelectionStrategy *selection_strategy,
                       SimulationStrategy *simulation_strategy,
                       TimeControlStrategy *time_controller)
 {
@@ -34,17 +34,17 @@ void MCTSTree::Search(SelectionStrategy *selection_strategy,
     }
 }
 
-int MCTSTree::MakeDecision(DecisionStrategy *decision_strategy)
+int SingleTree::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
 }
 
-std::vector<int> MCTSTree::GetFrequencies()
+std::vector<int> SingleTree::GetFrequencies()
 {
     return root_->GetChildrenN();
 }
 
-std::vector<float> MCTSTree::GetValues()
+std::vector<float> SingleTree::GetValues()
 {
     return root_->GetChildrenQ();
 }
