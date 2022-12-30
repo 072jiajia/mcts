@@ -42,3 +42,93 @@ private:
     Game *state_;
     MCTSNode_ *root_;
 };
+
+struct MCTSThreadInput
+{
+    MCTSThreadInput(Game *b, MCTSNode_ *root,
+                    TimeControlStrategy *time_controller,
+                    SelectionStrategy *selection_strategy,
+                    SimulationStrategy *simulation_strategy)
+        : b_{b}, root_{root},
+          time_controller_{time_controller},
+          selection_strategy_{selection_strategy},
+          simulation_strategy_{simulation_strategy} {}
+
+    Game *b() { return b_; }
+    MCTSNode_ *root() { return root_; }
+    TimeControlStrategy *time_controller() { return time_controller_; }
+    SelectionStrategy *selection_strategy() { return selection_strategy_; }
+    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
+
+private:
+    Game *b_;
+    MCTSNode_ *root_;
+    TimeControlStrategy *time_controller_;
+    SelectionStrategy *selection_strategy_;
+    SimulationStrategy *simulation_strategy_;
+};
+
+void *LaunchSearchThread(void *);
+
+class ThreadParallel : public MCTSTree_
+{
+public:
+    ThreadParallel(MCTSNode_ **, Game *, int);
+    ~ThreadParallel();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
+    int MakeDecision(DecisionStrategy *);
+    std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
+
+private:
+    Game *state_;
+    int num_threads_;
+    MCTSNode_ **roots_;
+    pthread_t *threads_;
+};
+
+class MultiThreadSingleTree : public MCTSTree_
+{
+public:
+    MultiThreadSingleTree(MCTSNode_ *, Game *, int);
+    ~MultiThreadSingleTree();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
+    int MakeDecision(DecisionStrategy *);
+    std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
+
+private:
+    Game *state_;
+    int num_threads_;
+    MCTSNode_ *root_;
+    pthread_t *threads_;
+};
+
+class ProcessParallel : public MCTSTree_
+{
+public:
+    ProcessParallel(Game *, MCTSTree_ *, int);
+    ~ProcessParallel();
+    float GetTotalSimulationCount();
+    void Search(SelectionStrategy *,
+                SimulationStrategy *,
+                TimeControlStrategy *);
+    int MakeDecision(DecisionStrategy *);
+    std::vector<int> GetFrequencies();
+    std::vector<float> GetValues();
+
+private:
+    int num_processes_;
+    MCTSTree_ *tree_;
+    int action_size_;
+    int shm_id_;
+    int *shm_;
+    int shm_value_id_;
+    float *shm_value_;
+};
