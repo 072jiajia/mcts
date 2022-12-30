@@ -279,9 +279,7 @@ void MCTSMutexNode::SearchOnce(SearchParam *input)
         int action_index = selection_strategy->Select(current_node);
         MCTSMutexNode *next_node = (MCTSMutexNode *)(current_node->GetChildren()->at(action_index));
 
-        next_node->Lock();
-        next_node->SetVirtualN(next_node->GetVirtualN() + 1);
-        next_node->Release();
+        next_node->virtual_N_++;
 
         current_node->Release();
 
@@ -293,7 +291,7 @@ void MCTSMutexNode::SearchOnce(SearchParam *input)
     {
         MCTSMutexNode *node = traversed_nodes[i];
         node->Lock();
-        node->SetVirtualN(node->GetVirtualN() - 1);
+        node->virtual_N_--;
         node->UpdateResult(value);
         node->Release();
 
