@@ -60,7 +60,7 @@ ThreadParallel::~ThreadParallel()
     {
         delete roots_[i];
     }
-    delete roots_;
+    delete[] roots_;
     delete threads_;
 }
 
