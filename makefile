@@ -1,44 +1,26 @@
-simpledemo:
+test-tictactoe:
 	mkdir -p build
-	g++ -O3 -pthread demo-tictactoe.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/simpledemo
+	g++ -O3 -pthread test/test-tictactoe.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/test-tictactoe
 
-clean-simpledemo:
-	rm build/simpledemo
-
-demo-nogo:
+test-nogo:
 	mkdir -p build
-	g++ -O3 -pthread demo-nogo.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-nogo
+	g++ -O3 -pthread test/test-nogo.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/test-nogo
 
-clean-demo-nogo:
-	rm build/demo-nogo
-
-demo-rave:
+test-rave:
 	mkdir -p build
-	g++ -O3 -pthread demo-rave.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-rave
+	g++ -O3 -pthread test/test-rave.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/test-rave
 
-clean-demo-rave:
-	rm build/demo-rave
-
-demo-parallel:
+test-parallel:
 	mkdir -p build
-	g++ -O3 -pthread demo-parallel.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-parallel
+	g++ -O3 -pthread test/test-parallel.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/test-parallel
 
-clean-demo-parallel:
-	rm build/demo-parallel
-
-demo-othello:
+test-othello:
 	mkdir -p build
-	g++ -O3 -pthread demo-othello.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-othello
+	g++ -O3 -pthread test/test-othello.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/test-othello
 
-clean-demo-othello:
-	rm build/demo-othello
-
-demo-gomoku:
+test-gomoku:
 	mkdir -p build
-	g++ -O3 -pthread demo-gomoku.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/demo-gomoku
-
-clean-demo-gomoku:
-	rm build/demo-gomoku
+	g++ -O3 -pthread test/test-gomoku.cpp mcts/*.cpp mcts/strategies/*.cpp games/*.cpp -o build/test-gomoku
 
 play-gomoku:
 	mkdir -p build

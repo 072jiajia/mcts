@@ -1,5 +1,5 @@
-#include "mcts/mcts.h"
-#include "games/games.h"
+#include "../mcts/mcts.h"
+#include "../games/games.h"
 #include <iostream>
 #include <vector>
 #include <stdexcept>

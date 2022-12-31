@@ -1,12 +1,12 @@
-#include "mcts/mcts.h"
-#include "games/games.h"
+#include "../mcts/mcts.h"
+#include "../games/games.h"
 #include <iostream>
 #include <vector>
 #include <stdexcept>
 
 int main()
 {
-    AgentOptions p1_args = AgentOptions(Algorithm::MCTS_PUCT).selection_strategy(new PUCT(1.4));
+    AgentOptions p1_args = AgentOptions(Algorithm::RAVE).selection_strategy(new RaveUCBHighest(1.4, 0.1));
     AgentOptions p2_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
     Agent p1(p1_args);
     Agent p2(p2_args);
@@ -16,7 +16,7 @@ int main()
     int draw_count = 0;
     while (true)
     {
-        Gomoku b;
+        NoGo b(5, 5);
         while (!b.IsGameOver())
         {
             b.PrintState();
