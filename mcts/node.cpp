@@ -78,16 +78,12 @@ void MCTSNodeCS::Expansion(Game *dummy)
     delete movable_actions;
 }
 
-Game *MCTSNodeCS::GetNextState(Game *state, int action_index)
-{
-    MCTSNodeCS *node = (MCTSNodeCS *)(GetChildren()->at(action_index));
-    return node->state_;
-}
-
 void MCTSNodeCS::SearchOnce(Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
+
+Game *MCTSNodeCS::GetState() { return state_; }
 
 MCTSNode::MCTSNode() : MCTSNodeImpl_(), actions_(nullptr) {}
 
@@ -110,16 +106,12 @@ void MCTSNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-Game *MCTSNode::GetNextState(Game *state, int action_index)
-{
-    state->DoAction(actions_->Get(action_index));
-    return state;
-}
-
 void MCTSNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
+
+ActionList *MCTSNode::GetActions() { return actions_; }
 
 MCTSMutexNode::MCTSMutexNode() : MCTSNodeImpl_(), virtual_N_(0), actions_(nullptr), lock()
 {
@@ -165,16 +157,12 @@ void MCTSMutexNode::SetVirtualN(int virtual_N)
     virtual_N_ = virtual_N;
 }
 
-Game *MCTSMutexNode::GetNextState(Game *state, int action_index)
-{
-    state->DoAction(actions_->Get(action_index));
-    return state;
-}
-
 void MCTSMutexNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
+
+ActionList *MCTSMutexNode::GetActions() { return actions_; }
 
 RaveNode::RaveNode() : MCTSNodeImpl_(), actions_(nullptr), rave_QN_() {}
 
@@ -211,16 +199,14 @@ void RaveNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-Game *RaveNode::GetNextState(Game *state, int action_index)
-{
-    state->DoAction(actions_->Get(action_index));
-    return state;
-}
-
 void RaveNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
+
+ActionList *RaveNode::GetAction() { return actions_; }
+
+std::map<int, std::pair<float, float>> *RaveNode::GetRaveQN() { return &rave_QN_; }
 
 MCTSPolicyNode::MCTSPolicyNode() : MCTSNodeImpl_(), actions_(nullptr), policy_() {}
 
@@ -248,13 +234,9 @@ void MCTSPolicyNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-Game *MCTSPolicyNode::GetNextState(Game *state, int action_index)
-{
-    state->DoAction(actions_->Get(action_index));
-    return state;
-}
-
 void MCTSPolicyNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
+
+ActionList *MCTSPolicyNode::GetActions() { return actions_; }

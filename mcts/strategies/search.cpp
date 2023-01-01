@@ -9,8 +9,8 @@ MCTSSearch::MCTSSearch(SelectionStrategy *selection_strategy,
 
 std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
 {
-    std::vector<MCTSNode_ *> traversed_nodes;
-    MCTSNode_ *current_node = node;
+    std::vector<MCTSNode *> traversed_nodes;
+    MCTSNode *current_node = (MCTSNode *)node;
 
     Game *state = input_state->Clone();
 
@@ -34,8 +34,9 @@ std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, Game *input_state) c
             current_node->Expansion(state);
 
         int action_index = selection_strategy_->Select(current_node);
-        state = current_node->GetNextState(state, action_index);
-        current_node = current_node->GetChildren()->at(action_index);
+        Action *action = current_node->GetActions()->Get(action_index);
+        state->DoAction(action);
+        current_node = (MCTSNode *)(current_node->GetChildren()->at(action_index));
     }
 
     for (int i = traversed_nodes.size() - 1; i >= 0; i--)
@@ -53,7 +54,7 @@ MCTSCopyStateSearch::MCTSCopyStateSearch(SelectionStrategy *selection_strategy,
 
 std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *state) const
 {
-    std::vector<MCTSNode_ *> traversed_nodes;
+    std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = (MCTSNodeCS *)node;
 
     float value;
@@ -75,8 +76,8 @@ std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *state
             current_node->Expansion(state);
 
         int action_index = selection_strategy_->Select(current_node);
-        state = current_node->GetNextState(state, action_index);
         current_node = (MCTSNodeCS *)(current_node->GetChildren()->at(action_index));
+        state = current_node->GetState();
     }
 
     for (int i = traversed_nodes.size() - 1; i >= 0; i--)
@@ -124,7 +125,9 @@ std::vector<float> *MutexSearch::SearchOnce(MCTSNode_ *node, Game *input_state) 
 
         current_node->Release();
 
-        state = current_node->GetNextState(state, action_index);
+        Action *action = current_node->GetActions()->Get(action_index);
+        state->DoAction(action);
+
         current_node = next_node;
     }
 
@@ -237,7 +240,10 @@ std::vector<float> *PolicySearch::SearchOnce(MCTSNode_ *node, Game *input_state)
             current_node->Expansion(state);
 
         int action_index = selection_strategy_->Select(current_node);
-        state = current_node->GetNextState(state, action_index);
+
+        Action *action = current_node->GetActions()->Get(action_index);
+        state->DoAction(action);
+
         current_node = (MCTSPolicyNode *)(current_node->GetChildren()->at(action_index));
     }
 

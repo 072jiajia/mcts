@@ -32,7 +32,6 @@ public:
     virtual std::vector<float> GetChildrenQ() = 0;
     virtual std::vector<std::pair<int, float>> GetChildrenQN() = 0;
     virtual void SearchOnce(Game *, SearchStrategy *) = 0;
-    virtual Game *GetNextState(Game *state, int action_index) = 0;
     virtual void Expansion(Game *state) = 0;
 };
 
@@ -69,7 +68,7 @@ public:
     ~MCTSNodeCS();
     void Expansion(Game *);
     void SearchOnce(Game *, SearchStrategy *);
-    Game *GetNextState(Game *state, int action_index);
+    Game *GetState();
 
 private:
     Game *state_;
@@ -87,7 +86,7 @@ public:
     ~MCTSNode();
     void Expansion(Game *);
     void SearchOnce(Game *, SearchStrategy *);
-    Game *GetNextState(Game *state, int action_index);
+    ActionList *GetActions();
 
 private:
     ActionList *actions_;
@@ -110,7 +109,8 @@ public:
     int GetVirtualN();
 
     void SetVirtualN(int virtual_N);
-    Game *GetNextState(Game *state, int action_index);
+
+    ActionList *GetActions();
 
 private:
     ActionList *actions_;
@@ -133,10 +133,9 @@ public:
 
     float rave_Q(int);
     float rave_N(int);
-    Game *GetNextState(Game *state, int action_index);
 
-    ActionList *GetAction() { return actions_; }
-    std::map<int, std::pair<float, float>> *GetRaveQN() { return &rave_QN_; }
+    ActionList *GetAction();
+    std::map<int, std::pair<float, float>> *GetRaveQN();
 
 private:
     ActionList *actions_;
@@ -154,7 +153,8 @@ public:
 
     void Expansion(Game *state);
     void SearchOnce(Game *, SearchStrategy *);
-    Game *GetNextState(Game *state, int action_index);
+
+    ActionList *GetActions();
 
 private:
     ActionList *actions_;
