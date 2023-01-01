@@ -12,21 +12,7 @@
 #include "strategies/simulation.h"
 #include "strategies/selection.h"
 #include "strategies/timecontrol.h"
-
-struct SearchParam
-{
-    SearchParam(Game *state, SelectionStrategy *selection_strategy, SimulationStrategy *simulation_strategy)
-        : state_(state), selection_strategy_{selection_strategy}, simulation_strategy_{simulation_strategy} {}
-
-    Game *state() { return state_; }
-    SelectionStrategy *selection_strategy() { return selection_strategy_; }
-    SimulationStrategy *simulation_strategy() { return simulation_strategy_; }
-
-private:
-    Game *state_;
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
-};
+#include "strategies/search.h"
 
 class MCTSNode_
 {
@@ -45,7 +31,7 @@ public:
     virtual std::vector<int> GetChildrenN() = 0;
     virtual std::vector<float> GetChildrenQ() = 0;
     virtual std::vector<std::pair<int, float>> GetChildrenQN() = 0;
-    virtual void SearchOnce(SearchParam *) = 0;
+    virtual void SearchOnce(Game *, SearchStrategy *) = 0;
     virtual Game *GetNextState(Game *state, int action_index) = 0;
     virtual void Expansion(Game *state) = 0;
 };
@@ -82,7 +68,7 @@ public:
     MCTSNodeCS(Game *s);
     ~MCTSNodeCS();
     void Expansion(Game *);
-    void SearchOnce(SearchParam *);
+    void SearchOnce(Game *, SearchStrategy *);
     Game *GetNextState(Game *state, int action_index);
 
 private:
@@ -100,7 +86,7 @@ public:
     MCTSNode();
     ~MCTSNode();
     void Expansion(Game *);
-    void SearchOnce(SearchParam *);
+    void SearchOnce(Game *, SearchStrategy *);
     Game *GetNextState(Game *state, int action_index);
 
 private:
@@ -116,7 +102,7 @@ public:
 
     void Expansion(Game *);
 
-    void SearchOnce(SearchParam *);
+    void SearchOnce(Game *, SearchStrategy *);
 
     void Lock();
     void Release();
@@ -143,11 +129,14 @@ public:
     ~RaveNode();
 
     void Expansion(Game *state);
-    void SearchOnce(SearchParam *);
+    void SearchOnce(Game *, SearchStrategy *);
 
     float rave_Q(int);
     float rave_N(int);
     Game *GetNextState(Game *state, int action_index);
+
+    ActionList *GetAction() { return actions_; }
+    std::map<int, std::pair<float, float>> *GetRaveQN() { return &rave_QN_; }
 
 private:
     ActionList *actions_;
@@ -164,7 +153,7 @@ public:
     const std::vector<float> *GetPolicy() const;
 
     void Expansion(Game *state);
-    void SearchOnce(SearchParam *);
+    void SearchOnce(Game *, SearchStrategy *);
     Game *GetNextState(Game *state, int action_index);
 
 private:

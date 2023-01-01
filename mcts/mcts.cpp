@@ -4,20 +4,46 @@
 Agent::Agent(AgentOptions &options)
 	: algo_(options.algo()), timer_(), time_limit_ms_(options.time_limit_ms()),
 	  min_iter_(options.min_iter()),
-	  selection_strategy_(options.selection_strategy()),
-	  simulation_strategy_(options.simulation_strategy()),
 	  decision_strategy_(options.decision_strategy()),
 	  num_threads_(options.num_threads()),
 	  num_processes_(options.num_processes())
 {
-	if (!selection_strategy_)
-		selection_strategy_ = new UCBHighest();
+	SelectionStrategy *selection_strategy(options.selection_strategy());
+	SimulationStrategy *simulation_strategy(options.simulation_strategy());
 
-	if (!simulation_strategy_)
-		simulation_strategy_ = new SimulationDefaultStrategy();
+	if (!selection_strategy)
+		selection_strategy = new UCBHighest();
+
+	if (!simulation_strategy)
+		simulation_strategy = new SimulationDefaultStrategy();
 
 	if (!decision_strategy_)
 		decision_strategy_ = new MostFrequency();
+
+	if (algo_ == Algorithm::MCTS_COPY_STATE)
+	{
+		search_strategy_ = new MCTSCopyStateSearch(selection_strategy, simulation_strategy);
+	}
+	else if (algo_ == Algorithm::MCTS)
+	{
+		search_strategy_ = new MCTSSearch(selection_strategy, simulation_strategy);
+	}
+	else if (algo_ == Algorithm::RAVE)
+	{
+		search_strategy_ = new RaveSearch(selection_strategy, simulation_strategy);
+	}
+	else if (algo_ == Algorithm::MCTS_PUCT)
+	{
+		search_strategy_ = new PolicySearch(selection_strategy, simulation_strategy);
+	}
+	else if (algo_ == Algorithm::MCTS_VIRTUAL_LOSS)
+	{
+		search_strategy_ = new MutexSearch(selection_strategy, simulation_strategy);
+	}
+	else
+	{
+		throw std::invalid_argument("Unknown Algorithm");
+	}
 }
 
 Agent::~Agent() {}
@@ -76,7 +102,7 @@ Action *Agent::SearchAction(Game *b)
 		mcts_tree = new ProcessParallel(b, mcts_tree, num_processes_);
 	}
 
-	mcts_tree->Search(selection_strategy_, simulation_strategy_, time_controller);
+	mcts_tree->Search(search_strategy_, time_controller);
 	int best_move = mcts_tree->MakeDecision(decision_strategy_);
 	std::cout << "Total Search Times: " << mcts_tree->GetTotalSimulationCount() << std::endl;
 	delete mcts_tree;

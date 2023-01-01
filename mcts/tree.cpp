@@ -23,14 +23,12 @@ float SingleTree::GetTotalSimulationCount()
     return root_->N();
 }
 
-void SingleTree::Search(SelectionStrategy *selection_strategy,
-                        SimulationStrategy *simulation_strategy,
+void SingleTree::Search(SearchStrategy *search_strategy,
                         TimeControlStrategy *time_controller)
 {
     while (!time_controller->Stop())
     {
-        SearchParam temp{state_, selection_strategy, simulation_strategy};
-        root_->SearchOnce(&temp);
+        root_->SearchOnce(state_, search_strategy);
     }
 }
 
@@ -75,14 +73,13 @@ float ThreadParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ThreadParallel::Search(SelectionStrategy *selection_strategy,
-                            SimulationStrategy *simulation_strategy,
+void ThreadParallel::Search(SearchStrategy *search_strategy,
                             TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
     {
         MCTSThreadInput *data = new MCTSThreadInput(state_, roots_[i], time_controller,
-                                                    selection_strategy, simulation_strategy);
+                                                    search_strategy);
         if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
         {
             perror("pthread_create() error");
@@ -107,13 +104,11 @@ void *LaunchSearchThread(void *args_void)
     MCTSNode_ *root = args->root();
     Game *b = args->b();
     TimeControlStrategy *time_controller = args->time_controller();
-    SelectionStrategy *selection_strategy = args->selection_strategy();
-    SimulationStrategy *simulation_strategy = args->simulation_strategy();
+    SearchStrategy *search_strategy = args->search_strategy();
 
     while (!time_controller->Stop())
     {
-        SearchParam temp{b, selection_strategy, simulation_strategy};
-        root->SearchOnce(&temp);
+        root->SearchOnce(b, search_strategy);
     }
     delete args;
     pthread_exit(NULL);
@@ -167,14 +162,13 @@ float MultiThreadSingleTree::GetTotalSimulationCount()
     return root_->N();
 }
 
-void MultiThreadSingleTree::Search(SelectionStrategy *selection_strategy,
-                                   SimulationStrategy *simulation_strategy,
+void MultiThreadSingleTree::Search(SearchStrategy *search_strategy,
                                    TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
     {
         MCTSThreadInput *data = new MCTSThreadInput(state_, root_, time_controller,
-                                                    selection_strategy, simulation_strategy);
+                                                    search_strategy);
         if (pthread_create(&threads_[i], NULL, LaunchSearchThread, (void *)data) != 0)
         {
             perror("pthread_create() error");
@@ -265,8 +259,7 @@ float ProcessParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ProcessParallel::Search(SelectionStrategy *selection_strategy,
-                             SimulationStrategy *simulation_strategy,
+void ProcessParallel::Search(SearchStrategy *search_strategy,
                              TimeControlStrategy *time_controller)
 {
     for (int process_id = 0; process_id < num_processes_; process_id++)
@@ -281,7 +274,7 @@ void ProcessParallel::Search(SelectionStrategy *selection_strategy,
         else if (pid == 0)
         {
             srand(getpid());
-            tree_->Search(selection_strategy, simulation_strategy, time_controller);
+            tree_->Search(search_strategy, time_controller);
 
             std::vector<int> freqs = tree_->GetFrequencies();
             std::vector<float> values = tree_->GetValues();
