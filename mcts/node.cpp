@@ -62,7 +62,7 @@ MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
 
 MCTSNodeCS::~MCTSNodeCS() { delete state_; }
 
-void MCTSNodeCS::Expansion(Game *dummy)
+void MCTSNodeCS::Expansion()
 {
     ActionList *movable_actions = state_->GetLegalMoves();
 

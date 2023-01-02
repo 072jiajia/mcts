@@ -52,7 +52,7 @@ MCTSCopyStateSearch::MCTSCopyStateSearch(SelectionStrategy *selection_strategy,
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
-std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *state) const
+std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *dummy) const
 {
     std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = (MCTSNodeCS *)node;
@@ -60,6 +60,7 @@ std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *state
     float value;
     while (true)
     {
+        Game *state = current_node->GetState();
         traversed_nodes.push_back(current_node);
         if (state->IsGameOver())
         {
@@ -73,11 +74,10 @@ std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *state
         }
 
         if (!current_node->IsExpanded())
-            current_node->Expansion(state);
+            current_node->Expansion();
 
         int action_index = selection_strategy_->Select(current_node);
         current_node = (MCTSNodeCS *)(current_node->GetChildren()->at(action_index));
-        state = current_node->GetState();
     }
 
     for (int i = traversed_nodes.size() - 1; i >= 0; i--)
