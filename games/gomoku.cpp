@@ -8,12 +8,9 @@ Gomoku::Gomoku(const Gomoku *src)
     : remaining_space_(src->remaining_space_),
       whos_turn(src->whos_turn), result_(src->result_)
 {
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 225; i++)
     {
-        for (int j = 0; j < 15; j++)
-        {
-            board[i][j] = src->board[i][j];
-        }
+        board[i] = src->board[i];
     }
 }
 
@@ -24,7 +21,7 @@ ActionList *Gomoku::GetLegalMoves() const
     {
         for (int j = 0; j < 15; j++)
         {
-            if (board[i][j] == PieceType::EMPTY)
+            if (board[i * 15 + j] == PieceType::EMPTY)
                 output->Add(new GomokuAction(i, j));
         }
     }
@@ -36,17 +33,17 @@ void Gomoku::DoAction(const Action *action_abs)
     GomokuAction *action = (GomokuAction *)action_abs;
     int x = action->x();
     int y = action->y();
-    if (board[x][y] != PieceType::EMPTY)
+    if (board[x * 15 + y] != PieceType::EMPTY)
     {
         throw std::invalid_argument("Your action is invalid");
     }
-    board[x][y] = whos_turn == Player::PLAYER1 ? PieceType::PLAYER1 : PieceType::PLAYER2;
+    board[x * 15 + y] = whos_turn == Player::PLAYER1 ? PieceType::PLAYER1 : PieceType::PLAYER2;
     remaining_space_--;
 
-    if (LineConnected(x, y, 1, 1) ||
-        LineConnected(x, y, 1, 0) ||
-        LineConnected(x, y, 0, 1) ||
-        LineConnected(x, y, 1, -1))
+    if (LineConnected(x, y, 1, 1) >= 5 ||
+        LineConnected(x, y, 1, 0) >= 5 ||
+        LineConnected(x, y, 0, 1) >= 5 ||
+        LineConnected(x, y, 1, -1) >= 5)
     {
         result_ = whos_turn == Player::PLAYER1 ? ResultType::PLAYER1_WIN : ResultType::PLAYER2_WIN;
     }
@@ -88,11 +85,11 @@ void Gomoku::PrintState() const
         for (int j = 0; j < 15; j++)
         {
             char c;
-            if (board[i][j] == PieceType::EMPTY)
+            if (board[i * 15 + j] == PieceType::EMPTY)
                 c = ' ';
-            else if (board[i][j] == PieceType::PLAYER1)
+            else if (board[i * 15 + j] == PieceType::PLAYER1)
                 c = 'O';
-            else if (board[i][j] == PieceType::PLAYER2)
+            else if (board[i * 15 + j] == PieceType::PLAYER2)
                 c = 'X';
             else
                 c = '?';
@@ -124,13 +121,13 @@ ResultType Gomoku::GetResult() const
 
 Player Gomoku::GetPlayerThisTurn() const { return whos_turn; }
 
-bool Gomoku::LineConnected(int x, int y, int dx, int dy) const
+int Gomoku::LineConnected(int x, int y, int dx, int dy) const
 {
-    PieceType piece = board[x][y];
+    PieceType piece = board[x * 15 + y];
     int line_length = 1;
     int i = x + dx;
     int j = y + dy;
-    while (0 <= i && i < 15 && 0 <= j && j < 15 && board[i][j] == piece)
+    while (0 <= i && i < 15 && 0 <= j && j < 15 && board[i * 15 + j] == piece)
     {
         line_length++;
         i += dx;
@@ -138,11 +135,16 @@ bool Gomoku::LineConnected(int x, int y, int dx, int dy) const
     }
     i = x - dx;
     j = y - dy;
-    while (0 <= i && i < 15 && 0 <= j && j < 15 && board[i][j] == piece)
+    while (0 <= i && i < 15 && 0 <= j && j < 15 && board[i * 15 + j] == piece)
     {
         line_length++;
         i -= dx;
         j -= dy;
     }
-    return line_length >= 5;
+    return line_length;
+}
+
+Gomoku::PieceType *Gomoku::GetBoard()
+{
+    return board;
 }

@@ -23,6 +23,14 @@ private:
 class Gomoku : public Game
 {
 public:
+    enum class PieceType
+    {
+        EMPTY = 0,
+        PLAYER1 = 1,
+        PLAYER2 = 2,
+        UNKNOWN = 3,
+    };
+
     Gomoku();
     Gomoku(const Gomoku *);
     ~Gomoku();
@@ -35,20 +43,14 @@ public:
     bool IsGameOver() const;
     void PrintState() const;
 
-private:
-    enum class PieceType
-    {
-        EMPTY = 0,
-        PLAYER1 = 1,
-        PLAYER2 = 2,
-        UNKNOWN = 3,
-    };
+    PieceType *GetBoard();
 
-    bool LineConnected(int x, int y, int dx, int dy) const;
+private:
+    int LineConnected(int x, int y, int dx, int dy) const;
     void switch_turn();
 
     int remaining_space_;
-    PieceType board[15][15];
+    PieceType board[225];
     Player whos_turn;
     ResultType result_;
 };

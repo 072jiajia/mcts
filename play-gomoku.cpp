@@ -1,12 +1,15 @@
 #include "mcts/mcts.h"
 #include "games/games.h"
+#include "mcts/strategies/misc/gomoku_strategy.h"
 #include <iostream>
 #include <vector>
 #include <stdexcept>
 
 int main()
 {
-    AgentOptions ai_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+    AgentOptions ai_args = AgentOptions(Algorithm::MCTS_PUCT)
+                               .selection_strategy(new PUCT(1.4))
+                               .policy_strategy(new GomokuCenterFirst());
     Agent ai(ai_args);
 
     Gomoku b;
