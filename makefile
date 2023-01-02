@@ -1,3 +1,7 @@
+quickdemo:
+	mkdir -p build
+	g++ -O3 -pthread test/test-tictactoe.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/quickdemo
+
 test-tictactoe:
 	mkdir -p build
 	g++ -O3 -pthread test/test-tictactoe.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/test-tictactoe
@@ -22,9 +26,13 @@ test-gomoku:
 	mkdir -p build
 	g++ -O3 -pthread test/test-gomoku.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/test-gomoku
 
-play-gomoku:
+test-connect-four:
 	mkdir -p build
-	g++ -O3 -pthread play-gomoku.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/play-gomoku
+	g++ -O3 -pthread test/test-connect-four.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/test-connect-four
 
-clean-play-gomoku:
-	rm build/play-gomoku
+play-connect-four:
+	mkdir -p build
+	g++ -O3 -pthread play-connect-four.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/play-connect-four
+
+clean-play-connect-four:
+	rm build/play-connect-four

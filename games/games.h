@@ -3,3 +3,4 @@
 #include "tictactoe.h"
 #include "othello.h"
 #include "gomoku.h"
+#include "connect_four.h"

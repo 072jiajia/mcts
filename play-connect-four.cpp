@@ -1,18 +1,15 @@
 #include "mcts/mcts.h"
 #include "games/games.h"
-#include "mcts/strategies/misc/gomoku_strategy.h"
 #include <iostream>
 #include <vector>
 #include <stdexcept>
 
 int main()
 {
-    AgentOptions ai_args = AgentOptions(Algorithm::MCTS_PUCT)
-                               .selection_strategy(new PUCT(1.4))
-                               .policy_strategy(new GomokuCenterFirst());
+    AgentOptions ai_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
     Agent ai(ai_args);
 
-    Gomoku b;
+    ConnectFour b;
     while (!b.IsGameOver())
     {
         b.PrintState();
@@ -21,10 +18,9 @@ int main()
         if (b.GetPlayerThisTurn() == Player::PLAYER1)
         {
             int x;
-            char y;
-            std::cout << "Your turn! Please input your move (ex: I8, A15): ";
-            std::cin >> y >> x;
-            action = new GomokuAction(x - 1, y - 'A');
+            std::cout << "Your turn! Please input your move (1~7): ";
+            std::cin >> x;
+            action = new ConnectFourAction(x - 1, -1);
         }
         else
         {

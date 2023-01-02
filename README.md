@@ -11,9 +11,9 @@ Some parallel implementation of MCTS can further enhance its performance.
 
 ```
     # compile
-    make simpledemo
+    make quickdemo
     # Run the demo on tic-tac-toe game
-    ./build/simpledemo
+    ./build/quickdemo
 ```
 
 ## Supported Algorithms
@@ -30,7 +30,15 @@ Some parallel implementation of MCTS can further enhance its performance.
 - [Othello (Reversi)](https://en.wikipedia.org/wiki/Reversi)
 - [NoGo](https://webdocs.cs.ualberta.ca/~mmueller/nogo/rules.html)
 - [Gomoku](https://en.wikipedia.org/wiki/Gomoku)
+- [Connect Four](https://en.wikipedia.org/wiki/Connect_Four)
 - [Other Games](#How-To-Run-It-On-Your-Game)
+
+## Play Connect Four With MCTS Agent
+
+```
+    make play-connect-four
+    ./build/play-connect-four
+```
 
 ## How To Run It On Your Game?
 
