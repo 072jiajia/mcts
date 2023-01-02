@@ -10,6 +10,7 @@ Agent::Agent(AgentOptions &options)
 {
 	SelectionStrategy *selection_strategy(options.selection_strategy());
 	SimulationStrategy *simulation_strategy(options.simulation_strategy());
+	PolicyStrategy *policy_strategy(options.policy_strategy());
 
 	if (!selection_strategy)
 		selection_strategy = new UCBHighest();
@@ -19,6 +20,9 @@ Agent::Agent(AgentOptions &options)
 
 	if (!decision_strategy_)
 		decision_strategy_ = new MostFrequency();
+
+	if (!policy_strategy)
+		policy_strategy = new DefaultPolicy();
 
 	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
@@ -34,7 +38,8 @@ Agent::Agent(AgentOptions &options)
 	}
 	else if (algo_ == Algorithm::MCTS_PUCT)
 	{
-		search_strategy_ = new PolicySearch(selection_strategy, simulation_strategy);
+		search_strategy_ = new PolicySearch(selection_strategy, simulation_strategy, policy_strategy);
+		policy_strategy = nullptr;
 	}
 	else if (algo_ == Algorithm::MCTS_VIRTUAL_LOSS)
 	{
@@ -44,6 +49,8 @@ Agent::Agent(AgentOptions &options)
 	{
 		throw std::invalid_argument("Unknown Algorithm");
 	}
+	if (policy_strategy)
+		delete policy_strategy;
 }
 
 Agent::~Agent() {}

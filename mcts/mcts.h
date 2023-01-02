@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "strategies/simulation.h"
 #include "strategies/selection.h"
+#include "strategies/policy.h"
 #include "strategies/timecontrol.h"
 #include "strategies/decision.h"
 #include "strategies/search.h"
@@ -34,6 +35,7 @@ struct AgentOptions
 	OPTION_ARG(int, min_iter) = 1000;
 	OPTION_POINTER_ARG(SelectionStrategy *, selection_strategy) = nullptr;
 	OPTION_POINTER_ARG(SimulationStrategy *, simulation_strategy) = nullptr;
+	OPTION_POINTER_ARG(PolicyStrategy *, policy_strategy) = nullptr;
 	OPTION_POINTER_ARG(DecisionStrategy *, decision_strategy) = nullptr;
 	OPTION_ARG(int, num_threads) = 1;
 	OPTION_ARG(int, num_processes) = 1;

@@ -208,7 +208,7 @@ ActionList *RaveNode::GetAction() { return actions_; }
 
 std::map<int, std::pair<float, float>> *RaveNode::GetRaveQN() { return &rave_QN_; }
 
-MCTSPolicyNode::MCTSPolicyNode() : MCTSNodeImpl_(), actions_(nullptr), policy_() {}
+MCTSPolicyNode::MCTSPolicyNode() : MCTSNodeImpl_(), actions_(nullptr), policy_(nullptr) {}
 
 MCTSPolicyNode::~MCTSPolicyNode()
 {
@@ -216,17 +216,25 @@ MCTSPolicyNode::~MCTSPolicyNode()
     {
         delete actions_;
     }
+    if (policy_ != nullptr)
+    {
+        delete policy_;
+    }
 }
 
 const std::vector<float> *MCTSPolicyNode::GetPolicy() const
 {
-    return &policy_;
+    return policy_;
+}
+
+void MCTSPolicyNode::SetPolicy(std::vector<float> *policy)
+{
+    policy_ = policy;
 }
 
 void MCTSPolicyNode::Expansion(Game *state)
 {
     actions_ = state->GetLegalMoves();
-    policy_.resize(actions_->GetSize(), 1. / actions_->GetSize());
     for (uint i = 0; i < actions_->GetSize(); i++)
     {
         this->AppendChild(new MCTSPolicyNode());

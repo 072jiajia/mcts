@@ -229,9 +229,11 @@ std::vector<float> *RaveSearch::SearchOnce(MCTSNode_ *node, Game *input_state) c
 }
 
 PolicySearch::PolicySearch(SelectionStrategy *selection_strategy,
-                           SimulationStrategy *simulation_strategy)
+                           SimulationStrategy *simulation_strategy,
+                           PolicyStrategy *policy_strategy)
     : selection_strategy_(selection_strategy),
-      simulation_strategy_(simulation_strategy) {}
+      simulation_strategy_(simulation_strategy),
+      policy_strategy_(policy_strategy) {}
 
 MCTSNode_ *PolicySearch::CreateNode(Game *state) const
 {
@@ -262,7 +264,10 @@ std::vector<float> *PolicySearch::SearchOnce(MCTSNode_ *node, Game *input_state)
         }
 
         if (!current_node->IsExpanded())
+        {
             current_node->Expansion(state);
+            current_node->SetPolicy(policy_strategy_->Estimate(current_node, state, current_node->GetActions()));
+        }
 
         int action_index = selection_strategy_->Select(current_node);
 

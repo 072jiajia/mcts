@@ -2,6 +2,7 @@
 #include "../utils.h"
 #include "selection.h"
 #include "simulation.h"
+#include "policy.h"
 
 class MCTSNode_;
 
@@ -64,11 +65,12 @@ private:
 class PolicySearch : public SearchStrategy
 {
 public:
-    PolicySearch(SelectionStrategy *, SimulationStrategy *);
+    PolicySearch(SelectionStrategy *, SimulationStrategy *, PolicyStrategy *);
     MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const;
 
 private:
     SelectionStrategy *selection_strategy_;
     SimulationStrategy *simulation_strategy_;
+    PolicyStrategy *policy_strategy_;
 };

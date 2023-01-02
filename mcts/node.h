@@ -149,6 +149,7 @@ public:
     ~MCTSPolicyNode();
 
     const std::vector<float> *GetPolicy() const;
+    void SetPolicy(std::vector<float> *);
 
     void Expansion(Game *state);
     void SearchOnce(Game *, SearchStrategy *);
@@ -157,5 +158,5 @@ public:
 
 private:
     ActionList *actions_;
-    std::vector<float> policy_;
+    std::vector<float> *policy_;
 };
