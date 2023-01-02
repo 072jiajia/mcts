@@ -9,6 +9,7 @@ class SearchStrategy
 {
 public:
     virtual ~SearchStrategy() = default;
+    virtual MCTSNode_ *CreateNode(Game *state) const = 0;
     virtual std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const = 0;
 };
 
@@ -16,6 +17,7 @@ class MCTSSearch : public SearchStrategy
 {
 public:
     MCTSSearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const;
 
 private:
@@ -27,6 +29,7 @@ class MCTSCopyStateSearch : public SearchStrategy
 {
 public:
     MCTSCopyStateSearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const;
 
 private:
@@ -38,6 +41,7 @@ class RaveSearch : public SearchStrategy
 {
 public:
     RaveSearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const;
 
 private:
@@ -49,6 +53,7 @@ class MutexSearch : public SearchStrategy
 {
 public:
     MutexSearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const;
 
 private:
@@ -60,6 +65,7 @@ class PolicySearch : public SearchStrategy
 {
 public:
     PolicySearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, Game *state) const;
 
 private:

@@ -48,15 +48,11 @@ public:
 	Action *SearchAction(Game *b);
 
 private:
-	MCTSNode_ *CreateNode(const Algorithm &algo, Game *state);
-
 	Algorithm algo_;
 	double time_limit_ms_;
 	int min_iter_;
 	Timer timer_;
 	SearchStrategy *search_strategy_;
-	// SelectionStrategy *selection_strategy_;
-	// SimulationStrategy *simulation_strategy_;
 	DecisionStrategy *decision_strategy_;
 	int num_threads_;
 	int num_processes_;

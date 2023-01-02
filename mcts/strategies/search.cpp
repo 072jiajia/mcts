@@ -7,6 +7,11 @@ MCTSSearch::MCTSSearch(SelectionStrategy *selection_strategy,
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
+MCTSNode_ *MCTSSearch::CreateNode(Game *state) const
+{
+    return new MCTSNode();
+}
+
 std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
 {
     std::vector<MCTSNode *> traversed_nodes;
@@ -52,6 +57,11 @@ MCTSCopyStateSearch::MCTSCopyStateSearch(SelectionStrategy *selection_strategy,
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
+MCTSNode_ *MCTSCopyStateSearch::CreateNode(Game *state) const
+{
+    return new MCTSNodeCS(state);
+}
+
 std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *dummy) const
 {
     std::vector<MCTSNodeCS *> traversed_nodes;
@@ -91,6 +101,11 @@ MutexSearch::MutexSearch(SelectionStrategy *selection_strategy,
                          SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
+
+MCTSNode_ *MutexSearch::CreateNode(Game *state) const
+{
+    return new MCTSMutexNode();
+}
 
 std::vector<float> *MutexSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
 {
@@ -148,6 +163,11 @@ RaveSearch::RaveSearch(SelectionStrategy *selection_strategy,
                        SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
+
+MCTSNode_ *RaveSearch::CreateNode(Game *state) const
+{
+    return new RaveNode();
+}
 
 std::vector<float> *RaveSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
 {
@@ -212,6 +232,11 @@ PolicySearch::PolicySearch(SelectionStrategy *selection_strategy,
                            SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
+
+MCTSNode_ *PolicySearch::CreateNode(Game *state) const
+{
+    return new MCTSPolicyNode();
+}
 
 std::vector<float> *PolicySearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
 {

@@ -48,27 +48,6 @@ Agent::Agent(AgentOptions &options)
 
 Agent::~Agent() {}
 
-MCTSNode_ *Agent::CreateNode(const Algorithm &algo, Game *state)
-{
-	if (algo == Algorithm::MCTS_COPY_STATE)
-	{
-		return new MCTSNodeCS(state);
-	}
-	else if (algo == Algorithm::MCTS)
-	{
-		return new MCTSNode();
-	}
-	else if (algo == Algorithm::RAVE)
-	{
-		return new RaveNode();
-	}
-	else if (algo == Algorithm::MCTS_PUCT)
-	{
-		return new MCTSPolicyNode();
-	}
-	throw std::invalid_argument("Unknown Algorithm");
-}
-
 Action *Agent::SearchAction(Game *b)
 {
 	timer_.reset();
@@ -76,14 +55,14 @@ Action *Agent::SearchAction(Game *b)
 	MCTSTree_ *mcts_tree;
 	if (num_threads_ == 1)
 	{
-		MCTSNode_ *mcts_root = CreateNode(algo_, b);
+		MCTSNode_ *mcts_root = search_strategy_->CreateNode(b);
 		mcts_tree = new SingleTree(mcts_root, b);
 	}
 	else
 	{
 		if (algo_ == Algorithm::MCTS_VIRTUAL_LOSS)
 		{
-			MCTSNode_ *mcts_root = CreateNode(algo_, b);
+			MCTSNode_ *mcts_root = search_strategy_->CreateNode(b);
 			mcts_tree = new MultiThreadSingleTree(mcts_root, b, num_threads_);
 		}
 		else
@@ -91,7 +70,7 @@ Action *Agent::SearchAction(Game *b)
 			MCTSNode_ **mcts_roots = new MCTSNode_ *[num_threads_];
 			for (int i = 0; i < num_threads_; i++)
 			{
-				mcts_roots[i] = CreateNode(algo_, b);
+				mcts_roots[i] = search_strategy_->CreateNode(b);
 			}
 			mcts_tree = new ThreadParallel(mcts_roots, b, num_threads_);
 		}
