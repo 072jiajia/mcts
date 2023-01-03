@@ -91,6 +91,7 @@ Action *Agent::SearchAction(Game *b)
 	mcts_tree->Search(search_strategy_, time_controller);
 	int best_move = mcts_tree->MakeDecision(decision_strategy_);
 	std::cout << "Total Search Times: " << mcts_tree->GetTotalSimulationCount() << std::endl;
+	std::cout << "Action's Value: " << -mcts_tree->GetValues()[best_move] << std::endl;
 	delete mcts_tree;
 
 	ActionList *action_list = b->GetLegalMoves();
