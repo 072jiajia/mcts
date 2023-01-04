@@ -4,13 +4,13 @@
 
 MCTSNodeSearcher::MCTSNodeSearcher(SelectionStrategy *selection_strategy,
                                    SimulationStrategy *simulation_strategy)
-    : selection_strategy_(selection_strategy),
-      simulation_strategy_(simulation_strategy) {}
+    : selection_(selection_strategy),
+      simulation_(simulation_strategy) {}
 
 MCTSNodeSearcher::~MCTSNodeSearcher()
 {
-    delete selection_strategy_;
-    delete simulation_strategy_;
+    delete selection_;
+    delete simulation_;
 }
 
 MCTSNode_ *MCTSNodeSearcher::CreateNode(Game *state) const
@@ -42,14 +42,14 @@ std::vector<float> *MCTSNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *in
         }
         if (current_node->N() == 0)
         {
-            value = simulation_strategy_->SimulationOnce(state);
+            value = simulation_->SimulationOnce(state);
             break;
         }
 
         if (!current_node->IsExpanded())
             current_node->Expansion(state);
 
-        int action_index = selection_strategy_->Select(current_node);
+        int action_index = selection_->Select(current_node);
         Action *action = current_node->GetActions()->Get(action_index);
         state->DoAction(action);
         current_node = (MCTSNode *)(current_node->GetChildren()->at(action_index));
@@ -65,13 +65,13 @@ std::vector<float> *MCTSNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *in
 
 MCTSNodeCSSearcher::MCTSNodeCSSearcher(SelectionStrategy *selection_strategy,
                                        SimulationStrategy *simulation_strategy)
-    : selection_strategy_(selection_strategy),
-      simulation_strategy_(simulation_strategy) {}
+    : selection_(selection_strategy),
+      simulation_(simulation_strategy) {}
 
 MCTSNodeCSSearcher::~MCTSNodeCSSearcher()
 {
-    delete selection_strategy_;
-    delete simulation_strategy_;
+    delete selection_;
+    delete simulation_;
 }
 
 MCTSNode_ *MCTSNodeCSSearcher::CreateNode(Game *state) const
@@ -101,14 +101,14 @@ std::vector<float> *MCTSNodeCSSearcher::SearchOnce(MCTSNode_ *node, const Game *
         }
         if (current_node->N() == 0)
         {
-            value = simulation_strategy_->SimulationOnce(state);
+            value = simulation_->SimulationOnce(state);
             break;
         }
 
         if (!current_node->IsExpanded())
             current_node->Expansion();
 
-        int action_index = selection_strategy_->Select(current_node);
+        int action_index = selection_->Select(current_node);
         current_node = (MCTSNodeCS *)(current_node->GetChildren()->at(action_index));
     }
 
@@ -121,13 +121,13 @@ std::vector<float> *MCTSNodeCSSearcher::SearchOnce(MCTSNode_ *node, const Game *
 
 MutexNodeSearcher::MutexNodeSearcher(SelectionStrategy *selection_strategy,
                                      SimulationStrategy *simulation_strategy)
-    : selection_strategy_(selection_strategy),
-      simulation_strategy_(simulation_strategy) {}
+    : selection_(selection_strategy),
+      simulation_(simulation_strategy) {}
 
 MutexNodeSearcher::~MutexNodeSearcher()
 {
-    delete selection_strategy_;
-    delete simulation_strategy_;
+    delete selection_;
+    delete simulation_;
 }
 
 MCTSNode_ *MutexNodeSearcher::CreateNode(Game *state) const
@@ -158,7 +158,7 @@ std::vector<float> *MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *i
         }
         if (current_node->N() == 0)
         {
-            value = simulation_strategy_->SimulationOnce(state);
+            value = simulation_->SimulationOnce(state);
             break;
         }
 
@@ -166,7 +166,7 @@ std::vector<float> *MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *i
         if (!current_node->IsExpanded())
             current_node->Expansion(state);
 
-        int action_index = selection_strategy_->Select(current_node);
+        int action_index = selection_->Select(current_node);
         MCTSMutexNode *next_node = (MCTSMutexNode *)(current_node->GetChildren()->at(action_index));
 
         next_node->SetVirtualN(next_node->GetVirtualN() + 1);
@@ -194,13 +194,13 @@ std::vector<float> *MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *i
 
 RaveNodeSearcher::RaveNodeSearcher(SelectionStrategy *selection_strategy,
                                    SimulationStrategy *simulation_strategy)
-    : selection_strategy_(selection_strategy),
-      simulation_strategy_(simulation_strategy) {}
+    : selection_(selection_strategy),
+      simulation_(simulation_strategy) {}
 
 RaveNodeSearcher::~RaveNodeSearcher()
 {
-    delete selection_strategy_;
-    delete simulation_strategy_;
+    delete selection_;
+    delete simulation_;
 }
 
 MCTSNode_ *RaveNodeSearcher::CreateNode(Game *state) const
@@ -234,14 +234,14 @@ std::vector<float> *RaveNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *in
         }
         if (current_node->N() == 0)
         {
-            value = simulation_strategy_->SimulationOnce(state);
+            value = simulation_->SimulationOnce(state);
             break;
         }
 
         if (!current_node->IsExpanded())
             current_node->Expansion(state);
 
-        int action_index = selection_strategy_->Select(current_node);
+        int action_index = selection_->Select(current_node);
         Action *selected_action = current_node->GetAction()->Get(action_index);
         action_history.push_back(selected_action);
 
@@ -275,15 +275,15 @@ std::vector<float> *RaveNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *in
 PolicyNodeSearcher::PolicyNodeSearcher(SelectionStrategy *selection_strategy,
                                        SimulationStrategy *simulation_strategy,
                                        PolicyStrategy *policy_strategy)
-    : selection_strategy_(selection_strategy),
-      simulation_strategy_(simulation_strategy),
-      policy_strategy_(policy_strategy) {}
+    : selection_(selection_strategy),
+      simulation_(simulation_strategy),
+      policy_(policy_strategy) {}
 
 PolicyNodeSearcher::~PolicyNodeSearcher()
 {
-    delete selection_strategy_;
-    delete simulation_strategy_;
-    delete policy_strategy_;
+    delete selection_;
+    delete simulation_;
+    delete policy_;
 }
 
 MCTSNode_ *PolicyNodeSearcher::CreateNode(Game *state) const
@@ -315,17 +315,17 @@ std::vector<float> *PolicyNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *
         }
         if (current_node->N() == 0)
         {
-            value = simulation_strategy_->SimulationOnce(state);
+            value = simulation_->SimulationOnce(state);
             break;
         }
 
         if (!current_node->IsExpanded())
         {
             current_node->Expansion(state);
-            current_node->SetPolicy(policy_strategy_->Estimate(current_node, state, current_node->GetActions()));
+            current_node->SetPolicy(policy_->Estimate(current_node, state, current_node->GetActions()));
         }
 
-        int action_index = selection_strategy_->Select(current_node);
+        int action_index = selection_->Select(current_node);
 
         Action *action = current_node->GetActions()->Get(action_index);
         state->DoAction(action);

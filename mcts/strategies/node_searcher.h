@@ -25,8 +25,8 @@ public:
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
+    SelectionStrategy *selection_;
+    SimulationStrategy *simulation_;
 };
 
 class MCTSNodeCSSearcher : public NodeSearcher_
@@ -39,8 +39,8 @@ public:
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
+    SelectionStrategy *selection_;
+    SimulationStrategy *simulation_;
 };
 
 class RaveNodeSearcher : public NodeSearcher_
@@ -53,8 +53,8 @@ public:
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
+    SelectionStrategy *selection_;
+    SimulationStrategy *simulation_;
 };
 
 class MutexNodeSearcher : public NodeSearcher_
@@ -67,8 +67,8 @@ public:
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
+    SelectionStrategy *selection_;
+    SimulationStrategy *simulation_;
 };
 
 class PolicyNodeSearcher : public NodeSearcher_
@@ -81,7 +81,7 @@ public:
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
-    SelectionStrategy *selection_strategy_;
-    SimulationStrategy *simulation_strategy_;
-    PolicyStrategy *policy_strategy_;
+    SelectionStrategy *selection_;
+    SimulationStrategy *simulation_;
+    PolicyStrategy *policy_;
 };
