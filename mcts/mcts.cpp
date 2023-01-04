@@ -67,10 +67,10 @@ Action *Agent::SearchAction(Game *b)
 	}
 	else
 	{
-		if (algo_ == Algorithm::MCTS_VIRTUAL_LOSS)
+		if (search_strategy_->DoesSupportTreeParallel())
 		{
 			MCTSNode_ *mcts_root = search_strategy_->CreateNode(b);
-			mcts_tree = new MultiThreadSingleTree(mcts_root, b, num_threads_);
+			mcts_tree = new TreeParallel(mcts_root, b, num_threads_);
 		}
 		else
 		{
@@ -79,7 +79,7 @@ Action *Agent::SearchAction(Game *b)
 			{
 				mcts_roots[i] = search_strategy_->CreateNode(b);
 			}
-			mcts_tree = new ThreadParallel(mcts_roots, b, num_threads_);
+			mcts_tree = new RootParallel(mcts_roots, b, num_threads_);
 		}
 	}
 

@@ -64,11 +64,11 @@ private:
 
 void *LaunchSearchThread(void *);
 
-class ThreadParallel : public MCTSTree_
+class RootParallel : public MCTSTree_
 {
 public:
-    ThreadParallel(MCTSNode_ **, Game *, int);
-    ~ThreadParallel();
+    RootParallel(MCTSNode_ **, Game *, int);
+    ~RootParallel();
     float GetTotalSimulationCount();
     void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
@@ -82,11 +82,11 @@ private:
     pthread_t *threads_;
 };
 
-class MultiThreadSingleTree : public MCTSTree_
+class TreeParallel : public MCTSTree_
 {
 public:
-    MultiThreadSingleTree(MCTSNode_ *, Game *, int);
-    ~MultiThreadSingleTree();
+    TreeParallel(MCTSNode_ *, Game *, int);
+    ~TreeParallel();
     float GetTotalSimulationCount();
     void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);

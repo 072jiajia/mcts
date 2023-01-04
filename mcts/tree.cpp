@@ -47,12 +47,12 @@ std::vector<float> SingleTree::GetValues()
     return root_->GetChildrenQ();
 }
 
-ThreadParallel::ThreadParallel(MCTSNode_ **roots, Game *state, int num_threads) : roots_(roots), state_(state), num_threads_(num_threads)
+RootParallel::RootParallel(MCTSNode_ **roots, Game *state, int num_threads) : roots_(roots), state_(state), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
 }
 
-ThreadParallel::~ThreadParallel()
+RootParallel::~RootParallel()
 {
     for (int i = 0; i < num_threads_; i++)
     {
@@ -62,7 +62,7 @@ ThreadParallel::~ThreadParallel()
     delete threads_;
 }
 
-float ThreadParallel::GetTotalSimulationCount()
+float RootParallel::GetTotalSimulationCount()
 {
     int total_counts = 0;
     for (int i = 0; i < num_threads_; i++)
@@ -73,7 +73,7 @@ float ThreadParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ThreadParallel::Search(NodeSearcher_ *search_strategy,
+void RootParallel::Search(NodeSearcher_ *search_strategy,
                             TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
@@ -93,7 +93,7 @@ void ThreadParallel::Search(NodeSearcher_ *search_strategy,
     }
 }
 
-int ThreadParallel::MakeDecision(DecisionStrategy *decision_strategy)
+int RootParallel::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
 }
@@ -114,7 +114,7 @@ void *LaunchSearchThread(void *args_void)
     pthread_exit(NULL);
 }
 
-std::vector<int> ThreadParallel::GetFrequencies()
+std::vector<int> RootParallel::GetFrequencies()
 {
     std::vector<int> output = roots_[0]->GetChildrenN();
 
@@ -130,7 +130,7 @@ std::vector<int> ThreadParallel::GetFrequencies()
     return output;
 }
 
-std::vector<float> ThreadParallel::GetValues()
+std::vector<float> RootParallel::GetValues()
 {
     std::vector<float> output = roots_[0]->GetChildrenQ();
 
@@ -146,23 +146,23 @@ std::vector<float> ThreadParallel::GetValues()
     return output;
 }
 
-MultiThreadSingleTree::MultiThreadSingleTree(MCTSNode_ *root, Game *state, int num_threads) : root_(root), state_(state), num_threads_(num_threads)
+TreeParallel::TreeParallel(MCTSNode_ *root, Game *state, int num_threads) : root_(root), state_(state), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
 }
 
-MultiThreadSingleTree::~MultiThreadSingleTree()
+TreeParallel::~TreeParallel()
 {
     delete root_;
     delete threads_;
 }
 
-float MultiThreadSingleTree::GetTotalSimulationCount()
+float TreeParallel::GetTotalSimulationCount()
 {
     return root_->N();
 }
 
-void MultiThreadSingleTree::Search(NodeSearcher_ *search_strategy,
+void TreeParallel::Search(NodeSearcher_ *search_strategy,
                                    TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
@@ -182,17 +182,17 @@ void MultiThreadSingleTree::Search(NodeSearcher_ *search_strategy,
     }
 }
 
-int MultiThreadSingleTree::MakeDecision(DecisionStrategy *decision_strategy)
+int TreeParallel::MakeDecision(DecisionStrategy *decision_strategy)
 {
     return decision_strategy->Choose(this);
 }
 
-std::vector<int> MultiThreadSingleTree::GetFrequencies()
+std::vector<int> TreeParallel::GetFrequencies()
 {
     return root_->GetChildrenN();
 }
 
-std::vector<float> MultiThreadSingleTree::GetValues()
+std::vector<float> TreeParallel::GetValues()
 {
     return root_->GetChildrenQ();
 }
