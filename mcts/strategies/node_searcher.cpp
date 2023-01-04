@@ -7,6 +7,12 @@ MCTSNodeSearcher::MCTSNodeSearcher(SelectionStrategy *selection_strategy,
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
+MCTSNodeSearcher::~MCTSNodeSearcher()
+{
+    delete selection_strategy_;
+    delete simulation_strategy_;
+}
+
 MCTSNode_ *MCTSNodeSearcher::CreateNode(Game *state) const
 {
     return new MCTSNode();
@@ -62,6 +68,12 @@ MCTSNodeCSSearcher::MCTSNodeCSSearcher(SelectionStrategy *selection_strategy,
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
+MCTSNodeCSSearcher::~MCTSNodeCSSearcher()
+{
+    delete selection_strategy_;
+    delete simulation_strategy_;
+}
+
 MCTSNode_ *MCTSNodeCSSearcher::CreateNode(Game *state) const
 {
     return new MCTSNodeCS(state);
@@ -111,6 +123,12 @@ MutexNodeSearcher::MutexNodeSearcher(SelectionStrategy *selection_strategy,
                                      SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
+
+MutexNodeSearcher::~MutexNodeSearcher()
+{
+    delete selection_strategy_;
+    delete simulation_strategy_;
+}
 
 MCTSNode_ *MutexNodeSearcher::CreateNode(Game *state) const
 {
@@ -178,6 +196,12 @@ RaveNodeSearcher::RaveNodeSearcher(SelectionStrategy *selection_strategy,
                                    SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
+
+RaveNodeSearcher::~RaveNodeSearcher()
+{
+    delete selection_strategy_;
+    delete simulation_strategy_;
+}
 
 MCTSNode_ *RaveNodeSearcher::CreateNode(Game *state) const
 {
@@ -254,6 +278,13 @@ PolicyNodeSearcher::PolicyNodeSearcher(SelectionStrategy *selection_strategy,
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy),
       policy_strategy_(policy_strategy) {}
+
+PolicyNodeSearcher::~PolicyNodeSearcher()
+{
+    delete selection_strategy_;
+    delete simulation_strategy_;
+    delete policy_strategy_;
+}
 
 MCTSNode_ *PolicyNodeSearcher::CreateNode(Game *state) const
 {

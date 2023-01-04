@@ -19,6 +19,7 @@ class MCTSNodeSearcher : public NodeSearcher_
 {
 public:
     MCTSNodeSearcher(SelectionStrategy *, SimulationStrategy *);
+    ~MCTSNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
@@ -32,6 +33,7 @@ class MCTSNodeCSSearcher : public NodeSearcher_
 {
 public:
     MCTSNodeCSSearcher(SelectionStrategy *, SimulationStrategy *);
+    ~MCTSNodeCSSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
@@ -45,6 +47,7 @@ class RaveNodeSearcher : public NodeSearcher_
 {
 public:
     RaveNodeSearcher(SelectionStrategy *, SimulationStrategy *);
+    ~RaveNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
@@ -58,6 +61,7 @@ class MutexNodeSearcher : public NodeSearcher_
 {
 public:
     MutexNodeSearcher(SelectionStrategy *, SimulationStrategy *);
+    ~MutexNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
@@ -71,6 +75,7 @@ class PolicyNodeSearcher : public NodeSearcher_
 {
 public:
     PolicyNodeSearcher(SelectionStrategy *, SimulationStrategy *, PolicyStrategy *);
+    ~PolicyNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
