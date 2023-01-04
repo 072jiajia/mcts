@@ -13,7 +13,7 @@
 #include "strategies/policy.h"
 #include "strategies/timecontrol.h"
 #include "strategies/decision.h"
-#include "strategies/search.h"
+#include "strategies/node_searcher.h"
 
 enum class Algorithm
 {
@@ -54,7 +54,7 @@ private:
 	double time_limit_ms_;
 	int min_iter_;
 	Timer timer_;
-	SearchStrategy *search_strategy_;
+	NodeSearcher_ *search_strategy_;
 	DecisionStrategy *decision_strategy_;
 	int num_threads_;
 	int num_processes_;

@@ -19,7 +19,7 @@ class MCTSTree_
 public:
     virtual ~MCTSTree_(){};
     virtual float GetTotalSimulationCount() = 0;
-    virtual void Search(SearchStrategy *, TimeControlStrategy *) = 0;
+    virtual void Search(NodeSearcher_ *, TimeControlStrategy *) = 0;
     virtual int MakeDecision(DecisionStrategy *) = 0;
     virtual std::vector<int> GetFrequencies() = 0;
     virtual std::vector<float> GetValues() = 0;
@@ -31,7 +31,7 @@ public:
     SingleTree(MCTSNode_ *, Game *);
     ~SingleTree();
     float GetTotalSimulationCount();
-    void Search(SearchStrategy *, TimeControlStrategy *);
+    void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
@@ -45,7 +45,7 @@ struct MCTSThreadInput
 {
     MCTSThreadInput(Game *b, MCTSNode_ *root,
                     TimeControlStrategy *time_controller,
-                    SearchStrategy *search_strategy)
+                    NodeSearcher_ *search_strategy)
         : b_{b}, root_{root},
           time_controller_{time_controller},
           search_strategy_{search_strategy} {}
@@ -53,13 +53,13 @@ struct MCTSThreadInput
     Game *b() { return b_; }
     MCTSNode_ *root() { return root_; }
     TimeControlStrategy *time_controller() { return time_controller_; }
-    SearchStrategy *search_strategy() { return search_strategy_; }
+    NodeSearcher_ *search_strategy() { return search_strategy_; }
 
 private:
     Game *b_;
     MCTSNode_ *root_;
     TimeControlStrategy *time_controller_;
-    SearchStrategy *search_strategy_;
+    NodeSearcher_ *search_strategy_;
 };
 
 void *LaunchSearchThread(void *);
@@ -70,7 +70,7 @@ public:
     ThreadParallel(MCTSNode_ **, Game *, int);
     ~ThreadParallel();
     float GetTotalSimulationCount();
-    void Search(SearchStrategy *, TimeControlStrategy *);
+    void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
@@ -88,7 +88,7 @@ public:
     MultiThreadSingleTree(MCTSNode_ *, Game *, int);
     ~MultiThreadSingleTree();
     float GetTotalSimulationCount();
-    void Search(SearchStrategy *, TimeControlStrategy *);
+    void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
@@ -106,7 +106,7 @@ public:
     ProcessParallel(Game *, MCTSTree_ *, int);
     ~ProcessParallel();
     float GetTotalSimulationCount();
-    void Search(SearchStrategy *, TimeControlStrategy *);
+    void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();

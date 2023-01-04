@@ -23,7 +23,7 @@ float SingleTree::GetTotalSimulationCount()
     return root_->N();
 }
 
-void SingleTree::Search(SearchStrategy *search_strategy,
+void SingleTree::Search(NodeSearcher_ *search_strategy,
                         TimeControlStrategy *time_controller)
 {
     while (!time_controller->Stop())
@@ -73,7 +73,7 @@ float ThreadParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ThreadParallel::Search(SearchStrategy *search_strategy,
+void ThreadParallel::Search(NodeSearcher_ *search_strategy,
                             TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
@@ -104,7 +104,7 @@ void *LaunchSearchThread(void *args_void)
     MCTSNode_ *root = args->root();
     Game *b = args->b();
     TimeControlStrategy *time_controller = args->time_controller();
-    SearchStrategy *search_strategy = args->search_strategy();
+    NodeSearcher_ *search_strategy = args->search_strategy();
 
     while (!time_controller->Stop())
     {
@@ -162,7 +162,7 @@ float MultiThreadSingleTree::GetTotalSimulationCount()
     return root_->N();
 }
 
-void MultiThreadSingleTree::Search(SearchStrategy *search_strategy,
+void MultiThreadSingleTree::Search(NodeSearcher_ *search_strategy,
                                    TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
@@ -259,7 +259,7 @@ float ProcessParallel::GetTotalSimulationCount()
     return total_counts;
 }
 
-void ProcessParallel::Search(SearchStrategy *search_strategy,
+void ProcessParallel::Search(NodeSearcher_ *search_strategy,
                              TimeControlStrategy *time_controller)
 {
     for (int process_id = 0; process_id < num_processes_; process_id++)

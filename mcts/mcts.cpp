@@ -26,24 +26,24 @@ Agent::Agent(AgentOptions &options)
 
 	if (algo_ == Algorithm::MCTS_COPY_STATE)
 	{
-		search_strategy_ = new MCTSCopyStateSearch(selection_strategy, simulation_strategy);
+		search_strategy_ = new MCTSNodeCSSearcher(selection_strategy, simulation_strategy);
 	}
 	else if (algo_ == Algorithm::MCTS)
 	{
-		search_strategy_ = new MCTSSearch(selection_strategy, simulation_strategy);
+		search_strategy_ = new MCTSNodeSearcher(selection_strategy, simulation_strategy);
 	}
 	else if (algo_ == Algorithm::RAVE)
 	{
-		search_strategy_ = new RaveSearch(selection_strategy, simulation_strategy);
+		search_strategy_ = new RaveNodeSearcher(selection_strategy, simulation_strategy);
 	}
 	else if (algo_ == Algorithm::MCTS_PUCT)
 	{
-		search_strategy_ = new PolicySearch(selection_strategy, simulation_strategy, policy_strategy);
+		search_strategy_ = new PolicyNodeSearcher(selection_strategy, simulation_strategy, policy_strategy);
 		policy_strategy = nullptr;
 	}
 	else if (algo_ == Algorithm::MCTS_VIRTUAL_LOSS)
 	{
-		search_strategy_ = new MutexSearch(selection_strategy, simulation_strategy);
+		search_strategy_ = new MutexNodeSearcher(selection_strategy, simulation_strategy);
 	}
 	else
 	{

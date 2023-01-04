@@ -6,18 +6,18 @@
 
 class MCTSNode_;
 
-class SearchStrategy
+class NodeSearcher_
 {
 public:
-    virtual ~SearchStrategy() = default;
+    virtual ~NodeSearcher_() = default;
     virtual MCTSNode_ *CreateNode(Game *state) const = 0;
     virtual std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const = 0;
 };
 
-class MCTSSearch : public SearchStrategy
+class MCTSNodeSearcher : public NodeSearcher_
 {
 public:
-    MCTSSearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNodeSearcher(SelectionStrategy *, SimulationStrategy *);
     MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -26,10 +26,10 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class MCTSCopyStateSearch : public SearchStrategy
+class MCTSNodeCSSearcher : public NodeSearcher_
 {
 public:
-    MCTSCopyStateSearch(SelectionStrategy *, SimulationStrategy *);
+    MCTSNodeCSSearcher(SelectionStrategy *, SimulationStrategy *);
     MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -38,10 +38,10 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class RaveSearch : public SearchStrategy
+class RaveNodeSearcher : public NodeSearcher_
 {
 public:
-    RaveSearch(SelectionStrategy *, SimulationStrategy *);
+    RaveNodeSearcher(SelectionStrategy *, SimulationStrategy *);
     MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -50,10 +50,10 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class MutexSearch : public SearchStrategy
+class MutexNodeSearcher : public NodeSearcher_
 {
 public:
-    MutexSearch(SelectionStrategy *, SimulationStrategy *);
+    MutexNodeSearcher(SelectionStrategy *, SimulationStrategy *);
     MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -62,10 +62,10 @@ private:
     SimulationStrategy *simulation_strategy_;
 };
 
-class PolicySearch : public SearchStrategy
+class PolicyNodeSearcher : public NodeSearcher_
 {
 public:
-    PolicySearch(SelectionStrategy *, SimulationStrategy *, PolicyStrategy *);
+    PolicyNodeSearcher(SelectionStrategy *, SimulationStrategy *, PolicyStrategy *);
     MCTSNode_ *CreateNode(Game *state) const;
     std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
 

@@ -1,18 +1,18 @@
 #include "../node.h"
 #include "../utils.h"
-#include "search.h"
+#include "node_searcher.h"
 
-MCTSSearch::MCTSSearch(SelectionStrategy *selection_strategy,
+MCTSNodeSearcher::MCTSNodeSearcher(SelectionStrategy *selection_strategy,
                        SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
-MCTSNode_ *MCTSSearch::CreateNode(Game *state) const
+MCTSNode_ *MCTSNodeSearcher::CreateNode(Game *state) const
 {
     return new MCTSNode();
 }
 
-std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+std::vector<float> *MCTSNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     std::vector<MCTSNode *> traversed_nodes;
     MCTSNode *current_node = (MCTSNode *)node;
@@ -52,17 +52,17 @@ std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, const Game *input_st
     delete state;
 }
 
-MCTSCopyStateSearch::MCTSCopyStateSearch(SelectionStrategy *selection_strategy,
+MCTSNodeCSSearcher::MCTSNodeCSSearcher(SelectionStrategy *selection_strategy,
                                          SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
-MCTSNode_ *MCTSCopyStateSearch::CreateNode(Game *state) const
+MCTSNode_ *MCTSNodeCSSearcher::CreateNode(Game *state) const
 {
     return new MCTSNodeCS(state);
 }
 
-std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, const Game *dummy) const
+std::vector<float> *MCTSNodeCSSearcher::SearchOnce(MCTSNode_ *node, const Game *dummy) const
 {
     std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = (MCTSNodeCS *)node;
@@ -97,17 +97,17 @@ std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, const Game 
     }
 }
 
-MutexSearch::MutexSearch(SelectionStrategy *selection_strategy,
+MutexNodeSearcher::MutexNodeSearcher(SelectionStrategy *selection_strategy,
                          SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
-MCTSNode_ *MutexSearch::CreateNode(Game *state) const
+MCTSNode_ *MutexNodeSearcher::CreateNode(Game *state) const
 {
     return new MCTSMutexNode();
 }
 
-std::vector<float> *MutexSearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+std::vector<float> *MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
     std::vector<MCTSMutexNode *> traversed_nodes;
@@ -159,17 +159,17 @@ std::vector<float> *MutexSearch::SearchOnce(MCTSNode_ *node, const Game *input_s
     delete state;
 }
 
-RaveSearch::RaveSearch(SelectionStrategy *selection_strategy,
+RaveNodeSearcher::RaveNodeSearcher(SelectionStrategy *selection_strategy,
                        SimulationStrategy *simulation_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy) {}
 
-MCTSNode_ *RaveSearch::CreateNode(Game *state) const
+MCTSNode_ *RaveNodeSearcher::CreateNode(Game *state) const
 {
     return new RaveNode();
 }
 
-std::vector<float> *RaveSearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+std::vector<float> *RaveNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
 
@@ -228,19 +228,19 @@ std::vector<float> *RaveSearch::SearchOnce(MCTSNode_ *node, const Game *input_st
     delete state;
 }
 
-PolicySearch::PolicySearch(SelectionStrategy *selection_strategy,
+PolicyNodeSearcher::PolicyNodeSearcher(SelectionStrategy *selection_strategy,
                            SimulationStrategy *simulation_strategy,
                            PolicyStrategy *policy_strategy)
     : selection_strategy_(selection_strategy),
       simulation_strategy_(simulation_strategy),
       policy_strategy_(policy_strategy) {}
 
-MCTSNode_ *PolicySearch::CreateNode(Game *state) const
+MCTSNode_ *PolicyNodeSearcher::CreateNode(Game *state) const
 {
     return new MCTSPolicyNode();
 }
 
-std::vector<float> *PolicySearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+std::vector<float> *PolicyNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
 

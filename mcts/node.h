@@ -12,7 +12,7 @@
 #include "strategies/simulation.h"
 #include "strategies/selection.h"
 #include "strategies/timecontrol.h"
-#include "strategies/search.h"
+#include "strategies/node_searcher.h"
 
 class MCTSNode_
 {
@@ -31,7 +31,7 @@ public:
     virtual std::vector<int> GetChildrenN() const = 0;
     virtual std::vector<float> GetChildrenQ() const = 0;
     virtual std::vector<std::pair<int, float>> GetChildrenQN() const = 0;
-    virtual void SearchOnce(const Game *, SearchStrategy *) = 0;
+    virtual void SearchOnce(const Game *, NodeSearcher_ *) = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -66,7 +66,7 @@ public:
     MCTSNodeCS(Game *s);
     ~MCTSNodeCS();
     void Expansion();
-    void SearchOnce(const Game *, SearchStrategy *);
+    void SearchOnce(const Game *, NodeSearcher_ *);
     Game *GetState();
 
 private:
@@ -84,7 +84,7 @@ public:
     MCTSNode();
     ~MCTSNode();
     void Expansion(Game *);
-    void SearchOnce(const Game *, SearchStrategy *);
+    void SearchOnce(const Game *, NodeSearcher_ *);
     ActionList *GetActions();
 
 private:
@@ -100,7 +100,7 @@ public:
 
     void Expansion(Game *);
 
-    void SearchOnce(const Game *, SearchStrategy *);
+    void SearchOnce(const Game *, NodeSearcher_ *);
 
     void Lock();
     void Release();
@@ -128,7 +128,7 @@ public:
     ~RaveNode();
 
     void Expansion(Game *state);
-    void SearchOnce(const Game *, SearchStrategy *);
+    void SearchOnce(const Game *, NodeSearcher_ *);
 
     float rave_Q(int);
     float rave_N(int);
@@ -152,7 +152,7 @@ public:
     void SetPolicy(std::vector<float> *);
 
     void Expansion(Game *state);
-    void SearchOnce(const Game *, SearchStrategy *);
+    void SearchOnce(const Game *, NodeSearcher_ *);
 
     ActionList *GetActions();
 
