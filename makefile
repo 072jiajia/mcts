@@ -8,7 +8,7 @@ test-tictactoe:
 
 test-nogo:
 	mkdir -p build
-	g++ -O3 -pthread test/test-nogo.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp -o build/test-nogo
+	g++ -O3 -pthread test/test-nogo.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/test-nogo
 
 test-rave:
 	mkdir -p build
