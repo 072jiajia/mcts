@@ -10,17 +10,17 @@ MCTSNodeImpl_::~MCTSNodeImpl_()
     }
 }
 
-float MCTSNodeImpl_::Q() { return Q_; }
-int MCTSNodeImpl_::N() { return N_; }
+float MCTSNodeImpl_::Q() const { return Q_; }
+int MCTSNodeImpl_::N() const { return N_; }
 void MCTSNodeImpl_::SetQ(float Q) { Q_ = Q; }
 void MCTSNodeImpl_::SetN(int N) { N_ = N; }
-bool MCTSNodeImpl_::IsExpanded() { return expanded_; }
+bool MCTSNodeImpl_::IsExpanded() const { return expanded_; }
 void MCTSNodeImpl_::SetExpanded() { expanded_ = true; }
 void MCTSNodeImpl_::SetNotExpanded() { expanded_ = false; }
 const std::vector<MCTSNode_ *> *MCTSNodeImpl_::GetChildren() { return &children_; }
 void MCTSNodeImpl_::AppendChild(MCTSNode_ *new_child) { children_.push_back(new_child); }
 
-std::vector<int> MCTSNodeImpl_::GetChildrenN()
+std::vector<int> MCTSNodeImpl_::GetChildrenN() const
 {
     std::vector<int> output;
     for (int i = 0; i < children_.size(); i++)
@@ -31,7 +31,7 @@ std::vector<int> MCTSNodeImpl_::GetChildrenN()
     return output;
 }
 
-std::vector<float> MCTSNodeImpl_::GetChildrenQ()
+std::vector<float> MCTSNodeImpl_::GetChildrenQ() const
 {
     std::vector<float> output;
     for (int i = 0; i < children_.size(); i++)
@@ -42,7 +42,7 @@ std::vector<float> MCTSNodeImpl_::GetChildrenQ()
     return output;
 }
 
-std::vector<std::pair<int, float>> MCTSNodeImpl_::GetChildrenQN()
+std::vector<std::pair<int, float>> MCTSNodeImpl_::GetChildrenQN() const
 {
     std::vector<std::pair<int, float>> output;
     for (int i = 0; i < children_.size(); i++)

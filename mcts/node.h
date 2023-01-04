@@ -18,19 +18,19 @@ class MCTSNode_
 {
 public:
     virtual ~MCTSNode_(){};
-    virtual float Q() = 0;
-    virtual int N() = 0;
+    virtual float Q() const = 0;
+    virtual int N() const = 0;
     virtual void SetQ(float) = 0;
     virtual void SetN(int) = 0;
     virtual void UpdateResult(float) = 0;
-    virtual bool IsExpanded() = 0;
+    virtual bool IsExpanded() const = 0;
     virtual void SetExpanded() = 0;
     virtual void SetNotExpanded() = 0;
     virtual const std::vector<MCTSNode_ *> *GetChildren() = 0;
     virtual void AppendChild(MCTSNode_ *) = 0;
-    virtual std::vector<int> GetChildrenN() = 0;
-    virtual std::vector<float> GetChildrenQ() = 0;
-    virtual std::vector<std::pair<int, float>> GetChildrenQN() = 0;
+    virtual std::vector<int> GetChildrenN() const = 0;
+    virtual std::vector<float> GetChildrenQ() const = 0;
+    virtual std::vector<std::pair<int, float>> GetChildrenQN() const = 0;
     virtual void SearchOnce(const Game *, SearchStrategy *) = 0;
 };
 
@@ -39,19 +39,19 @@ class MCTSNodeImpl_ : public MCTSNode_
 public:
     MCTSNodeImpl_();
     virtual ~MCTSNodeImpl_();
-    float Q();
-    int N();
+    float Q() const;
+    int N() const;
     void SetQ(float);
     void SetN(int);
     void UpdateResult(float);
-    bool IsExpanded();
+    bool IsExpanded() const;
     void SetExpanded();
     void SetNotExpanded();
     const std::vector<MCTSNode_ *> *GetChildren();
     void AppendChild(MCTSNode_ *);
-    std::vector<int> GetChildrenN();
-    std::vector<float> GetChildrenQ();
-    std::vector<std::pair<int, float>> GetChildrenQN();
+    std::vector<int> GetChildrenN() const;
+    std::vector<float> GetChildrenQ() const;
+    std::vector<std::pair<int, float>> GetChildrenQN() const;
 
 private:
     std::vector<MCTSNode_ *> children_;
