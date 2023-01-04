@@ -78,7 +78,7 @@ void MCTSNodeCS::Expansion()
     delete movable_actions;
 }
 
-void MCTSNodeCS::SearchOnce(Game *state, SearchStrategy *search_strategy)
+void MCTSNodeCS::SearchOnce(const Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
@@ -106,7 +106,7 @@ void MCTSNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void MCTSNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
+void MCTSNode::SearchOnce(const Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
@@ -157,7 +157,7 @@ void MCTSMutexNode::SetVirtualN(int virtual_N)
     virtual_N_ = virtual_N;
 }
 
-void MCTSMutexNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
+void MCTSMutexNode::SearchOnce(const Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
@@ -199,7 +199,7 @@ void RaveNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void RaveNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
+void RaveNode::SearchOnce(const Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }
@@ -242,7 +242,7 @@ void MCTSPolicyNode::Expansion(Game *state)
     this->SetExpanded();
 }
 
-void MCTSPolicyNode::SearchOnce(Game *state, SearchStrategy *search_strategy)
+void MCTSPolicyNode::SearchOnce(const Game *state, SearchStrategy *search_strategy)
 {
     search_strategy->SearchOnce(this, state);
 }

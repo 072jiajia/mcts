@@ -12,7 +12,7 @@ MCTSNode_ *MCTSSearch::CreateNode(Game *state) const
     return new MCTSNode();
 }
 
-std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
+std::vector<float> *MCTSSearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     std::vector<MCTSNode *> traversed_nodes;
     MCTSNode *current_node = (MCTSNode *)node;
@@ -62,7 +62,7 @@ MCTSNode_ *MCTSCopyStateSearch::CreateNode(Game *state) const
     return new MCTSNodeCS(state);
 }
 
-std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, Game *dummy) const
+std::vector<float> *MCTSCopyStateSearch::SearchOnce(MCTSNode_ *node, const Game *dummy) const
 {
     std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = (MCTSNodeCS *)node;
@@ -107,7 +107,7 @@ MCTSNode_ *MutexSearch::CreateNode(Game *state) const
     return new MCTSMutexNode();
 }
 
-std::vector<float> *MutexSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
+std::vector<float> *MutexSearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
     std::vector<MCTSMutexNode *> traversed_nodes;
@@ -169,7 +169,7 @@ MCTSNode_ *RaveSearch::CreateNode(Game *state) const
     return new RaveNode();
 }
 
-std::vector<float> *RaveSearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
+std::vector<float> *RaveSearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
 
@@ -240,7 +240,7 @@ MCTSNode_ *PolicySearch::CreateNode(Game *state) const
     return new MCTSPolicyNode();
 }
 
-std::vector<float> *PolicySearch::SearchOnce(MCTSNode_ *node, Game *input_state) const
+std::vector<float> *PolicySearch::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
 
