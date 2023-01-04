@@ -6,8 +6,10 @@
 
 int main()
 {
-    AgentOptions p1_args = AgentOptions(Algorithm::MCTS_COPY_STATE).selection_strategy(new UCBHighest(1.4));
-    AgentOptions p2_args = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+    AgentOptions p1_args = AgentOptions()
+                               .search_strategy(new MCTSNodeCSSearcher());
+    AgentOptions p2_args = AgentOptions()
+                               .search_strategy(new MCTSNodeSearcher());
     Agent p1(p1_args);
     Agent p2(p2_args);
 

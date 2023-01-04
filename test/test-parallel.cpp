@@ -7,27 +7,14 @@
 int main()
 {
     /* Use MCTS with root parallel with 30 processes */
-    AgentOptions p1_options = AgentOptions(Algorithm::MCTS)
-                                  .selection_strategy(new UCBHighest(1.4))
-                                  .decision_strategy(new HighestValue())
+    AgentOptions p1_options = AgentOptions()
+                                  .search_strategy(new MCTSNodeSearcher())
                                   .time_limit_ms(1000.)
                                   .num_threads(4)
                                   .num_processes(10);
 
-    /* Use MCTS with tree parallel with 4 threads */
-    // AgentOptions p1_options = AgentOptions(Algorithm::MCTS_VIRTUAL_LOSS)
-    //                               .selection_strategy(new UCBHighestVirtualLoss(1.4))
-    //                               .num_threads(4);
-
-    /* Use MCTS with tree parallel with 4 threads
-       & also with root parallel with 30 processes */
-    // AgentOptions p1_options = AgentOptions(Algorithm::MCTS_VIRTUAL_LOSS)
-    //                               .selection_strategy(new UCBHighestVirtualLoss(1.4))
-    //                               .time_limit_ms(1500.)
-    //                               .num_threads(4)
-    //                               .num_processes(30);
-
-    AgentOptions p2_options = AgentOptions(Algorithm::MCTS).selection_strategy(new UCBHighest(1.4));
+    AgentOptions p2_options = AgentOptions()
+                                  .search_strategy(new MCTSNodeSearcher());
 
     Agent p1(p1_options);
     Agent p2(p2_options);

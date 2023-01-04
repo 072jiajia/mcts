@@ -5,7 +5,14 @@
 MCTSNodeSearcher::MCTSNodeSearcher(SelectionStrategy *selection_strategy,
                                    SimulationStrategy *simulation_strategy)
     : selection_(selection_strategy),
-      simulation_(simulation_strategy) {}
+      simulation_(simulation_strategy)
+{
+    if (!selection_)
+        selection_ = new UCBHighest(1.4);
+
+    if (!simulation_)
+        simulation_ = new SimulationDefaultStrategy();
+}
 
 MCTSNodeSearcher::~MCTSNodeSearcher()
 {
@@ -66,7 +73,14 @@ std::vector<float> *MCTSNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *in
 MCTSNodeCSSearcher::MCTSNodeCSSearcher(SelectionStrategy *selection_strategy,
                                        SimulationStrategy *simulation_strategy)
     : selection_(selection_strategy),
-      simulation_(simulation_strategy) {}
+      simulation_(simulation_strategy)
+{
+    if (!selection_)
+        selection_ = new UCBHighest(1.4);
+
+    if (!simulation_)
+        simulation_ = new SimulationDefaultStrategy();
+}
 
 MCTSNodeCSSearcher::~MCTSNodeCSSearcher()
 {
@@ -122,7 +136,14 @@ std::vector<float> *MCTSNodeCSSearcher::SearchOnce(MCTSNode_ *node, const Game *
 MutexNodeSearcher::MutexNodeSearcher(SelectionStrategy *selection_strategy,
                                      SimulationStrategy *simulation_strategy)
     : selection_(selection_strategy),
-      simulation_(simulation_strategy) {}
+      simulation_(simulation_strategy)
+{
+    if (!selection_)
+        selection_ = new UCBHighestVirtualLoss(1.4);
+
+    if (!simulation_)
+        simulation_ = new SimulationDefaultStrategy();
+}
 
 MutexNodeSearcher::~MutexNodeSearcher()
 {
@@ -195,7 +216,14 @@ std::vector<float> *MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *i
 RaveNodeSearcher::RaveNodeSearcher(SelectionStrategy *selection_strategy,
                                    SimulationStrategy *simulation_strategy)
     : selection_(selection_strategy),
-      simulation_(simulation_strategy) {}
+      simulation_(simulation_strategy)
+{
+    if (!selection_)
+        selection_ = new RaveUCBHighest(1.4, 0.1);
+
+    if (!simulation_)
+        simulation_ = new SimulationDefaultStrategy();
+}
 
 RaveNodeSearcher::~RaveNodeSearcher()
 {
@@ -277,7 +305,17 @@ PolicyNodeSearcher::PolicyNodeSearcher(SelectionStrategy *selection_strategy,
                                        PolicyStrategy *policy_strategy)
     : selection_(selection_strategy),
       simulation_(simulation_strategy),
-      policy_(policy_strategy) {}
+      policy_(policy_strategy)
+{
+    if (!selection_)
+        selection_ = new PUCT(1.4);
+
+    if (!simulation_)
+        simulation_ = new SimulationDefaultStrategy();
+
+    if (!policy_)
+        policy_ = new DefaultPolicy();
+}
 
 PolicyNodeSearcher::~PolicyNodeSearcher()
 {

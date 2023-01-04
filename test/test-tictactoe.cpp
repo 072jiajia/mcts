@@ -8,7 +8,9 @@ int main()
 {
     TicTacToe b;
 
-    AgentOptions p_options(Algorithm::MCTS);
+    AgentOptions p_options;
+    p_options.search_strategy(new MCTSNodeSearcher());
+
     Agent p(p_options);
 
     while (!b.IsGameOver())

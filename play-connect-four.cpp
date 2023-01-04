@@ -7,7 +7,7 @@
 int main()
 {
     AgentOptions ai_args = AgentOptions()
-                               .search_strategy(new MCTSNodeSearcher(new UCBHighest(1.4), new SimulationDefaultStrategy()));
+                               .search_strategy(new MCTSNodeSearcher());
     Agent ai(ai_args);
 
     ConnectFour b;
