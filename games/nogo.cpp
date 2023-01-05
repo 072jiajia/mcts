@@ -150,27 +150,27 @@ bool NoGo::DoesHaveLiberty(NoGo &state, int x, int y, PieceType who)
     if (state.flat_board_[state.size_y_ * x + y] != who)
         return true;
 
-    NoGo b(&state);
+    NoGo test_state(&state);
 
     std::list<Position> check;
     for (check.emplace_back(x, y); check.size(); check.pop_front())
     {
         // std::cout << check.size() << std::endl;
         int x = check.front().x, y = check.front().y;
-        b.flat_board_[x * b.size_y_ + y] = PieceType::UNKNOWN; // prevent recalculate
+        test_state.flat_board_[x * test_state.size_y_ + y] = PieceType::UNKNOWN; // prevent recalculate
 
         if (x > 0)
         {
-            PieceType near_l = b.flat_board_[(x - 1) * b.size_y_ + y]; // left
+            PieceType near_l = test_state.flat_board_[(x - 1) * test_state.size_y_ + y]; // left
             if (near_l == PieceType::EMPTY)
                 return true;
             else if (near_l == who)
                 check.emplace_back(x - 1, y);
         }
 
-        if (x < b.size_x_ - 1)
+        if (x < test_state.size_x_ - 1)
         {
-            PieceType near_r = b.flat_board_[(x + 1) * b.size_y_ + y]; // right
+            PieceType near_r = test_state.flat_board_[(x + 1) * test_state.size_y_ + y]; // right
             if (near_r == PieceType::EMPTY)
                 return true;
             else if (near_r == who)
@@ -179,16 +179,16 @@ bool NoGo::DoesHaveLiberty(NoGo &state, int x, int y, PieceType who)
 
         if (y > 0)
         {
-            PieceType near_d = b.flat_board_[x * b.size_y_ + y - 1]; // down
+            PieceType near_d = test_state.flat_board_[x * test_state.size_y_ + y - 1]; // down
             if (near_d == PieceType::EMPTY)
                 return true;
             else if (near_d == who)
                 check.emplace_back(x, y - 1);
         }
 
-        if (y < b.size_y_ - 1)
+        if (y < test_state.size_y_ - 1)
         {
-            PieceType near_u = b.flat_board_[x * b.size_y_ + y + 1]; // up
+            PieceType near_u = test_state.flat_board_[x * test_state.size_y_ + y + 1]; // up
             if (near_u == PieceType::EMPTY)
                 return true;
             else if (near_u == who)

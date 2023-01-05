@@ -15,9 +15,9 @@ double Timer::get_duration()
     return (double)((tock_.tv_sec + tock_.tv_nsec * 1e-9) - (double)(tick_.tv_sec + tick_.tv_nsec * 1e-9));
 }
 
-float EvaluateResult(Game *b, Player turn)
+float EvaluateResult(Game *state, Player turn)
 {
-    ResultType result = b->GetResult();
+    ResultType result = state->GetResult();
     if (result == ResultType::DRAW)
         return 0.;
     if (result == ResultType::PLAYER1_WIN)

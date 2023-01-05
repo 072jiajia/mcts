@@ -10,13 +10,13 @@ int main()
                                .search_strategy(new MCTSNodeSearcher());
     Agent ai(ai_args);
 
-    ConnectFour b;
-    while (!b.IsGameOver())
+    ConnectFour state;
+    while (!state.IsGameOver())
     {
-        b.PrintState();
+        state.PrintState();
         Action *action;
         Agent *current_player;
-        if (b.GetPlayerThisTurn() == Player::PLAYER1)
+        if (state.GetPlayerThisTurn() == Player::PLAYER1)
         {
             int x;
             std::cout << "Your turn! Please input your move (1~7): ";
@@ -25,16 +25,16 @@ int main()
         }
         else
         {
-            action = ai.SearchAction(&b);
+            action = ai.SearchAction(&state);
         }
-        b.DoAction(action);
+        state.DoAction(action);
         delete action;
     }
-    b.PrintState();
-    if (b.GetResult() == ResultType::PLAYER1_WIN)
+    state.PrintState();
+    if (state.GetResult() == ResultType::PLAYER1_WIN)
         std::cout << "player1 wins" << std::endl;
-    else if (b.GetResult() == ResultType::PLAYER2_WIN)
+    else if (state.GetResult() == ResultType::PLAYER2_WIN)
         std::cout << "player2 wins" << std::endl;
-    else if (b.GetResult() == ResultType::DRAW)
+    else if (state.GetResult() == ResultType::DRAW)
         std::cout << "Draw" << std::endl;
 }

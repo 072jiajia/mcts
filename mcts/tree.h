@@ -43,20 +43,20 @@ private:
 
 struct MCTSThreadInput
 {
-    MCTSThreadInput(Game *b, MCTSNode_ *root,
+    MCTSThreadInput(Game *state, MCTSNode_ *root,
                     TimeControlStrategy *time_controller,
                     NodeSearcher_ *search_strategy)
-        : b_{b}, root_{root},
+        : state_{state}, root_{root},
           time_controller_{time_controller},
           search_strategy_{search_strategy} {}
 
-    Game *b() { return b_; }
+    Game *state() { return state_; }
     MCTSNode_ *root() { return root_; }
     TimeControlStrategy *time_controller() { return time_controller_; }
     NodeSearcher_ *search_strategy() { return search_strategy_; }
 
 private:
-    Game *b_;
+    Game *state_;
     MCTSNode_ *root_;
     TimeControlStrategy *time_controller_;
     NodeSearcher_ *search_strategy_;

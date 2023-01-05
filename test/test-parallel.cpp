@@ -24,31 +24,31 @@ int main()
     int draw_count = 0;
     while (true)
     {
-        NoGo b(5, 5);
-        while (!b.IsGameOver())
+        NoGo state(5, 5);
+        while (!state.IsGameOver())
         {
-            b.PrintState();
+            state.PrintState();
             Action *action;
             Agent *current_player;
-            if (b.GetPlayerThisTurn() == Player::PLAYER1)
+            if (state.GetPlayerThisTurn() == Player::PLAYER1)
             {
                 current_player = &p1;
-                action = current_player->SearchAction(&b);
+                action = current_player->SearchAction(&state);
             }
             else
             {
                 current_player = &p2;
-                action = current_player->SearchAction(&b);
+                action = current_player->SearchAction(&state);
             }
-            b.DoAction(action);
+            state.DoAction(action);
             delete action;
         }
-        b.PrintState();
-        if (b.GetResult() == ResultType::PLAYER1_WIN)
+        state.PrintState();
+        if (state.GetResult() == ResultType::PLAYER1_WIN)
             p1_win++;
-        else if (b.GetResult() == ResultType::PLAYER2_WIN)
+        else if (state.GetResult() == ResultType::PLAYER2_WIN)
             p2_win++;
-        else if (b.GetResult() == ResultType::DRAW)
+        else if (state.GetResult() == ResultType::DRAW)
             draw_count++;
 
         std::cout << p1_win << " / " << draw_count << " / " << p2_win << std::endl;

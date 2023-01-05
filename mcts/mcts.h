@@ -32,7 +32,7 @@ public:
     Agent(AgentOptions &options);
     ~Agent();
 
-    Action *SearchAction(Game *b);
+    Action *SearchAction(Game *state);
 
 private:
     double time_limit_ms_;

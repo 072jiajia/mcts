@@ -1,23 +1,23 @@
 #include "simulation.h"
 
-float SimulationDefaultStrategy::SimulationOnce(Game *b) const
+float SimulationDefaultStrategy::SimulationOnce(Game *state) const
 {
-    Game *traverse_b = b->Clone();
-    Player turn = traverse_b->GetPlayerThisTurn();
-    while (!traverse_b->IsGameOver())
+    Game *traverse_state = state->Clone();
+    Player turn = traverse_state->GetPlayerThisTurn();
+    while (!traverse_state->IsGameOver())
     {
-        Action *move = this->GetRandomMove(traverse_b);
-        traverse_b->DoAction(move);
+        Action *move = this->GetRandomMove(traverse_state);
+        traverse_state->DoAction(move);
         delete move;
     }
-    float output = EvaluateResult(traverse_b, turn);
-    delete traverse_b;
+    float output = EvaluateResult(traverse_state, turn);
+    delete traverse_state;
     return output;
 }
 
-Action *SimulationDefaultStrategy::GetRandomMove(Game *b) const
+Action *SimulationDefaultStrategy::GetRandomMove(Game *state) const
 {
-    ActionList *movable_actions = b->GetLegalMoves();
+    ActionList *movable_actions = state->GetLegalMoves();
     int m = rand() % movable_actions->GetSize();
     Action *output = movable_actions->Pop(m);
     delete movable_actions;
@@ -44,21 +44,21 @@ void *ParallelSimulationStrategy::LaunchThread(void *void_args)
 {
     ParallelDataContainer *args = (ParallelDataContainer *)void_args;
     SimulationStrategy *strategy = args->strategy();
-    Game *b = args->b();
+    Game *state = args->state();
     float *result_ptr = args->result_ptr();
 
-    *result_ptr = strategy->SimulationOnce(b);
+    *result_ptr = strategy->SimulationOnce(state);
 
     delete args;
     pthread_exit(NULL);
 }
 
-float ParallelSimulationStrategy::SimulationOnce(Game *b) const
+float ParallelSimulationStrategy::SimulationOnce(Game *state) const
 {
 
     for (int i = 0; i < num_threads_; i++)
     {
-        ParallelDataContainer *data = new ParallelDataContainer(strategy_, b, &(results[i]));
+        ParallelDataContainer *data = new ParallelDataContainer(strategy_, state, &(results[i]));
         pthread_create(&t[i], NULL, LaunchThread, (void *)data);
     }
 
@@ -87,26 +87,26 @@ QuickRandomRollout::~QuickRandomRollout()
     delete indices_;
 }
 
-float QuickRandomRollout::SimulationOnce(Game *b) const
+float QuickRandomRollout::SimulationOnce(Game *state) const
 {
-    Game *traverse_b = b->Clone();
-    Player turn = traverse_b->GetPlayerThisTurn();
-    while (!traverse_b->IsGameOver())
+    Game *traverse_state = state->Clone();
+    Player turn = traverse_state->GetPlayerThisTurn();
+    while (!traverse_state->IsGameOver())
     {
-        Action *move = GetRandomMove(b);
-        traverse_b->DoAction(move);
+        Action *move = GetRandomMove(state);
+        traverse_state->DoAction(move);
     }
-    return EvaluateResult(traverse_b, turn);
+    return EvaluateResult(traverse_state, turn);
 }
 
-Action *QuickRandomRollout::GetRandomMove(Game *b) const
+Action *QuickRandomRollout::GetRandomMove(Game *state) const
 {
     std::random_shuffle(indices_->begin(), indices_->end());
 
     for (int i = 0; i < indices_->size(); i++)
     {
         Action *action = action_space_->Get(indices_->at(i));
-        if (b->IsMovable(action))
+        if (state->IsMovable(action))
             return action;
     }
 

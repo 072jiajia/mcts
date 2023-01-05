@@ -74,7 +74,7 @@ float RootParallel::GetTotalSimulationCount()
 }
 
 void RootParallel::Search(NodeSearcher_ *search_strategy,
-                            TimeControlStrategy *time_controller)
+                          TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
     {
@@ -102,13 +102,13 @@ void *LaunchSearchThread(void *args_void)
 {
     MCTSThreadInput *args = (MCTSThreadInput *)args_void;
     MCTSNode_ *root = args->root();
-    Game *b = args->b();
+    Game *state = args->state();
     TimeControlStrategy *time_controller = args->time_controller();
     NodeSearcher_ *search_strategy = args->search_strategy();
 
     while (!time_controller->Stop())
     {
-        root->SearchOnce(b, search_strategy);
+        root->SearchOnce(state, search_strategy);
     }
     delete args;
     pthread_exit(NULL);
@@ -163,7 +163,7 @@ float TreeParallel::GetTotalSimulationCount()
 }
 
 void TreeParallel::Search(NodeSearcher_ *search_strategy,
-                                   TimeControlStrategy *time_controller)
+                          TimeControlStrategy *time_controller)
 {
     for (int i = 0; i < num_threads_; i++)
     {

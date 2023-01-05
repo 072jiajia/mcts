@@ -6,21 +6,21 @@
 
 int main()
 {
-    TicTacToe b;
+    TicTacToe state;
 
     AgentOptions p_options;
     p_options.search_strategy(new MCTSNodeSearcher());
 
     Agent p(p_options);
 
-    while (!b.IsGameOver())
+    while (!state.IsGameOver())
     {
-        b.PrintState();
+        state.PrintState();
 
-        Action *action = p.SearchAction(&b);
-        b.DoAction(action);
+        Action *action = p.SearchAction(&state);
+        state.DoAction(action);
         delete action;
     }
 
-    b.PrintState();
+    state.PrintState();
 }

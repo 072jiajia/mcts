@@ -11,32 +11,32 @@ class SimulationStrategy
 {
 public:
     virtual ~SimulationStrategy() = default;
-    virtual float SimulationOnce(Game *b) const = 0;
+    virtual float SimulationOnce(Game *state) const = 0;
 };
 
 class SimulationDefaultStrategy : public SimulationStrategy
 {
 public:
-    float SimulationOnce(Game *b) const;
+    float SimulationOnce(Game *state) const;
 
 private:
-    Action *GetRandomMove(Game *b) const;
+    Action *GetRandomMove(Game *state) const;
 };
 
 struct ParallelDataContainer
 {
-    ParallelDataContainer(SimulationStrategy *strategy, Game *b, float *result_ptr)
+    ParallelDataContainer(SimulationStrategy *strategy, Game *state, float *result_ptr)
     {
         strategy_ = strategy;
-        b_ = b;
+        state_ = state;
         result_ptr_ = result_ptr;
     }
     SimulationStrategy *strategy() { return strategy_; }
-    Game *b() { return b_; }
+    Game *state() { return state_; }
     float *result_ptr() { return result_ptr_; }
 
     SimulationStrategy *strategy_;
-    Game *b_;
+    Game *state_;
     float *result_ptr_;
 };
 
@@ -46,7 +46,7 @@ public:
     ParallelSimulationStrategy(int num_threads, SimulationStrategy *strategy);
     ~ParallelSimulationStrategy();
     static void *LaunchThread(void *args);
-    float SimulationOnce(Game *b) const;
+    float SimulationOnce(Game *state) const;
 
 private:
     SimulationStrategy *strategy_;
@@ -62,11 +62,11 @@ public:
     QuickRandomRollout(ActionList *action_space);
     ~QuickRandomRollout();
 
-    float SimulationOnce(Game *b) const;
+    float SimulationOnce(Game *state) const;
 
 private:
     ActionList *action_space_;
     std::vector<int> *indices_;
 
-    inline Action *GetRandomMove(Game *b) const;
+    inline Action *GetRandomMove(Game *state) const;
 };

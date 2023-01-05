@@ -22,37 +22,37 @@ Agent::~Agent()
 	delete decision_strategy_;
 }
 
-Action *Agent::SearchAction(Game *b)
+Action *Agent::SearchAction(Game *state)
 {
 	timer_.reset();
 	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
 	MCTSTree_ *mcts_tree;
 	if (num_threads_ == 1)
 	{
-		MCTSNode_ *mcts_root = search_strategy_->CreateNode(b);
-		mcts_tree = new SingleTree(mcts_root, b);
+		MCTSNode_ *mcts_root = search_strategy_->CreateNode(state);
+		mcts_tree = new SingleTree(mcts_root, state);
 	}
 	else
 	{
 		if (search_strategy_->DoesSupportTreeParallel())
 		{
-			MCTSNode_ *mcts_root = search_strategy_->CreateNode(b);
-			mcts_tree = new TreeParallel(mcts_root, b, num_threads_);
+			MCTSNode_ *mcts_root = search_strategy_->CreateNode(state);
+			mcts_tree = new TreeParallel(mcts_root, state, num_threads_);
 		}
 		else
 		{
 			MCTSNode_ **mcts_roots = new MCTSNode_ *[num_threads_];
 			for (int i = 0; i < num_threads_; i++)
 			{
-				mcts_roots[i] = search_strategy_->CreateNode(b);
+				mcts_roots[i] = search_strategy_->CreateNode(state);
 			}
-			mcts_tree = new RootParallel(mcts_roots, b, num_threads_);
+			mcts_tree = new RootParallel(mcts_roots, state, num_threads_);
 		}
 	}
 
 	if (num_processes_ > 1)
 	{
-		mcts_tree = new ProcessParallel(b, mcts_tree, num_processes_);
+		mcts_tree = new ProcessParallel(state, mcts_tree, num_processes_);
 	}
 
 	mcts_tree->Search(search_strategy_, time_controller);
@@ -61,7 +61,7 @@ Action *Agent::SearchAction(Game *b)
 	std::cout << "Action's Value: " << -mcts_tree->GetValues()[best_move] << std::endl;
 	delete mcts_tree;
 
-	ActionList *action_list = b->GetLegalMoves();
+	ActionList *action_list = state->GetLegalMoves();
 	Action *output = action_list->Pop(best_move);
 	delete action_list;
 	return output;

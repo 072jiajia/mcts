@@ -55,4 +55,4 @@ private:
 	struct timespec tick_;
 };
 
-float EvaluateResult(Game *b, Player turn);
+float EvaluateResult(Game *state, Player turn);
