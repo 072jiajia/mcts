@@ -1,12 +1,5 @@
 #include "game_base.h"
 
-int Action::encoding() const
-{
-    throw std::invalid_argument("virtual int YourGameAction::encoding() not implemented");
-}
-
-Action::~Action() {}
-
 ActionList::ActionList() {}
 
 ActionList::~ActionList()

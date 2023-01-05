@@ -15,6 +15,16 @@ public:
     inline int x() { return x_; }
     inline int y() { return y_; }
 
+    bool IsSame(const Action *input_action) const
+    {
+        ConnectFourAction *action = (ConnectFourAction *)input_action;
+        if (this->x_ != action->x_)
+            return false;
+        if (this->y_ != action->y_)
+            return false;
+        return true;
+    }
+
 private:
     int x_;
     int y_;

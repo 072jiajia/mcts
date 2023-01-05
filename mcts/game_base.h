@@ -20,8 +20,17 @@ enum class ResultType
 class Action
 {
 public:
-    virtual ~Action();
-    virtual int encoding() const;
+    virtual ~Action() {}
+
+    virtual int encoding() const
+    {
+        throw std::invalid_argument("virtual int YourGameAction::encoding() not implemented");
+    }
+
+    virtual bool IsSame(const Action *) const
+    {
+        throw std::invalid_argument("virtual bool YourGameAction::IsSame() not implemented");
+    }
 };
 
 class ActionList

@@ -15,6 +15,14 @@ public:
     int encoding() const { return position_; }
     inline int position() { return position_; }
 
+    bool IsSame(const Action *input_action) const
+    {
+        OthelloAction *action = (OthelloAction *)input_action;
+        if (this->position_ != action->position_)
+            return false;
+        return true;
+    }
+
 private:
     int position_;
 };
