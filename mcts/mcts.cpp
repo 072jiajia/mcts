@@ -11,6 +11,9 @@ Agent::Agent(AgentOptions &options)
 {
 	if (!decision_strategy_)
 		decision_strategy_ = new MostFrequency();
+
+	if (!search_strategy_)
+		throw std::invalid_argument("search_strategy not defined");
 }
 
 Agent::~Agent()
