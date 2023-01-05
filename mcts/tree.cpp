@@ -334,7 +334,7 @@ std::vector<float> ProcessParallel::GetValues()
         {
             sum += shm_value_[j * action_size_ + i];
         }
-        output[i] = sum;
+        output[i] = sum / num_processes_;
     }
     return output;
 }
