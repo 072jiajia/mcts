@@ -152,3 +152,26 @@ int ConnectFour::LineConnected(int x, int y, int dx, int dy) const
 }
 
 Player ConnectFour::GetPlayerThisTurn() const { return whos_turn_; }
+
+bool ConnectFour::IsSame(Game *input_state) const
+{
+    ConnectFour *state = (ConnectFour *)input_state;
+    if (this->remaining_space_ != state->remaining_space_)
+        return false;
+    if (this->whos_turn_ != state->whos_turn_)
+        return false;
+    if (this->result_ != state->result_)
+        return false;
+
+    for (int i = 0; i < 7; i++)
+    {
+        if (this->line_height_[i] != state->line_height_[i])
+            return false;
+        for (int j = 0; j < 6; j++)
+        {
+            if (this->board_[i][j] != state->board_[i][j])
+                return false;
+        }
+    }
+    return true;
+}

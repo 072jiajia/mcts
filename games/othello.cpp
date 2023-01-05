@@ -212,3 +212,20 @@ void Othello::doFlip(int8_t i, int8_t j, int8_t di, int8_t dj)
     }
     return;
 }
+
+bool Othello::IsSame(Game *input_state) const
+{
+    Othello *state = (Othello *)input_state;
+    if (this->whos_turn_ != state->whos_turn_)
+        return false;
+    if (this->last_skipped_ != state->last_skipped_)
+        return false;
+    if (this->gameover_ != state->gameover_)
+        return false;
+    for (int i = 0; i < 64; i++)
+    {
+        if (this->board_[i] != state->board_[i])
+            return false;
+    }
+    return true;
+}

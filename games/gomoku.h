@@ -44,6 +44,7 @@ public:
     void PrintState() const;
 
     PieceType *GetBoard();
+    bool IsSame(Game *) const;
 
 private:
     int LineConnected(int x, int y, int dx, int dy) const;

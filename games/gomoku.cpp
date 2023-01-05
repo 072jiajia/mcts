@@ -148,3 +148,20 @@ Gomoku::PieceType *Gomoku::GetBoard()
 {
     return board;
 }
+
+bool Gomoku::IsSame(Game *input_state) const
+{
+    Gomoku *state = (Gomoku *)input_state;
+    if (this->remaining_space_ != state->remaining_space_)
+        return false;
+    if (this->whos_turn != state->whos_turn)
+        return false;
+    if (this->result_ != state->result_)
+        return false;
+    for (int i = 225 - 1; i >= 0; i--)
+    {
+        if (this->board[i] != state->board[i])
+            return false;
+    }
+    return true;
+}

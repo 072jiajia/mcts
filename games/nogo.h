@@ -41,6 +41,8 @@ public:
 
     static ActionList *GetActionSpace(int size_x, int size_y);
 
+    bool IsSame(Game *) const;
+
 private:
     enum class PieceType
     {

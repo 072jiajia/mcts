@@ -35,6 +35,8 @@ public:
     bool IsGameOver() const;
     void PrintState() const;
 
+    bool IsSame(Game *) const;
+
 private:
     enum class PieceType
     {
