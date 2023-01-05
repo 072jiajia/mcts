@@ -30,7 +30,7 @@ bool MCTSNodeSearcher::DoesSupportTreeParallel() const
     return false;
 }
 
-std::vector<float> *MCTSNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+void MCTSNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     std::vector<MCTSNode *> traversed_nodes;
     MCTSNode *current_node = (MCTSNode *)node;
@@ -98,7 +98,7 @@ bool MCTSNodeCSSearcher::DoesSupportTreeParallel() const
     return false;
 }
 
-std::vector<float> *MCTSNodeCSSearcher::SearchOnce(MCTSNode_ *node, const Game *dummy) const
+void MCTSNodeCSSearcher::SearchOnce(MCTSNode_ *node, const Game *dummy) const
 {
     std::vector<MCTSNodeCS *> traversed_nodes;
     MCTSNodeCS *current_node = (MCTSNodeCS *)node;
@@ -161,7 +161,7 @@ bool MutexNodeSearcher::DoesSupportTreeParallel() const
     return true;
 }
 
-std::vector<float> *MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+void MutexNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
     std::vector<MCTSMutexNode *> traversed_nodes;
@@ -241,7 +241,7 @@ bool RaveNodeSearcher::DoesSupportTreeParallel() const
     return false;
 }
 
-std::vector<float> *RaveNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+void RaveNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
 
@@ -334,7 +334,7 @@ bool PolicyNodeSearcher::DoesSupportTreeParallel() const
     return false;
 }
 
-std::vector<float> *PolicyNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
+void PolicyNodeSearcher::SearchOnce(MCTSNode_ *node, const Game *input_state) const
 {
     Game *state = input_state->Clone();
 

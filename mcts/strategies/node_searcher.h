@@ -24,7 +24,7 @@ public:
     virtual ~NodeSearcher_() = default;
     virtual MCTSNode_ *CreateNode(Game *state) const = 0;
     virtual bool DoesSupportTreeParallel() const = 0;
-    virtual std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const = 0;
+    virtual void SearchOnce(MCTSNode_ *node, const Game *state) const = 0;
 };
 
 class MCTSNodeSearcher : public NodeSearcher_
@@ -35,7 +35,7 @@ public:
     ~MCTSNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
-    std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
+    void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
     NODE_SEARCHER_STRATEGY(SelectionStrategy *, selection);
@@ -50,7 +50,7 @@ public:
     ~MCTSNodeCSSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
-    std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
+    void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
     NODE_SEARCHER_STRATEGY(SelectionStrategy *, selection);
@@ -65,7 +65,7 @@ public:
     ~RaveNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
-    std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
+    void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
     NODE_SEARCHER_STRATEGY(SelectionStrategy *, selection);
@@ -80,7 +80,7 @@ public:
     ~MutexNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
-    std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
+    void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
     NODE_SEARCHER_STRATEGY(SelectionStrategy *, selection);
@@ -96,7 +96,7 @@ public:
     ~PolicyNodeSearcher();
     MCTSNode_ *CreateNode(Game *state) const;
     bool DoesSupportTreeParallel() const;
-    std::vector<float> *SearchOnce(MCTSNode_ *node, const Game *state) const;
+    void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
 private:
     NODE_SEARCHER_STRATEGY(SelectionStrategy *, selection);
