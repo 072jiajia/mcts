@@ -41,6 +41,7 @@ private:
     Timer timer_;
     NodeSearcher_ *search_strategy_;
     DecisionStrategy *decision_strategy_;
+    MCTSTree_ *mcts_tree_;
     int num_threads_;
     int num_processes_;
 };

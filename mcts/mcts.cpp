@@ -6,6 +6,7 @@ Agent::Agent(AgentOptions &options)
 	  min_iter_(options.min_iter()),
 	  search_strategy_(options.search_strategy()),
 	  decision_strategy_(options.decision_strategy()),
+	  mcts_tree_(nullptr),
 	  num_threads_(options.num_threads()),
 	  num_processes_(options.num_processes())
 {
@@ -20,6 +21,11 @@ Agent::~Agent()
 {
 	delete search_strategy_;
 	delete decision_strategy_;
+
+	if (!mcts_tree_)
+	{
+		delete mcts_tree_;
+	}
 }
 
 MCTSTree_ *Agent::CreateTree(Game *state) const
@@ -60,12 +66,18 @@ Action *Agent::SearchAction(Game *state)
 	timer_.reset();
 	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
 
-	MCTSTree_ *mcts_tree = CreateTree(state);
+	if (!mcts_tree_)
+	{
+		mcts_tree_ = CreateTree(state);
+	}
 
-	mcts_tree->Search(search_strategy_, time_controller);
-	int best_move = mcts_tree->MakeDecision(decision_strategy_);
-	std::cout << "Total Search Times: " << mcts_tree->GetTotalSimulationCount() << std::endl;
-	std::cout << "Action's Value: " << -mcts_tree->GetValues()[best_move] << std::endl;
+	mcts_tree_->Search(search_strategy_, time_controller);
+	int best_move = mcts_tree_->MakeDecision(decision_strategy_);
+	std::cout << "Total Search Times: " << mcts_tree_->GetTotalSimulationCount() << std::endl;
+	std::cout << "Action's Value: " << -mcts_tree_->GetValues()[best_move] << std::endl;
+
+	delete mcts_tree_;
+	mcts_tree_ = nullptr;
 
 	ActionList *action_list = state->GetLegalMoves();
 	Action *output = action_list->Pop(best_move);
