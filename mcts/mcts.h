@@ -33,6 +33,7 @@ public:
     ~Agent();
 
     Action *SearchAction(Game *state);
+    MCTSTree_ *CreateTree(Game *state) const;
 
 private:
     double time_limit_ms_;

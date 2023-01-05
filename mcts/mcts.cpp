@@ -22,10 +22,8 @@ Agent::~Agent()
 	delete decision_strategy_;
 }
 
-Action *Agent::SearchAction(Game *state)
+MCTSTree_ *Agent::CreateTree(Game *state) const
 {
-	timer_.reset();
-	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
 	MCTSTree_ *mcts_tree;
 	if (num_threads_ == 1)
 	{
@@ -54,12 +52,20 @@ Action *Agent::SearchAction(Game *state)
 	{
 		mcts_tree = new ProcessParallel(state, mcts_tree, num_processes_);
 	}
+	return mcts_tree;
+}
+
+Action *Agent::SearchAction(Game *state)
+{
+	timer_.reset();
+	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
+
+	MCTSTree_ *mcts_tree = CreateTree(state);
 
 	mcts_tree->Search(search_strategy_, time_controller);
 	int best_move = mcts_tree->MakeDecision(decision_strategy_);
 	std::cout << "Total Search Times: " << mcts_tree->GetTotalSimulationCount() << std::endl;
 	std::cout << "Action's Value: " << -mcts_tree->GetValues()[best_move] << std::endl;
-	delete mcts_tree;
 
 	ActionList *action_list = state->GetLegalMoves();
 	Action *output = action_list->Pop(best_move);
