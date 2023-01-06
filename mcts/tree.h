@@ -23,18 +23,33 @@ public:
     virtual int MakeDecision(DecisionStrategy *) = 0;
     virtual std::vector<int> GetFrequencies() = 0;
     virtual std::vector<float> GetValues() = 0;
+    virtual void MoveRoot(int index) { throw std::runtime_error("void MCTSTree_::MoveRoot() not implemented"); }
+    virtual Game *GetState() = 0;
 };
 
 class SingleTree : public MCTSTree_
 {
 public:
-    SingleTree(MCTSNode_ *, Game *);
+    SingleTree(MCTSNode_ *, const Game *);
     ~SingleTree();
     float GetTotalSimulationCount();
     void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
+
+    void MoveRoot(int index)
+    {
+        MCTSNode_ *original_root = root_;
+        root_ = root_->PopChild(index);
+        delete original_root;
+
+        ActionList *action_list = state_->GetLegalMoves();
+        state_->DoAction(action_list->Get(index));
+        delete action_list;
+    }
+
+    Game *GetState() { return state_; }
 
 private:
     Game *state_;
@@ -67,13 +82,29 @@ void *LaunchSearchThread(void *);
 class RootParallel : public MCTSTree_
 {
 public:
-    RootParallel(MCTSNode_ **, Game *, int);
+    RootParallel(MCTSNode_ **, const Game *, int);
     ~RootParallel();
     float GetTotalSimulationCount();
     void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
+
+    void MoveRoot(int index)
+    {
+        for (int i = 0; i < num_threads_; i++)
+        {
+            MCTSNode_ *original_root = roots_[i];
+            roots_[i] = roots_[i]->PopChild(index);
+            delete original_root;
+        }
+
+        ActionList *action_list = state_->GetLegalMoves();
+        state_->DoAction(action_list->Get(index));
+        delete action_list;
+    }
+
+    Game *GetState() { return state_; }
 
 private:
     Game *state_;
@@ -85,13 +116,26 @@ private:
 class TreeParallel : public MCTSTree_
 {
 public:
-    TreeParallel(MCTSNode_ *, Game *, int);
+    TreeParallel(MCTSNode_ *, const Game *, int);
     ~TreeParallel();
     float GetTotalSimulationCount();
     void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
+
+    void MoveRoot(int index)
+    {
+        MCTSNode_ *original_root = root_;
+        root_ = root_->PopChild(index);
+        delete original_root;
+
+        ActionList *action_list = state_->GetLegalMoves();
+        state_->DoAction(action_list->Get(index));
+        delete action_list;
+    }
+
+    Game *GetState() { return state_; }
 
 private:
     Game *state_;
@@ -103,13 +147,20 @@ private:
 class ProcessParallel : public MCTSTree_
 {
 public:
-    ProcessParallel(Game *, MCTSTree_ *, int);
+    ProcessParallel(const Game *, MCTSTree_ *, int);
     ~ProcessParallel();
     float GetTotalSimulationCount();
     void Search(NodeSearcher_ *, TimeControlStrategy *);
     int MakeDecision(DecisionStrategy *);
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
+
+    void MoveRoot(int index)
+    {
+        tree_->MoveRoot(index);
+    }
+
+    Game *GetState() { return tree_->GetState(); }
 
 private:
     int num_processes_;

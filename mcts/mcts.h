@@ -24,6 +24,7 @@ struct AgentOptions
     OPTION_POINTER_ARG(DecisionStrategy *, decision_strategy) = nullptr;
     OPTION_ARG(int, num_threads) = 1;
     OPTION_ARG(int, num_processes) = 1;
+    OPTION_ARG(bool, moving_root) = false;
 };
 
 class Agent
@@ -33,7 +34,8 @@ public:
     ~Agent();
 
     Action *SearchAction(Game *state);
-    MCTSTree_ *CreateTree(Game *state) const;
+    MCTSTree_ *CreateTree(const Game *state) const;
+    void HandleOppenentMove(const Action *);
 
 private:
     double time_limit_ms_;
@@ -44,4 +46,5 @@ private:
     MCTSTree_ *mcts_tree_;
     int num_threads_;
     int num_processes_;
+    bool moving_root_;
 };

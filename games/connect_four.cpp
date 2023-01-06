@@ -153,7 +153,7 @@ int ConnectFour::LineConnected(int x, int y, int dx, int dy) const
 
 Player ConnectFour::GetPlayerThisTurn() const { return whos_turn_; }
 
-bool ConnectFour::IsSame(Game *input_state) const
+bool ConnectFour::IsSame(const Game *input_state) const
 {
     ConnectFour *state = (ConnectFour *)input_state;
     if (this->remaining_space_ != state->remaining_space_)

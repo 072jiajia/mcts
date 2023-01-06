@@ -149,7 +149,7 @@ Gomoku::PieceType *Gomoku::GetBoard()
     return board;
 }
 
-bool Gomoku::IsSame(Game *input_state) const
+bool Gomoku::IsSame(const Game *input_state) const
 {
     Gomoku *state = (Gomoku *)input_state;
     if (this->remaining_space_ != state->remaining_space_)

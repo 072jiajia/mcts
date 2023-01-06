@@ -177,7 +177,7 @@ ResultType TicTacToe::GetResult() const
 
 Player TicTacToe::GetPlayerThisTurn() const { return whos_turn; }
 
-bool TicTacToe::IsSame(Game *input_state) const
+bool TicTacToe::IsSame(const Game *input_state) const
 {
     TicTacToe *state = (TicTacToe *)input_state;
     if (this->whos_turn != state->whos_turn)

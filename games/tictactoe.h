@@ -18,9 +18,9 @@ public:
     bool IsSame(const Action *input_action) const
     {
         TicTacToeAction *action = (TicTacToeAction *)input_action;
-        if (this->x_ != action->x_)
+        if (this->x_ != action->x())
             return false;
-        if (this->y_ != action->y_)
+        if (this->y_ != action->y())
             return false;
         return true;
     }
@@ -45,7 +45,7 @@ public:
     bool IsGameOver() const;
     void PrintState() const;
 
-    bool IsSame(Game *) const;
+    bool IsSame(const Game *) const;
 
 private:
     enum class PieceType

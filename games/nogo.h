@@ -21,9 +21,9 @@ public:
     bool IsSame(const Action *input_action) const
     {
         NoGoAction *action = (NoGoAction *)input_action;
-        if (this->x_ != action->x_)
+        if (this->x_ != action->x())
             return false;
-        if (this->y_ != action->y_)
+        if (this->y_ != action->y())
             return false;
         return true;
     }
@@ -51,7 +51,7 @@ public:
 
     static ActionList *GetActionSpace(int size_x, int size_y);
 
-    bool IsSame(Game *) const;
+    bool IsSame(const Game *) const;
 
 private:
     enum class PieceType

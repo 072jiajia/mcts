@@ -17,10 +17,10 @@ public:
 
     bool IsSame(const Action *input_action) const
     {
-        NoGoAction *action = (NoGoAction *)input_action;
-        if (this->x_ != action->x_)
+        GomokuAction *action = (GomokuAction *)input_action;
+        if (this->x_ != action->x())
             return false;
-        if (this->y_ != action->y_)
+        if (this->y_ != action->y())
             return false;
         return true;
     }
@@ -54,7 +54,7 @@ public:
     void PrintState() const;
 
     PieceType *GetBoard();
-    bool IsSame(Game *) const;
+    bool IsSame(const Game *) const;
 
 private:
     int LineConnected(int x, int y, int dx, int dy) const;

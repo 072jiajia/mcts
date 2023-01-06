@@ -32,6 +32,7 @@ public:
     virtual std::vector<float> GetChildrenQ() const = 0;
     virtual std::vector<std::pair<int, float>> GetChildrenQN() const = 0;
     virtual void SearchOnce(const Game *, NodeSearcher_ *) = 0;
+    virtual MCTSNode_ *PopChild(int) = 0;
 };
 
 class MCTSNodeImpl_ : public MCTSNode_
@@ -52,6 +53,7 @@ public:
     std::vector<int> GetChildrenN() const;
     std::vector<float> GetChildrenQ() const;
     std::vector<std::pair<int, float>> GetChildrenQN() const;
+    MCTSNode_ *PopChild(int);
 
 private:
     std::vector<MCTSNode_ *> children_;
@@ -63,7 +65,7 @@ private:
 class MCTSNodeCS : public MCTSNodeImpl_
 {
 public:
-    MCTSNodeCS(Game *s);
+    MCTSNodeCS(const Game *s);
     ~MCTSNodeCS();
     void Expansion();
     void SearchOnce(const Game *, NodeSearcher_ *);

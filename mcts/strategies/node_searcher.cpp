@@ -20,7 +20,7 @@ MCTSNodeSearcher::~MCTSNodeSearcher()
     delete simulation_;
 }
 
-MCTSNode_ *MCTSNodeSearcher::CreateNode(Game *state) const
+MCTSNode_ *MCTSNodeSearcher::CreateNode(const Game *state) const
 {
     return new MCTSNode();
 }
@@ -88,7 +88,7 @@ MCTSNodeCSSearcher::~MCTSNodeCSSearcher()
     delete simulation_;
 }
 
-MCTSNode_ *MCTSNodeCSSearcher::CreateNode(Game *state) const
+MCTSNode_ *MCTSNodeCSSearcher::CreateNode(const Game *state) const
 {
     return new MCTSNodeCS(state);
 }
@@ -151,7 +151,7 @@ MutexNodeSearcher::~MutexNodeSearcher()
     delete simulation_;
 }
 
-MCTSNode_ *MutexNodeSearcher::CreateNode(Game *state) const
+MCTSNode_ *MutexNodeSearcher::CreateNode(const Game *state) const
 {
     return new MCTSMutexNode();
 }
@@ -231,7 +231,7 @@ RaveNodeSearcher::~RaveNodeSearcher()
     delete simulation_;
 }
 
-MCTSNode_ *RaveNodeSearcher::CreateNode(Game *state) const
+MCTSNode_ *RaveNodeSearcher::CreateNode(const Game *state) const
 {
     return new RaveNode();
 }
@@ -324,7 +324,7 @@ PolicyNodeSearcher::~PolicyNodeSearcher()
     delete policy_;
 }
 
-MCTSNode_ *PolicyNodeSearcher::CreateNode(Game *state) const
+MCTSNode_ *PolicyNodeSearcher::CreateNode(const Game *state) const
 {
     return new MCTSPolicyNode();
 }

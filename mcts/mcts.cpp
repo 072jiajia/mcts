@@ -8,7 +8,8 @@ Agent::Agent(AgentOptions &options)
 	  decision_strategy_(options.decision_strategy()),
 	  mcts_tree_(nullptr),
 	  num_threads_(options.num_threads()),
-	  num_processes_(options.num_processes())
+	  num_processes_(options.num_processes()),
+	  moving_root_(options.moving_root())
 {
 	if (!decision_strategy_)
 		decision_strategy_ = new MostFrequency();
@@ -28,7 +29,7 @@ Agent::~Agent()
 	}
 }
 
-MCTSTree_ *Agent::CreateTree(Game *state) const
+MCTSTree_ *Agent::CreateTree(const Game *state) const
 {
 	MCTSTree_ *mcts_tree;
 	if (num_threads_ == 1)
@@ -68,7 +69,21 @@ Action *Agent::SearchAction(Game *state)
 
 	if (!mcts_tree_)
 	{
+
 		mcts_tree_ = CreateTree(state);
+	}
+	else
+	{
+		if (!mcts_tree_->GetState()->IsSame(state))
+		{
+			std::cout << "Moving Root Not Matched (Rebuild Tree)" << std::endl;
+			delete mcts_tree_;
+			mcts_tree_ = CreateTree(state);
+		}
+		else
+		{
+			std::cout << "Precomputed " << mcts_tree_->GetTotalSimulationCount() << " times" << std::endl;
+		}
 	}
 
 	mcts_tree_->Search(search_strategy_, time_controller);
@@ -76,11 +91,44 @@ Action *Agent::SearchAction(Game *state)
 	std::cout << "Total Search Times: " << mcts_tree_->GetTotalSimulationCount() << std::endl;
 	std::cout << "Action's Value: " << -mcts_tree_->GetValues()[best_move] << std::endl;
 
-	delete mcts_tree_;
-	mcts_tree_ = nullptr;
+	if (moving_root_)
+	{
+		mcts_tree_->MoveRoot(best_move);
+	}
+	else
+	{
+		delete mcts_tree_;
+		mcts_tree_ = nullptr;
+	}
 
 	ActionList *action_list = state->GetLegalMoves();
 	Action *output = action_list->Pop(best_move);
 	delete action_list;
 	return output;
+}
+
+void Agent::HandleOppenentMove(const Action *action)
+{
+	if (!mcts_tree_)
+		return;
+	Game *state = mcts_tree_->GetState();
+	ActionList *action_list = state->GetLegalMoves();
+	int action_index = -1;
+	for (int i = 0; i < action_list->GetSize(); i++)
+	{
+		if (action_list->Get(i)->IsSame(action))
+		{
+			action_index = i;
+		}
+	}
+	delete action_list;
+
+	if (action_index == -1)
+	{
+		std::cout << "Agent::HandleOppenentMove action not found" << std::endl;
+		delete mcts_tree_;
+		mcts_tree_ = nullptr;
+	}
+	else
+		mcts_tree_->MoveRoot(action_index);
 }

@@ -18,7 +18,7 @@ public:
     bool IsSame(const Action *input_action) const
     {
         OthelloAction *action = (OthelloAction *)input_action;
-        if (this->position_ != action->position_)
+        if (this->position_ != action->position())
             return false;
         return true;
     }
@@ -43,7 +43,7 @@ public:
     bool IsGameOver() const;
     void PrintState() const;
 
-    bool IsSame(Game *) const;
+    bool IsSame(const Game *) const;
 
 private:
     enum class PieceType

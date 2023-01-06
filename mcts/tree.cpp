@@ -10,7 +10,7 @@
 
 #include "tree.h"
 
-SingleTree::SingleTree(MCTSNode_ *root, Game *state) : root_(root), state_(state->Clone()) {}
+SingleTree::SingleTree(MCTSNode_ *root, const Game *state) : root_(root), state_(state->Clone()) {}
 
 SingleTree::~SingleTree()
 {
@@ -47,7 +47,7 @@ std::vector<float> SingleTree::GetValues()
     return root_->GetChildrenQ();
 }
 
-RootParallel::RootParallel(MCTSNode_ **roots, Game *state, int num_threads) : roots_(roots), state_(state), num_threads_(num_threads)
+RootParallel::RootParallel(MCTSNode_ **roots, const Game *state, int num_threads) : roots_(roots), state_(state->Clone()), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
 }
@@ -58,6 +58,7 @@ RootParallel::~RootParallel()
     {
         delete roots_[i];
     }
+    delete state_;
     delete[] roots_;
     delete threads_;
 }
@@ -146,13 +147,14 @@ std::vector<float> RootParallel::GetValues()
     return output;
 }
 
-TreeParallel::TreeParallel(MCTSNode_ *root, Game *state, int num_threads) : root_(root), state_(state), num_threads_(num_threads)
+TreeParallel::TreeParallel(MCTSNode_ *root, const Game *state, int num_threads) : root_(root), state_(state->Clone()), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
 }
 
 TreeParallel::~TreeParallel()
 {
+    delete state_;
     delete root_;
     delete threads_;
 }
@@ -197,7 +199,7 @@ std::vector<float> TreeParallel::GetValues()
     return root_->GetChildrenQ();
 }
 
-ProcessParallel::ProcessParallel(Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
+ProcessParallel::ProcessParallel(const Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
 {
     ActionList *action_list = state->GetLegalMoves();
     action_size_ = action_list->GetSize();

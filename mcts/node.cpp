@@ -6,7 +6,10 @@ MCTSNodeImpl_::~MCTSNodeImpl_()
 {
     for (uint i = 0; i < children_.size(); i++)
     {
-        delete children_[i];
+        if (!children_[i])
+        {
+            delete children_[i];
+        }
     }
 }
 
@@ -58,7 +61,14 @@ void MCTSNodeImpl_::UpdateResult(float q)
     Q_ += (q - Q_) / ++N_;
 }
 
-MCTSNodeCS::MCTSNodeCS(Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
+MCTSNode_ *MCTSNodeImpl_::PopChild(int index)
+{
+    MCTSNode_ *output = children_[index];
+    children_[index] = nullptr;
+    return output;
+}
+
+MCTSNodeCS::MCTSNodeCS(const Game *s) : MCTSNodeImpl_(), state_(s->Clone()) {}
 
 MCTSNodeCS::~MCTSNodeCS() { delete state_; }
 

@@ -22,7 +22,7 @@ class NodeSearcher_
 {
 public:
     virtual ~NodeSearcher_() = default;
-    virtual MCTSNode_ *CreateNode(Game *state) const = 0;
+    virtual MCTSNode_ *CreateNode(const Game *state) const = 0;
     virtual bool DoesSupportTreeParallel() const = 0;
     virtual void SearchOnce(MCTSNode_ *node, const Game *state) const = 0;
 };
@@ -33,7 +33,7 @@ public:
     MCTSNodeSearcher(SelectionStrategy *selection = nullptr,
                      SimulationStrategy *simulation = nullptr);
     ~MCTSNodeSearcher();
-    MCTSNode_ *CreateNode(Game *state) const;
+    MCTSNode_ *CreateNode(const Game *state) const;
     bool DoesSupportTreeParallel() const;
     void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -48,7 +48,7 @@ public:
     MCTSNodeCSSearcher(SelectionStrategy *selection = nullptr,
                        SimulationStrategy *simulation = nullptr);
     ~MCTSNodeCSSearcher();
-    MCTSNode_ *CreateNode(Game *state) const;
+    MCTSNode_ *CreateNode(const Game *state) const;
     bool DoesSupportTreeParallel() const;
     void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -63,7 +63,7 @@ public:
     RaveNodeSearcher(SelectionStrategy *selection = nullptr,
                      SimulationStrategy *simulation = nullptr);
     ~RaveNodeSearcher();
-    MCTSNode_ *CreateNode(Game *state) const;
+    MCTSNode_ *CreateNode(const Game *state) const;
     bool DoesSupportTreeParallel() const;
     void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -78,7 +78,7 @@ public:
     MutexNodeSearcher(SelectionStrategy *selection = nullptr,
                       SimulationStrategy *simulation = nullptr);
     ~MutexNodeSearcher();
-    MCTSNode_ *CreateNode(Game *state) const;
+    MCTSNode_ *CreateNode(const Game *state) const;
     bool DoesSupportTreeParallel() const;
     void SearchOnce(MCTSNode_ *node, const Game *state) const;
 
@@ -94,7 +94,7 @@ public:
                        SimulationStrategy *simulation = nullptr,
                        PolicyStrategy *policy = nullptr);
     ~PolicyNodeSearcher();
-    MCTSNode_ *CreateNode(Game *state) const;
+    MCTSNode_ *CreateNode(const Game *state) const;
     bool DoesSupportTreeParallel() const;
     void SearchOnce(MCTSNode_ *node, const Game *state) const;
 

@@ -30,6 +30,10 @@ test-connect-four:
 	mkdir -p build
 	g++ -O3 -pthread test/test-connect-four.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/test-connect-four
 
+test-moving-root:
+	mkdir -p build
+	g++ -O3 -pthread test/test-moving-root.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/test-moving-root
+
 play-connect-four:
 	mkdir -p build
 	g++ -O3 -pthread play-connect-four.cpp mcts/*.cpp mcts/*/*.cpp mcts/*/*/*.cpp games/*.cpp -o build/play-connect-four
