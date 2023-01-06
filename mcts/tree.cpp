@@ -47,6 +47,19 @@ std::vector<float> SingleTree::GetValues()
     return root_->GetChildrenQ();
 }
 
+void SingleTree::MoveRoot(int index)
+{
+    MCTSNode_ *original_root = root_;
+    root_ = root_->PopChild(index);
+    delete original_root;
+
+    ActionList *action_list = state_->GetLegalMoves();
+    state_->DoAction(action_list->Get(index));
+    delete action_list;
+}
+
+Game *SingleTree::GetState() { return state_; }
+
 RootParallel::RootParallel(MCTSNode_ **roots, const Game *state, int num_threads) : roots_(roots), state_(state->Clone()), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
@@ -147,6 +160,22 @@ std::vector<float> RootParallel::GetValues()
     return output;
 }
 
+void RootParallel::MoveRoot(int index)
+{
+    for (int i = 0; i < num_threads_; i++)
+    {
+        MCTSNode_ *original_root = roots_[i];
+        roots_[i] = roots_[i]->PopChild(index);
+        delete original_root;
+    }
+
+    ActionList *action_list = state_->GetLegalMoves();
+    state_->DoAction(action_list->Get(index));
+    delete action_list;
+}
+
+Game *RootParallel::GetState() { return state_; }
+
 TreeParallel::TreeParallel(MCTSNode_ *root, const Game *state, int num_threads) : root_(root), state_(state->Clone()), num_threads_(num_threads)
 {
     threads_ = new pthread_t[num_threads];
@@ -198,6 +227,19 @@ std::vector<float> TreeParallel::GetValues()
 {
     return root_->GetChildrenQ();
 }
+
+void TreeParallel::MoveRoot(int index)
+{
+    MCTSNode_ *original_root = root_;
+    root_ = root_->PopChild(index);
+    delete original_root;
+
+    ActionList *action_list = state_->GetLegalMoves();
+    state_->DoAction(action_list->Get(index));
+    delete action_list;
+}
+
+Game *TreeParallel::GetState() { return state_; }
 
 ProcessParallel::ProcessParallel(const Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
 {
@@ -340,3 +382,10 @@ std::vector<float> ProcessParallel::GetValues()
     }
     return output;
 }
+
+void ProcessParallel::MoveRoot(int index)
+{
+    tree_->MoveRoot(index);
+}
+
+Game *ProcessParallel::GetState() { return tree_->GetState(); }

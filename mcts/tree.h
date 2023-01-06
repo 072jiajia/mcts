@@ -38,18 +38,8 @@ public:
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
 
-    void MoveRoot(int index)
-    {
-        MCTSNode_ *original_root = root_;
-        root_ = root_->PopChild(index);
-        delete original_root;
-
-        ActionList *action_list = state_->GetLegalMoves();
-        state_->DoAction(action_list->Get(index));
-        delete action_list;
-    }
-
-    Game *GetState() { return state_; }
+    void MoveRoot(int index);
+    Game *GetState();
 
 private:
     Game *state_;
@@ -90,21 +80,8 @@ public:
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
 
-    void MoveRoot(int index)
-    {
-        for (int i = 0; i < num_threads_; i++)
-        {
-            MCTSNode_ *original_root = roots_[i];
-            roots_[i] = roots_[i]->PopChild(index);
-            delete original_root;
-        }
-
-        ActionList *action_list = state_->GetLegalMoves();
-        state_->DoAction(action_list->Get(index));
-        delete action_list;
-    }
-
-    Game *GetState() { return state_; }
+    void MoveRoot(int index);
+    Game *GetState();
 
 private:
     Game *state_;
@@ -124,18 +101,8 @@ public:
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
 
-    void MoveRoot(int index)
-    {
-        MCTSNode_ *original_root = root_;
-        root_ = root_->PopChild(index);
-        delete original_root;
-
-        ActionList *action_list = state_->GetLegalMoves();
-        state_->DoAction(action_list->Get(index));
-        delete action_list;
-    }
-
-    Game *GetState() { return state_; }
+    void MoveRoot(int index);
+    Game *GetState();
 
 private:
     Game *state_;
@@ -155,12 +122,8 @@ public:
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
 
-    void MoveRoot(int index)
-    {
-        tree_->MoveRoot(index);
-    }
-
-    Game *GetState() { return tree_->GetState(); }
+    void MoveRoot(int index);
+    Game *GetState();
 
 private:
     int num_processes_;
