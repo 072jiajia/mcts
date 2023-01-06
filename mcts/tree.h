@@ -122,12 +122,18 @@ public:
     std::vector<int> GetFrequencies();
     std::vector<float> GetValues();
 
+    void PrepareSHM();
+    void ClearSHM();
+
     void MoveRoot(int index);
     Game *GetState();
 
 private:
     int num_processes_;
     MCTSTree_ *tree_;
+    Game *state_;
+
+    bool shm_usable_;
     int action_size_;
     int shm_id_;
     int *shm_;

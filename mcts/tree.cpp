@@ -241,12 +241,16 @@ void TreeParallel::MoveRoot(int index)
 
 Game *TreeParallel::GetState() { return state_; }
 
-ProcessParallel::ProcessParallel(const Game *state, MCTSTree_ *tree, int num_processes) : tree_(tree), num_processes_(num_processes)
+void ProcessParallel::PrepareSHM()
 {
-    ActionList *action_list = state->GetLegalMoves();
-    action_size_ = action_list->GetSize();
+    if (shm_usable_)
+        throw std::runtime_error("Shared memory reallocated");
 
-    shm_id_ = shmget(0, sizeof(int) * num_processes * action_size_, IPC_CREAT | 0600);
+    ActionList *action_list = state_->GetLegalMoves();
+    action_size_ = action_list->GetSize();
+    delete action_list;
+
+    shm_id_ = shmget(0, sizeof(int) * num_processes_ * action_size_, IPC_CREAT | 0600);
     if (shm_id_ == -1)
     {
         perror("shmget: shmget failed");
@@ -260,7 +264,7 @@ ProcessParallel::ProcessParallel(const Game *state, MCTSTree_ *tree, int num_pro
         exit(1);
     }
 
-    shm_value_id_ = shmget(0, sizeof(float) * num_processes * action_size_, IPC_CREAT | 0600);
+    shm_value_id_ = shmget(0, sizeof(float) * num_processes_ * action_size_, IPC_CREAT | 0600);
     if (shm_value_id_ == -1)
     {
         perror("shmget: shmget failed");
@@ -273,10 +277,15 @@ ProcessParallel::ProcessParallel(const Game *state, MCTSTree_ *tree, int num_pro
         perror("shmat: attach error");
         exit(1);
     }
+
+    shm_usable_ = true;
 }
 
-ProcessParallel::~ProcessParallel()
+void ProcessParallel::ClearSHM()
 {
+    if (!shm_usable_)
+        return;
+
     if (shmdt(shm_) == -1)
     {
         fprintf(stderr, "shmdt failed\n");
@@ -290,7 +299,20 @@ ProcessParallel::~ProcessParallel()
         exit(1);
     }
     shmctl(shm_value_id_, IPC_RMID, NULL);
+
+    shm_usable_ = false;
+}
+
+ProcessParallel::ProcessParallel(const Game *state, MCTSTree_ *tree, int num_processes)
+    : tree_(tree), state_(state->Clone()), num_processes_(num_processes),
+      shm_usable_(false)
+{
+}
+
+ProcessParallel::~ProcessParallel()
+{
     delete tree_;
+    delete state_;
 }
 
 float ProcessParallel::GetTotalSimulationCount()
@@ -306,7 +328,9 @@ float ProcessParallel::GetTotalSimulationCount()
 void ProcessParallel::Search(NodeSearcher_ *search_strategy,
                              TimeControlStrategy *time_controller)
 {
-    for (int process_id = 0; process_id < num_processes_; process_id++)
+    ClearSHM();
+    PrepareSHM();
+    for (int process_id = 1; process_id < num_processes_; process_id++)
     {
         pid_t pid;
         pid = fork();
@@ -332,7 +356,19 @@ void ProcessParallel::Search(NodeSearcher_ *search_strategy,
         }
     }
 
-    for (int i = 0; i < num_processes_; i++)
+    /* main-process */
+    {
+        tree_->Search(search_strategy, time_controller);
+        std::vector<int> freqs = tree_->GetFrequencies();
+        std::vector<float> values = tree_->GetValues();
+        for (int i = 0; i < freqs.size(); i++)
+        {
+            shm_[i] = freqs[i];
+            shm_value_[i] = values[i];
+        }
+    }
+
+    for (int i = 1; i < num_processes_; i++)
     {
         wait(NULL);
     }
@@ -386,6 +422,10 @@ std::vector<float> ProcessParallel::GetValues()
 void ProcessParallel::MoveRoot(int index)
 {
     tree_->MoveRoot(index);
+
+    ActionList *action_list = state_->GetLegalMoves();
+    state_->DoAction(action_list->Get(index));
+    delete action_list;
 }
 
 Game *ProcessParallel::GetState() { return tree_->GetState(); }

@@ -8,8 +8,8 @@ int main()
 {
     AgentOptions p1_args = AgentOptions()
                                .search_strategy(new MCTSNodeSearcher())
-                               .num_threads(4)
-                               //    .num_processes(4)
+                               //    .num_threads(4)
+                               .num_processes(4)
                                .moving_root(true);
     AgentOptions p2_args = AgentOptions()
                                .search_strategy(new MCTSNodeSearcher());
