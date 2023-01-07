@@ -6,32 +6,11 @@
 #include <algorithm>
 #include <utility>
 #include <cmath>
+
+#include "common_actioins.h"
 #include "../mcts/game_base.h"
 
-class NoGoAction : public Action
-{
-public:
-    NoGoAction(int x, int y) : x_(x), y_(y) {}
-    NoGoAction(const NoGoAction &) = default;
-    int encoding() const { return (x_ << 16) + y_; }
-
-    inline int x() { return x_; }
-    inline int y() { return y_; }
-
-    bool IsSame(const Action *input_action) const
-    {
-        NoGoAction *action = (NoGoAction *)input_action;
-        if (this->x_ != action->x())
-            return false;
-        if (this->y_ != action->y())
-            return false;
-        return true;
-    }
-
-private:
-    int x_;
-    int y_;
-};
+using NoGoAction = TwoDimensionalAction;
 
 class NoGo : public Game
 {

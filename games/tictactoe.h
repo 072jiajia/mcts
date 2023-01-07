@@ -3,32 +3,10 @@
 #include <stdexcept>
 #include <iostream>
 
+#include "common_actioins.h"
 #include "../mcts/game_base.h"
 
-class TicTacToeAction : public Action
-{
-public:
-    TicTacToeAction(int x, int y) : x_(x), y_(y) {}
-    TicTacToeAction(const TicTacToeAction &) = default;
-
-    int encoding() const { return (x_ << 16) + y_; }
-    inline int x() { return x_; }
-    inline int y() { return y_; }
-
-    bool IsSame(const Action *input_action) const
-    {
-        TicTacToeAction *action = (TicTacToeAction *)input_action;
-        if (this->x_ != action->x())
-            return false;
-        if (this->y_ != action->y())
-            return false;
-        return true;
-    }
-
-private:
-    int x_;
-    int y_;
-};
+using TicTacToeAction = TwoDimensionalAction;
 
 class TicTacToe : public Game
 {

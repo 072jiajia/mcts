@@ -4,28 +4,10 @@
 #include <iostream>
 #include <vector>
 
+#include "common_actioins.h"
 #include "../mcts/game_base.h"
 
-class OthelloAction : public Action
-{
-public:
-    OthelloAction(int position) : position_(position) {}
-    OthelloAction(const OthelloAction &) = default;
-
-    int encoding() const { return position_; }
-    inline int position() { return position_; }
-
-    bool IsSame(const Action *input_action) const
-    {
-        OthelloAction *action = (OthelloAction *)input_action;
-        if (this->position_ != action->position())
-            return false;
-        return true;
-    }
-
-private:
-    int position_;
-};
+using OthelloAction = OneDimensionalAction;
 
 class Othello : public Game
 {
