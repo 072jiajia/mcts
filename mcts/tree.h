@@ -14,6 +14,31 @@
 #include "strategies/timecontrol.h"
 #include "strategies/decision.h"
 
+struct PonderInput
+{
+    PonderInput(sem_t *sem,
+                MCTSTree_ *tree,
+                TimeControlStrategy *time_controller,
+                NodeSearcher_ *search_strategy)
+        : sem_(sem),
+          tree_(tree),
+          time_controller_{time_controller},
+          search_strategy_{search_strategy} {}
+
+    sem_t *sem() { return sem_; }
+    MCTSTree_ *tree() { return tree_; }
+    TimeControlStrategy *time_controller() { return time_controller_; }
+    NodeSearcher_ *search_strategy() { return search_strategy_; }
+
+private:
+    sem_t *sem_;
+    MCTSTree_ *tree_;
+    TimeControlStrategy *time_controller_;
+    NodeSearcher_ *search_strategy_;
+};
+
+void *LaunchPonder(void *args_void);
+
 class MCTSTree_
 {
 public:

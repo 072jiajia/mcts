@@ -7,7 +7,9 @@
 int main()
 {
     AgentOptions ai_args = AgentOptions()
-                               .search_strategy(new MCTSNodeSearcher());
+                               .search_strategy(new MCTSNodeSearcher())
+                               .moving_root(true)
+                               .does_ponder(true);
     Agent ai(ai_args);
 
     ConnectFour state;
@@ -22,12 +24,14 @@ int main()
             std::cout << "Your turn! Please input your move (1~7): ";
             std::cin >> x;
             action = new ConnectFourAction(x - 1, -1);
+            state.DoAction(action);
+            ai.HandleOppenentMove(action);
         }
         else
         {
             action = ai.SearchAction(&state);
+            state.DoAction(action);
         }
-        state.DoAction(action);
         delete action;
     }
     std::cout << state << std::endl;

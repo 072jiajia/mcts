@@ -25,6 +25,7 @@ struct AgentOptions
     OPTION_ARG(int, num_threads) = 1;
     OPTION_ARG(int, num_processes) = 1;
     OPTION_ARG(bool, moving_root) = false;
+    OPTION_ARG(bool, does_ponder) = false;
 };
 
 class Agent
@@ -35,6 +36,7 @@ public:
 
     Action *SearchAction(Game *state);
     MCTSTree_ *CreateTree(const Game *state) const;
+    void Ponder();
     void HandleOppenentMove(const Action *);
 
 private:
@@ -46,4 +48,9 @@ private:
     int num_threads_;
     int num_processes_;
     bool moving_root_;
+
+    bool does_ponder_;
+    pthread_t ponder_thread_;
+    bool ponder_stop_;
+    sem_t ponder_sem_;
 };

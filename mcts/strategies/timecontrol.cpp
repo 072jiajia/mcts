@@ -25,3 +25,12 @@ bool CountDown::Stop() const
 {
     return timer_.get_duration() >= time_limit_ms_ / 1000.;
 }
+
+SignalStopper::SignalStopper(bool *stop) : stop_(stop) {}
+
+SignalStopper::~SignalStopper() {}
+
+bool SignalStopper::Stop() const
+{
+    return *stop_;
+}

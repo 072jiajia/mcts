@@ -20,7 +20,7 @@ public:
         ConnectFourAction *action = (ConnectFourAction *)input_action;
         if (this->x_ != action->x())
             return false;
-        if (this->y_ != action->y())
+        if (this->y_ != action->y() && this->y_ != -1 && action->y() != -1)
             return false;
         return true;
     }

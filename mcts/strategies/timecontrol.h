@@ -26,12 +26,21 @@ class CountDown : public TimeControlStrategy
 {
 public:
     CountDown(double time_limit_ms);
-
     ~CountDown();
-
     bool Stop() const;
 
 private:
     Timer timer_;
     double time_limit_ms_;
+};
+
+class SignalStopper : public TimeControlStrategy
+{
+public:
+    SignalStopper(bool *stop);
+    ~SignalStopper();
+    bool Stop() const;
+
+private:
+    bool *stop_;
 };

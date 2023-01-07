@@ -9,13 +9,19 @@ Agent::Agent(AgentOptions &options)
 	  mcts_tree_(nullptr),
 	  num_threads_(options.num_threads()),
 	  num_processes_(options.num_processes()),
-	  moving_root_(options.moving_root())
+	  moving_root_(options.moving_root()),
+	  does_ponder_(options.does_ponder()),
+	  ponder_thread_(),
+	  ponder_stop_(false),
+	  ponder_sem_()
 {
 	if (!decision_strategy_)
 		decision_strategy_ = new MostFrequency();
 
 	if (!search_strategy_)
 		throw std::invalid_argument("search_strategy not defined");
+
+	sem_init(&ponder_sem_, 0, 1);
 }
 
 Agent::~Agent()
@@ -66,9 +72,14 @@ Action *Agent::SearchAction(Game *state)
 {
 	TimeControlStrategy *time_controller = new CountDown(time_limit_ms_);
 
+	if (does_ponder_)
+	{
+		ponder_stop_ = true;
+		sem_wait(&ponder_sem_);
+	}
+
 	if (!mcts_tree_)
 	{
-
 		mcts_tree_ = CreateTree(state);
 	}
 	else
@@ -93,6 +104,10 @@ Action *Agent::SearchAction(Game *state)
 	if (moving_root_)
 	{
 		mcts_tree_->MoveRoot(best_move);
+		if (does_ponder_)
+		{
+			this->Ponder();
+		}
 	}
 	else
 	{
@@ -104,6 +119,19 @@ Action *Agent::SearchAction(Game *state)
 	Action *output = action_list->Pop(best_move);
 	delete action_list;
 	return output;
+}
+
+void Agent::Ponder()
+{
+	ponder_stop_ = false;
+	TimeControlStrategy *time_controller = new SignalStopper(&ponder_stop_);
+	sem_init(&ponder_sem_, 0, 0);
+	PonderInput *data = new PonderInput(&ponder_sem_, mcts_tree_, time_controller, search_strategy_);
+	if (pthread_create(&ponder_thread_, NULL, LaunchPonder, (void *)data) != 0)
+	{
+		perror("pthread_create() error");
+		exit(1);
+	}
 }
 
 void Agent::HandleOppenentMove(const Action *action)
@@ -122,6 +150,10 @@ void Agent::HandleOppenentMove(const Action *action)
 	}
 	delete action_list;
 
+	ponder_stop_ = true;
+	sem_wait(&ponder_sem_);
+	sem_post(&ponder_sem_);
+
 	if (action_index == -1)
 	{
 		std::cout << "Agent::HandleOppenentMove action not found" << std::endl;
@@ -129,5 +161,12 @@ void Agent::HandleOppenentMove(const Action *action)
 		mcts_tree_ = nullptr;
 	}
 	else
+	{
 		mcts_tree_->MoveRoot(action_index);
+		if (does_ponder_)
+		{
+			sem_wait(&ponder_sem_);
+			Ponder();
+		}
+	}
 }
