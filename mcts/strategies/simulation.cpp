@@ -42,7 +42,7 @@ ParallelSimulationStrategy::~ParallelSimulationStrategy()
 
 void *ParallelSimulationStrategy::LaunchThread(void *void_args)
 {
-    ParallelDataContainer *args = (ParallelDataContainer *)void_args;
+    LeadParallelInput *args = (LeadParallelInput *)void_args;
     SimulationStrategy *strategy = args->strategy();
     Game *state = args->state();
     float *result_ptr = args->result_ptr();
@@ -58,7 +58,7 @@ float ParallelSimulationStrategy::SimulationOnce(Game *state) const
 
     for (int i = 0; i < num_threads_; i++)
     {
-        ParallelDataContainer *data = new ParallelDataContainer(strategy_, state, &(results[i]));
+        LeadParallelInput *data = new LeadParallelInput(strategy_, state, &(results[i]));
         pthread_create(&t[i], NULL, LaunchThread, (void *)data);
     }
 

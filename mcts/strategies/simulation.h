@@ -23,21 +23,14 @@ private:
     Action *GetRandomMove(Game *state) const;
 };
 
-struct ParallelDataContainer
+struct LeadParallelInput
 {
-    ParallelDataContainer(SimulationStrategy *strategy, Game *state, float *result_ptr)
-    {
-        strategy_ = strategy;
-        state_ = state;
-        result_ptr_ = result_ptr;
-    }
-    SimulationStrategy *strategy() { return strategy_; }
-    Game *state() { return state_; }
-    float *result_ptr() { return result_ptr_; }
+    LeadParallelInput(SimulationStrategy *strategy, Game *state, float *result_ptr)
+        : strategy_(strategy), state_(state), result_ptr_(result_ptr) {}
 
-    SimulationStrategy *strategy_;
-    Game *state_;
-    float *result_ptr_;
+    THREAD_INPUT_ARG(SimulationStrategy *, strategy);
+    THREAD_INPUT_ARG(Game *, state);
+    THREAD_INPUT_ARG(float *, result_ptr);
 };
 
 class ParallelSimulationStrategy : public SimulationStrategy

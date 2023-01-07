@@ -16,25 +16,17 @@
 
 struct PonderInput
 {
-    PonderInput(sem_t *sem,
-                MCTSTree_ *tree,
+    PonderInput(sem_t *sem, MCTSTree_ *tree,
                 TimeControlStrategy *time_controller,
                 NodeSearcher_ *search_strategy)
-        : sem_(sem),
-          tree_(tree),
+        : sem_(sem), tree_(tree),
           time_controller_{time_controller},
           search_strategy_{search_strategy} {}
 
-    sem_t *sem() { return sem_; }
-    MCTSTree_ *tree() { return tree_; }
-    TimeControlStrategy *time_controller() { return time_controller_; }
-    NodeSearcher_ *search_strategy() { return search_strategy_; }
-
-private:
-    sem_t *sem_;
-    MCTSTree_ *tree_;
-    TimeControlStrategy *time_controller_;
-    NodeSearcher_ *search_strategy_;
+    THREAD_INPUT_ARG(sem_t *, sem);
+    THREAD_INPUT_ARG(MCTSTree_ *, tree);
+    THREAD_INPUT_ARG(TimeControlStrategy *, time_controller);
+    THREAD_INPUT_ARG(NodeSearcher_ *, search_strategy);
 };
 
 void *LaunchPonder(void *args_void);
@@ -80,16 +72,10 @@ struct MCTSThreadInput
           time_controller_{time_controller},
           search_strategy_{search_strategy} {}
 
-    Game *state() { return state_; }
-    MCTSNode_ *root() { return root_; }
-    TimeControlStrategy *time_controller() { return time_controller_; }
-    NodeSearcher_ *search_strategy() { return search_strategy_; }
-
-private:
-    Game *state_;
-    MCTSNode_ *root_;
-    TimeControlStrategy *time_controller_;
-    NodeSearcher_ *search_strategy_;
+    THREAD_INPUT_ARG(Game *, state);
+    THREAD_INPUT_ARG(MCTSNode_ *, root);
+    THREAD_INPUT_ARG(TimeControlStrategy *, time_controller);
+    THREAD_INPUT_ARG(NodeSearcher_ *, search_strategy);
 };
 
 void *LaunchSearchThread(void *);

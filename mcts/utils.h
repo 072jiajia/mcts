@@ -43,4 +43,19 @@ public:                                             \
 private:                                            \
 	T name##_ /* NOLINT */
 
+#define THREAD_INPUT_ARG(T, name)                   \
+public:                                             \
+	inline auto name(T new_##name)->decltype(*this) \
+	{ /* NOLINT */                                  \
+		this->name##_ = new_##name;                 \
+		return *this;                               \
+	}                                               \
+	inline T name() noexcept                        \
+	{ /* NOLINT */                                  \
+		return this->name##_;                       \
+	}                                               \
+                                                    \
+private:                                            \
+	T name##_ /* NOLINT */
+
 float EvaluateResult(Game *state, Player turn);
