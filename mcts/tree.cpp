@@ -317,12 +317,7 @@ ProcessParallel::~ProcessParallel()
 
 float ProcessParallel::GetTotalSimulationCount()
 {
-    int total_counts = 0;
-    for (int i = 0; i < num_processes_ * action_size_; i++)
-    {
-        total_counts += shm_[i];
-    }
-    return total_counts;
+    return tree_->GetTotalSimulationCount();
 }
 
 void ProcessParallel::Search(NodeSearcher_ *search_strategy,
