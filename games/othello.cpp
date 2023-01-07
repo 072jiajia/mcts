@@ -1,4 +1,5 @@
 #include "othello.h"
+#include "print_utils.h"
 
 Othello::Othello() : board_(), whos_turn_(Player::PLAYER1), last_skipped_(false), gameover_(false)
 {
@@ -45,11 +46,6 @@ ActionList *Othello::GetLegalMoves() const
         output->Add(new OthelloAction(-1));
     }
 
-    // for (int i = 0; i < output->GetSize(); i++)
-    // {
-    //     std::cout << output->Get(i)->encoding() << " ";
-    // }
-    // std::cout << std::endl;
     return output;
 }
 
@@ -118,11 +114,9 @@ void Othello::PrintState(std::ostream &out) const
 {
 
     out << "Current state" << std::endl;
-    for (int i = 0; i < 8; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+
+    PrintRepeatedly(out, "-", 8 * 2 + 1);
+    out << std::endl;
 
     for (int i = 0; i < 8; i++)
     {
@@ -141,11 +135,7 @@ void Othello::PrintState(std::ostream &out) const
         }
         out << "|" << std::endl;
     }
-    for (int i = 0; i < 8; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+    PrintRepeatedly(out, "-", 8 * 2 + 1);
     out << std::endl;
 }
 

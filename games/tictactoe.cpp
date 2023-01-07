@@ -1,4 +1,5 @@
 #include "tictactoe.h"
+#include "print_utils.h"
 
 TicTacToe::TicTacToe() : board(), whos_turn(Player::PLAYER1) {}
 
@@ -54,11 +55,9 @@ void TicTacToe::PrintState(std::ostream &out) const
 {
 
     out << "Current state" << std::endl;
-    for (int i = 0; i < 3; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+
+    PrintRepeatedly(out, "-", 3 * 2 + 1);
+    out << std::endl;
 
     for (int i = 0; i < 3; i++)
     {
@@ -77,11 +76,7 @@ void TicTacToe::PrintState(std::ostream &out) const
         }
         out << "|" << std::endl;
     }
-    for (int i = 0; i < 3; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+    PrintRepeatedly(out, "-", 3 * 2 + 1);
     out << std::endl;
 }
 

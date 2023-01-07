@@ -1,4 +1,5 @@
 #include "connect_four.h"
+#include "print_utils.h"
 
 ConnectFour::ConnectFour()
     : board_(), line_height_(),
@@ -109,11 +110,8 @@ void ConnectFour::PrintState(std::ostream &out) const
         }
         out << "|" << std::endl;
     }
-    for (int i = 0; i < 7; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+
+    PrintRepeatedly(out, "-", 7 * 2 + 1);
     out << std::endl;
 }
 

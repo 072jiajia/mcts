@@ -1,4 +1,5 @@
 #include "nogo.h"
+#include "print_utils.h"
 
 NoGo::NoGo(int size_x, int size_y)
     : size_x_(size_x),
@@ -88,11 +89,8 @@ void NoGo::switch_turn()
 void NoGo::PrintState(std::ostream &out) const
 {
     out << "Current state" << std::endl;
-    for (int i = 0; i < size_x_; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+    PrintRepeatedly(out, "-", size_x_ * 2 + 1);
+    out << std::endl;
 
     for (int i = 0; i < size_y_; i++)
     {
@@ -111,11 +109,8 @@ void NoGo::PrintState(std::ostream &out) const
         }
         out << "|" << std::endl;
     }
-    for (int i = 0; i < size_x_; i++)
-    {
-        out << "--";
-    }
-    out << "-" << std::endl;
+
+    PrintRepeatedly(out, "-", size_x_ * 2 + 1);
     out << std::endl;
 }
 

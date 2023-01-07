@@ -1,4 +1,5 @@
 #include "gomoku.h"
+#include "print_utils.h"
 
 Gomoku::Gomoku() : remaining_space_(225), board(), whos_turn(Player::PLAYER1), result_(ResultType::NOT_FINISH_YET) {}
 
