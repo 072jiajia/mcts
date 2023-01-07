@@ -15,12 +15,12 @@ int main()
 
     while (!state.IsGameOver())
     {
-        state.PrintState();
+        std::cout << state << std::endl;
 
         Action *action = p.SearchAction(&state);
         state.DoAction(action);
         delete action;
     }
 
-    state.PrintState();
+    std::cout << state << std::endl;
 }

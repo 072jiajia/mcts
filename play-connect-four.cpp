@@ -13,7 +13,7 @@ int main()
     ConnectFour state;
     while (!state.IsGameOver())
     {
-        state.PrintState();
+        std::cout << state << std::endl;
         Action *action;
         Agent *current_player;
         if (state.GetPlayerThisTurn() == Player::PLAYER1)
@@ -30,7 +30,7 @@ int main()
         state.DoAction(action);
         delete action;
     }
-    state.PrintState();
+    std::cout << state << std::endl;
     if (state.GetResult() == ResultType::PLAYER1_WIN)
         std::cout << "player1 wins" << std::endl;
     else if (state.GetResult() == ResultType::PLAYER2_WIN)

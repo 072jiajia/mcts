@@ -50,7 +50,9 @@ public:
     virtual Player GetPlayerThisTurn() const = 0;
     virtual ResultType GetResult() const = 0;
     virtual bool IsGameOver() const = 0;
-    virtual void PrintState() const = 0;
+    virtual void PrintState(std::ostream &out) const = 0;
     virtual bool IsMovable(const Action *) const { throw std::logic_error("bool Game::IsMovable not yet implemented"); }
     virtual bool IsSame(const Game *) const { throw std::logic_error("bool Game::IsSame not yet implemented"); }
 };
+
+std::ostream &operator<<(std::ostream &out, const Game &state);

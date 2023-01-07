@@ -64,23 +64,23 @@ void Gomoku::switch_turn()
     whos_turn = whos_turn == Player::PLAYER1 ? Player::PLAYER2 : Player::PLAYER1;
 }
 
-void Gomoku::PrintState() const
+void Gomoku::PrintState(std::ostream &out) const
 {
-    std::cout << "Current state" << std::endl;
+    out << "Current state" << std::endl;
 
-    std::cout << "   ";
+    out << "   ";
     for (int i = 0; i < 15; i++)
     {
-        std::cout << " " << char('A' + i);
+        out << " " << char('A' + i);
     }
-    std::cout << " " << std::endl;
+    out << " " << std::endl;
 
     for (int i = 0; i < 15; i++)
     {
         if (i + 1 < 10)
-            std::cout << " " << i + 1 << " ";
+            out << " " << i + 1 << " ";
         else
-            std::cout << i + 1 << " ";
+            out << i + 1 << " ";
 
         for (int j = 0; j < 15; j++)
         {
@@ -93,19 +93,19 @@ void Gomoku::PrintState() const
                 c = 'X';
             else
                 c = '?';
-            std::cout << "|" << c;
+            out << "|" << c;
         }
-        std::cout << "| " << i + 1 << std::endl;
+        out << "| " << i + 1 << std::endl;
     }
 
-    std::cout << "   ";
+    out << "   ";
     for (int i = 0; i < 15; i++)
     {
-        std::cout << " " << char('A' + i);
+        out << " " << char('A' + i);
     }
-    std::cout << " " << std::endl;
+    out << " " << std::endl;
 
-    std::cout << std::endl;
+    out << std::endl;
 }
 
 bool Gomoku::IsGameOver() const

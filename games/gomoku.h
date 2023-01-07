@@ -29,7 +29,7 @@ public:
     Player GetPlayerThisTurn() const;
     ResultType GetResult() const;
     bool IsGameOver() const;
-    void PrintState() const;
+    void PrintState(std::ostream &out) const;
 
     PieceType *GetBoard();
     bool IsSame(const Game *) const;

@@ -85,14 +85,14 @@ void NoGo::switch_turn()
     whos_turn_ = whos_turn_ == Player::PLAYER1 ? Player::PLAYER2 : Player::PLAYER1;
 }
 
-void NoGo::PrintState() const
+void NoGo::PrintState(std::ostream &out) const
 {
-    std::cout << "Current state" << std::endl;
+    out << "Current state" << std::endl;
     for (int i = 0; i < size_x_; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
+    out << "-" << std::endl;
 
     for (int i = 0; i < size_y_; i++)
     {
@@ -107,16 +107,16 @@ void NoGo::PrintState() const
                 c = 'X';
             else
                 c = '?';
-            std::cout << "|" << c;
+            out << "|" << c;
         }
-        std::cout << "|" << std::endl;
+        out << "|" << std::endl;
     }
     for (int i = 0; i < size_x_; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
-    std::cout << std::endl;
+    out << "-" << std::endl;
+    out << std::endl;
 }
 
 bool NoGo::IsMovable(const Action *action_abs) const

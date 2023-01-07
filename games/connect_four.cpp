@@ -81,16 +81,16 @@ void ConnectFour::switch_turn()
     whos_turn_ = whos_turn_ == Player::PLAYER1 ? Player::PLAYER2 : Player::PLAYER1;
 }
 
-void ConnectFour::PrintState() const
+void ConnectFour::PrintState(std::ostream &out) const
 {
 
-    std::cout << "Current state" << std::endl;
-    std::cout << std::endl;
+    out << "Current state" << std::endl;
+    out << std::endl;
     for (int i = 0; i < 7; i++)
     {
-        std::cout << " " << i + 1;
+        out << " " << i + 1;
     }
-    std::cout << " " << std::endl;
+    out << " " << std::endl;
 
     for (int j = 6 - 1; j >= 0; j--)
     {
@@ -105,16 +105,16 @@ void ConnectFour::PrintState() const
                 c = 'X';
             else
                 c = '?';
-            std::cout << "|" << c;
+            out << "|" << c;
         }
-        std::cout << "|" << std::endl;
+        out << "|" << std::endl;
     }
     for (int i = 0; i < 7; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
-    std::cout << std::endl;
+    out << "-" << std::endl;
+    out << std::endl;
 }
 
 bool ConnectFour::IsGameOver() const

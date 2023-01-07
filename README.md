@@ -69,7 +69,7 @@ public:
     Player GetPlayerThisTurn() const;
     ResultType GetResult() const;
     bool IsGameOver() const;
-    void PrintState() const;
+    void PrintState(std::ostream &out) const;
 
     /*
         Other members & functions of your implementations

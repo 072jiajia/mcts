@@ -36,3 +36,9 @@ int ActionList::GetSize() const
 }
 
 Game::~Game() {}
+
+std::ostream &operator<<(std::ostream &out, const Game &state)
+{
+    state.PrintState(out);
+    return out;
+}

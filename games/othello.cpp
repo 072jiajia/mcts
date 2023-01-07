@@ -114,15 +114,15 @@ bool Othello::IsGameOver() const
     return gameover_;
 }
 
-void Othello::PrintState() const
+void Othello::PrintState(std::ostream &out) const
 {
 
-    std::cout << "Current state" << std::endl;
+    out << "Current state" << std::endl;
     for (int i = 0; i < 8; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
+    out << "-" << std::endl;
 
     for (int i = 0; i < 8; i++)
     {
@@ -137,16 +137,16 @@ void Othello::PrintState() const
                 c = 'X';
             else
                 c = '?';
-            std::cout << "|" << c;
+            out << "|" << c;
         }
-        std::cout << "|" << std::endl;
+        out << "|" << std::endl;
     }
     for (int i = 0; i < 8; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
-    std::cout << std::endl;
+    out << "-" << std::endl;
+    out << std::endl;
 }
 
 void Othello::switch_turn()

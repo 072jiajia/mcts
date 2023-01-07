@@ -25,7 +25,7 @@ public:
     Player GetPlayerThisTurn() const;
     ResultType GetResult() const;
     bool IsGameOver() const;
-    void PrintState() const;
+    void PrintState(std::ostream &out) const;
     bool IsMovable(const Action *) const;
 
     static ActionList *GetActionSpace(int size_x, int size_y);

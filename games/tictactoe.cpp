@@ -50,15 +50,15 @@ void TicTacToe::switch_turn()
     whos_turn = whos_turn == Player::PLAYER1 ? Player::PLAYER2 : Player::PLAYER1;
 }
 
-void TicTacToe::PrintState() const
+void TicTacToe::PrintState(std::ostream &out) const
 {
 
-    std::cout << "Current state" << std::endl;
+    out << "Current state" << std::endl;
     for (int i = 0; i < 3; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
+    out << "-" << std::endl;
 
     for (int i = 0; i < 3; i++)
     {
@@ -73,16 +73,16 @@ void TicTacToe::PrintState() const
                 c = 'X';
             else
                 c = '?';
-            std::cout << "|" << c;
+            out << "|" << c;
         }
-        std::cout << "|" << std::endl;
+        out << "|" << std::endl;
     }
     for (int i = 0; i < 3; i++)
     {
-        std::cout << "--";
+        out << "--";
     }
-    std::cout << "-" << std::endl;
-    std::cout << std::endl;
+    out << "-" << std::endl;
+    out << std::endl;
 }
 
 bool TicTacToe::IsGameOver() const
