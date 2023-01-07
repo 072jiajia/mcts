@@ -43,16 +43,4 @@ public:                                             \
 private:                                            \
 	T name##_ /* NOLINT */
 
-class Timer
-{
-public:
-	Timer();
-	~Timer();
-	void reset();
-	double get_duration();
-
-private:
-	struct timespec tick_;
-};
-
 float EvaluateResult(Game *state, Player turn);

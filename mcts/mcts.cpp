@@ -2,7 +2,7 @@
 #include "mcts.h"
 
 Agent::Agent(AgentOptions &options)
-	: timer_(), time_limit_ms_(options.time_limit_ms()),
+	: time_limit_ms_(options.time_limit_ms()),
 	  min_iter_(options.min_iter()),
 	  search_strategy_(options.search_strategy()),
 	  decision_strategy_(options.decision_strategy()),
@@ -64,8 +64,7 @@ MCTSTree_ *Agent::CreateTree(const Game *state) const
 
 Action *Agent::SearchAction(Game *state)
 {
-	timer_.reset();
-	TimeControlStrategy *time_controller = new CountDown(&timer_, time_limit_ms_);
+	TimeControlStrategy *time_controller = new CountDown(time_limit_ms_);
 
 	if (!mcts_tree_)
 	{

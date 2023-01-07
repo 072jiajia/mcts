@@ -4,7 +4,16 @@
 #include <pthread.h>
 #include <iostream>
 
-#include "../utils.h"
+class Timer
+{
+public:
+    Timer();
+    ~Timer();
+    double get_duration() const;
+
+private:
+    double start_time_;
+};
 
 class TimeControlStrategy
 {
@@ -16,13 +25,13 @@ public:
 class CountDown : public TimeControlStrategy
 {
 public:
-    CountDown(Timer *timer, double time_limit_ms);
+    CountDown(double time_limit_ms);
 
     ~CountDown();
 
     bool Stop() const;
 
 private:
-    Timer *timer_;
+    Timer timer_;
     double time_limit_ms_;
 };

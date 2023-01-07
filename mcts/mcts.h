@@ -40,7 +40,6 @@ public:
 private:
     double time_limit_ms_;
     int min_iter_;
-    Timer timer_;
     NodeSearcher_ *search_strategy_;
     DecisionStrategy *decision_strategy_;
     MCTSTree_ *mcts_tree_;
