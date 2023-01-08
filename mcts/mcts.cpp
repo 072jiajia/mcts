@@ -8,6 +8,10 @@ void *LaunchPonder(void *args_void)
 	MCTSTree_ *tree = args->tree();
 	TimeControlStrategy *time_controller = args->time_controller();
 	NodeSearcher_ *search_strategy = args->search_strategy();
+
+	if (dynamic_cast<ProcessParallel *>(tree))
+		throw std::runtime_error("ProcessParallel doesn't support pondering");
+
 	tree->Search(search_strategy, time_controller);
 
 	sem_post(sem);
@@ -60,6 +64,9 @@ Agent::Agent(AgentOptions &options)
 
 	if (does_ponder_)
 		ponder_handler_ = new PonderHandler();
+
+	if (does_ponder_ && num_processes_ > 1)
+		throw std::runtime_error("ProcessParallel doesn't support pondering");
 }
 
 Agent::~Agent()
