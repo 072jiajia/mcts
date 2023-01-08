@@ -87,7 +87,7 @@ public:
     ~MCTSNode();
     void Expansion(Game *);
     void SearchOnce(const Game *, NodeSearcher_ *);
-    ActionList *GetActions();
+    const ActionList *GetActions();
 
 private:
     ActionList *actions_;
@@ -111,7 +111,7 @@ public:
 
     void SetVirtualN(int virtual_N);
 
-    ActionList *GetActions();
+    const ActionList *GetActions();
 
 private:
     ActionList *actions_;
@@ -156,7 +156,7 @@ public:
     void Expansion(Game *state);
     void SearchOnce(const Game *, NodeSearcher_ *);
 
-    ActionList *GetActions();
+    const ActionList *GetActions();
 
 private:
     ActionList *actions_;

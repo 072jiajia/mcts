@@ -121,7 +121,7 @@ void MCTSNode::SearchOnce(const Game *state, NodeSearcher_ *search_strategy)
     search_strategy->SearchOnce(this, state);
 }
 
-ActionList *MCTSNode::GetActions() { return actions_; }
+const ActionList *MCTSNode::GetActions() { return actions_; }
 
 MCTSMutexNode::MCTSMutexNode() : MCTSNodeImpl_(), virtual_N_(0), actions_(nullptr), lock()
 {
@@ -172,7 +172,7 @@ void MCTSMutexNode::SearchOnce(const Game *state, NodeSearcher_ *search_strategy
     search_strategy->SearchOnce(this, state);
 }
 
-ActionList *MCTSMutexNode::GetActions() { return actions_; }
+const ActionList *MCTSMutexNode::GetActions() { return actions_; }
 
 RaveNode::RaveNode() : MCTSNodeImpl_(), actions_(nullptr), rave_QN_() {}
 
@@ -257,4 +257,4 @@ void MCTSPolicyNode::SearchOnce(const Game *state, NodeSearcher_ *search_strateg
     search_strategy->SearchOnce(this, state);
 }
 
-ActionList *MCTSPolicyNode::GetActions() { return actions_; }
+const ActionList *MCTSPolicyNode::GetActions() { return actions_; }

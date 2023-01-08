@@ -2,7 +2,7 @@
 
 GomokuCenterFirst::GomokuCenterFirst() {}
 
-std::vector<float> *GomokuCenterFirst::Estimate(MCTSNode_ *node, Game *input_state, ActionList *action_list) const
+std::vector<float> *GomokuCenterFirst::Estimate(const MCTSNode_ *node, const Game *input_state, const ActionList *action_list) const
 {
     int action_size = action_list->GetSize();
     std::vector<float> *output = new std::vector<float>(action_size);

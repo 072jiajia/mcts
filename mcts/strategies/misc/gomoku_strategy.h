@@ -7,5 +7,5 @@ class GomokuCenterFirst : public PolicyStrategy
 {
 public:
     GomokuCenterFirst();
-    std::vector<float> *Estimate(MCTSNode_ *, Game *, ActionList *) const;
+    std::vector<float> *Estimate(const MCTSNode_ *, const Game *, const ActionList *) const;
 };
