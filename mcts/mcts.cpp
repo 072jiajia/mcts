@@ -1,6 +1,46 @@
 
 #include "mcts.h"
 
+void *LaunchPonder(void *args_void)
+{
+	PonderInput *args = (PonderInput *)args_void;
+	sem_t *sem = args->sem();
+	MCTSTree_ *tree = args->tree();
+	TimeControlStrategy *time_controller = args->time_controller();
+	NodeSearcher_ *search_strategy = args->search_strategy();
+	tree->Search(search_strategy, time_controller);
+
+	sem_post(sem);
+	delete time_controller;
+	delete args;
+	pthread_exit(NULL);
+}
+
+PonderHandler::PonderHandler()
+	: ponder_thread_(), ponder_stop_(true), ponder_sem_() {}
+
+void PonderHandler::StopPondering()
+{
+	if (ponder_stop_)
+		return;
+
+	ponder_stop_ = true;
+	sem_wait(&ponder_sem_);
+}
+
+void PonderHandler::StartPondering(MCTSTree_ *tree, NodeSearcher_ *search_strategy_)
+{
+	ponder_stop_ = false;
+	TimeControlStrategy *time_controller = new SignalStopper(&ponder_stop_);
+	sem_init(&ponder_sem_, 0, 0);
+	PonderInput *data = new PonderInput(&ponder_sem_, tree, time_controller, search_strategy_);
+	if (pthread_create(&ponder_thread_, NULL, LaunchPonder, (void *)data) != 0)
+	{
+		perror("pthread_create() error");
+		exit(1);
+	}
+}
+
 Agent::Agent(AgentOptions &options)
 	: time_limit_ms_(options.time_limit_ms()),
 	  min_iter_(options.min_iter()),
@@ -10,10 +50,7 @@ Agent::Agent(AgentOptions &options)
 	  num_threads_(options.num_threads()),
 	  num_processes_(options.num_processes()),
 	  moving_root_(options.moving_root()),
-	  does_ponder_(options.does_ponder()),
-	  ponder_thread_(),
-	  ponder_stop_(false),
-	  ponder_sem_()
+	  does_ponder_(options.does_ponder())
 {
 	if (!decision_strategy_)
 		decision_strategy_ = new MostFrequency();
@@ -21,7 +58,8 @@ Agent::Agent(AgentOptions &options)
 	if (!search_strategy_)
 		throw std::invalid_argument("search_strategy not defined");
 
-	sem_init(&ponder_sem_, 0, 1);
+	if (does_ponder_)
+		ponder_handler_ = new PonderHandler();
 }
 
 Agent::~Agent()
@@ -74,8 +112,7 @@ Action *Agent::SearchAction(const Game *state)
 
 	if (does_ponder_)
 	{
-		ponder_stop_ = true;
-		sem_wait(&ponder_sem_);
+		ponder_handler_->StopPondering();
 	}
 
 	if (!mcts_tree_)
@@ -106,7 +143,7 @@ Action *Agent::SearchAction(const Game *state)
 		mcts_tree_->MoveRoot(best_move);
 		if (does_ponder_)
 		{
-			this->Ponder();
+			ponder_handler_->StartPondering(mcts_tree_, search_strategy_);
 		}
 	}
 	else
@@ -119,19 +156,6 @@ Action *Agent::SearchAction(const Game *state)
 	Action *output = action_list->Pop(best_move);
 	delete action_list;
 	return output;
-}
-
-void Agent::Ponder()
-{
-	ponder_stop_ = false;
-	TimeControlStrategy *time_controller = new SignalStopper(&ponder_stop_);
-	sem_init(&ponder_sem_, 0, 0);
-	PonderInput *data = new PonderInput(&ponder_sem_, mcts_tree_, time_controller, search_strategy_);
-	if (pthread_create(&ponder_thread_, NULL, LaunchPonder, (void *)data) != 0)
-	{
-		perror("pthread_create() error");
-		exit(1);
-	}
 }
 
 void Agent::HandleOppenentMove(const Action *action)
@@ -150,9 +174,10 @@ void Agent::HandleOppenentMove(const Action *action)
 	}
 	delete action_list;
 
-	ponder_stop_ = true;
-	sem_wait(&ponder_sem_);
-	sem_post(&ponder_sem_);
+	if (does_ponder_)
+	{
+		ponder_handler_->StopPondering();
+	}
 
 	if (action_index == -1)
 	{
@@ -165,8 +190,7 @@ void Agent::HandleOppenentMove(const Action *action)
 		mcts_tree_->MoveRoot(action_index);
 		if (does_ponder_)
 		{
-			sem_wait(&ponder_sem_);
-			Ponder();
+			ponder_handler_->StartPondering(mcts_tree_, search_strategy_);
 		}
 	}
 }

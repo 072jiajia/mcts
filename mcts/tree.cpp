@@ -10,21 +10,6 @@
 
 #include "tree.h"
 
-void *LaunchPonder(void *args_void)
-{
-    PonderInput *args = (PonderInput *)args_void;
-    sem_t *sem = args->sem();
-    MCTSTree_ *tree = args->tree();
-    TimeControlStrategy *time_controller = args->time_controller();
-    NodeSearcher_ *search_strategy = args->search_strategy();
-    tree->Search(search_strategy, time_controller);
-
-    sem_post(sem);
-    delete time_controller;
-    delete args;
-    pthread_exit(NULL);
-}
-
 SingleTree::SingleTree(MCTSNode_ *root, const Game *state) : root_(root), state_(state->Clone()) {}
 
 SingleTree::~SingleTree()

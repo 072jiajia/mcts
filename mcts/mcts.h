@@ -15,6 +15,36 @@
 #include "strategies/decision.h"
 #include "strategies/node_searcher.h"
 
+void *LaunchPonder(void *args_void);
+
+struct PonderInput
+{
+    PonderInput(sem_t *sem, MCTSTree_ *tree,
+                TimeControlStrategy *time_controller,
+                NodeSearcher_ *search_strategy)
+        : sem_(sem), tree_(tree),
+          time_controller_{time_controller},
+          search_strategy_{search_strategy} {}
+
+    THREAD_INPUT_ARG(sem_t *, sem);
+    THREAD_INPUT_ARG(MCTSTree_ *, tree);
+    THREAD_INPUT_ARG(TimeControlStrategy *, time_controller);
+    THREAD_INPUT_ARG(NodeSearcher_ *, search_strategy);
+};
+
+class PonderHandler
+{
+public:
+    PonderHandler();
+    void StopPondering();
+    void StartPondering(MCTSTree_ *tree, NodeSearcher_ *search_strategy_);
+
+private:
+    pthread_t ponder_thread_;
+    bool ponder_stop_;
+    sem_t ponder_sem_;
+};
+
 struct AgentOptions
 {
     AgentOptions() {}
@@ -36,7 +66,6 @@ public:
 
     Action *SearchAction(const Game *state);
     MCTSTree_ *CreateTree(const Game *state) const;
-    void Ponder();
     void HandleOppenentMove(const Action *);
 
 private:
@@ -50,7 +79,5 @@ private:
     bool moving_root_;
 
     bool does_ponder_;
-    pthread_t ponder_thread_;
-    bool ponder_stop_;
-    sem_t ponder_sem_;
+    PonderHandler *ponder_handler_;
 };

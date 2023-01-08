@@ -18,7 +18,7 @@ int main()
         std::cout << state << std::endl;
         Action *action;
         Agent *current_player;
-        if (state.GetPlayerThisTurn() == Player::PLAYER1)
+        if (state.GetPlayerThisTurn() == Player::PLAYER2)
         {
             int x;
             std::cout << "Your turn! Please input your move (1~7): ";
