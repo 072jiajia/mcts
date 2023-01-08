@@ -152,7 +152,10 @@ Gomoku::PieceType *Gomoku::GetBoard()
 
 bool Gomoku::IsSame(const Game *input_state) const
 {
-    Gomoku *state = (Gomoku *)input_state;
+    const Gomoku *state = dynamic_cast<const Gomoku *>(input_state);
+    if (!state)
+        return false;
+
     if (this->remaining_space_ != state->remaining_space_)
         return false;
     if (this->whos_turn != state->whos_turn)

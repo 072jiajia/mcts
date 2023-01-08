@@ -205,7 +205,10 @@ void Othello::doFlip(int8_t i, int8_t j, int8_t di, int8_t dj)
 
 bool Othello::IsSame(const Game *input_state) const
 {
-    Othello *state = (Othello *)input_state;
+    const Othello *state = dynamic_cast<const Othello *>(input_state);
+    if (!state)
+        return false;
+
     if (this->whos_turn_ != state->whos_turn_)
         return false;
     if (this->last_skipped_ != state->last_skipped_)

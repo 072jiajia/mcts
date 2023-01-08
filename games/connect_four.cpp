@@ -153,7 +153,10 @@ Player ConnectFour::GetPlayerThisTurn() const { return whos_turn_; }
 
 bool ConnectFour::IsSame(const Game *input_state) const
 {
-    ConnectFour *state = (ConnectFour *)input_state;
+    const ConnectFour *state = dynamic_cast<const ConnectFour *>(input_state);
+    if (!state)
+        return false;
+
     if (this->remaining_space_ != state->remaining_space_)
         return false;
     if (this->whos_turn_ != state->whos_turn_)

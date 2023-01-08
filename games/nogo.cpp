@@ -208,7 +208,10 @@ ActionList *NoGo::GetActionSpace(int size_x, int size_y)
 
 bool NoGo::IsSame(const Game *input_state) const
 {
-    NoGo *state = (NoGo *)input_state;
+    const NoGo *state = dynamic_cast<const NoGo *>(input_state);
+    if (!state)
+        return false;
+
     if (this->whos_turn_ != state->whos_turn_)
         return false;
     if (this->size_x_ != state->size_x_)

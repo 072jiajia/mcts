@@ -174,7 +174,10 @@ Player TicTacToe::GetPlayerThisTurn() const { return whos_turn; }
 
 bool TicTacToe::IsSame(const Game *input_state) const
 {
-    TicTacToe *state = (TicTacToe *)input_state;
+    const TicTacToe *state = dynamic_cast<const TicTacToe *>(input_state);
+    if (!state)
+        return false;
+
     if (this->whos_turn != state->whos_turn)
         return false;
     for (int i = 0; i < 3; i++)
