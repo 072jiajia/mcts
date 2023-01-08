@@ -34,7 +34,7 @@ public:
     Agent(AgentOptions &options);
     ~Agent();
 
-    Action *SearchAction(Game *state);
+    Action *SearchAction(const Game *state);
     MCTSTree_ *CreateTree(const Game *state) const;
     void Ponder();
     void HandleOppenentMove(const Action *);

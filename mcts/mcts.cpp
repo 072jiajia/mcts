@@ -68,7 +68,7 @@ MCTSTree_ *Agent::CreateTree(const Game *state) const
 	return mcts_tree;
 }
 
-Action *Agent::SearchAction(Game *state)
+Action *Agent::SearchAction(const Game *state)
 {
 	TimeControlStrategy *time_controller = new CountDown(time_limit_ms_);
 

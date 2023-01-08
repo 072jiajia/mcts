@@ -31,7 +31,7 @@ public:
     ActionList();
     ~ActionList();
 
-    void Add(Action *action);
+    void Add(Action *const &action);
     int GetSize() const;
     Action *Pop(int index);
     Action *Get(int index) const;

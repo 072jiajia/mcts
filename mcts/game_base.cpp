@@ -13,7 +13,7 @@ ActionList::~ActionList()
     }
 };
 
-void ActionList::Add(Action *action)
+void ActionList::Add(Action *const &action)
 {
     actions_.push_back(action);
 }
